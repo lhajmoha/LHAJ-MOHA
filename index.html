@@ -238,7 +238,6 @@
         <div class="bg-cyber-card/90 border border-emerald-500/30 rounded-xl p-4 backdrop-blur-md shadow-lg shadow-emerald-950/10">
           <p class="text-xs text-gray-400 mb-3">تابع أطوار البثوث الحية لأبرز صناع المحتوى المغاربة:</p>
           
-          <!-- Moving Marquee Container ("Sanța") -->
           <div class="marquee-container py-2">
             <div id="kickMarqueeTrack" class="marquee-track">
               <!-- Dynamically injected via JavaScript -->
@@ -254,20 +253,7 @@
         </h2>
 
         <div class="bg-cyber-card/90 border border-slate-800 rounded-xl p-4 backdrop-blur-md">
-          <div class="flex flex-col sm:flex-row gap-3 mb-4 justify-between items-center">
-            <div class="relative w-full sm:w-64">
-              <i class="fas fa-search absolute left-3 top-3 text-gray-400 text-xs"></i>
-              <input type="text" id="radioSearch" placeholder="بحث عن إذاعة..." oninput="filterRadios()" class="w-full bg-black/50 border border-slate-800 rounded-lg pl-8 pr-3 py-1.5 text-xs text-white focus:outline-none focus:border-cyan-400">
-            </div>
-            <div class="flex gap-1 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0">
-              <button onclick="filterCategory('all', this)" class="cat-btn bg-cyan-500/20 text-cyan-400 border border-cyan-500/40 text-xs px-3 py-1 rounded-lg transition">الكل</button>
-              <button onclick="filterCategory('music', this)" class="cat-btn bg-black/40 text-gray-400 border border-slate-800 text-xs px-3 py-1 rounded-lg hover:text-white transition">موسيقى</button>
-              <button onclick="filterCategory('news', this)" class="cat-btn bg-black/40 text-gray-400 border border-slate-800 text-xs px-3 py-1 rounded-lg hover:text-white transition">أخبار</button>
-              <button onclick="filterCategory('sports', this)" class="cat-btn bg-black/40 text-gray-400 border border-slate-800 text-xs px-3 py-1 rounded-lg hover:text-white transition">رياضة</button>
-            </div>
-          </div>
-
-          <div id="radioGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-72 overflow-y-auto pr-1">
+          <div id="radioGrid" class="grid grid-cols-2 gap-4">
             <!-- Dynamically injected via JavaScript -->
           </div>
         </div>
@@ -415,17 +401,17 @@
           </div>
           <div class="font-bold text-white text-xs truncate w-full group-hover:text-emerald-400 transition">${streamer.name}</div>
           <div class="text-[10px] text-gray-400 truncate w-full mt-0.5">${streamer.category}</div>
-          <span class="mt-2 text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-2.5 py-0.5 rounded-full font-bold">مشاهدة اللايف</span>
+          <span class="mt-2 text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-2.5 py-0.5 rounded-full font-bold">بث مباشر من كيك</span>
         </a>
       `).join('');
 
       track.innerHTML = cardsHTML + cardsHTML;
     }
 
-    // ================= RADIO STATIONS SYSTEM =================
+    // ================= RADIO STATIONS SYSTEM (HIT RADIO & RADIO MARS ONLY) =================
     const radioStations = [
-      { id: 'hitradio', name: 'Hit Radio', category: 'music', stream: 'https://hitradio-maroc.ice.infomaniak.ch/hitradio-maroc-128.mp3', logo: 'hit radio.png' },[cite: 4]
-      { id: 'radiomars', name: 'Radio Mars', category: 'sports', stream: 'https://radiomars.ice.infomaniak.ch/radiomars-128.mp3', logo: 'radio maras.jpg' }[cite: 3]
+      { id: 'hitradio', name: 'Hit Radio', stream: 'https://hitradio-maroc.ice.infomaniak.ch/hitradio-maroc-128.mp3', logo: 'hit radio.png' },[cite: 4]
+      { id: 'radiomars', name: 'Radio Mars', stream: 'https://radiomars.ice.infomaniak.ch/radiomars-128.mp3', logo: 'radio maras.jpg' }[cite: 3]
     ];
 
     let currentStation = null;
@@ -437,12 +423,16 @@
       if (!grid) return;
       
       grid.innerHTML = stations.map(s => `
-        <div onclick="playRadio('${s.id}')" class="bg-black/40 border border-slate-800 hover:border-cyan-400/50 rounded-lg p-3 flex flex-col items-center text-center cursor-pointer transition transform hover:-translate-y-0.5 group">
-          <div class="w-12 h-12 rounded-full overflow-hidden border-2 border-cyan-500/40 mb-2 shadow-md bg-black flex items-center justify-center">
+        <div onclick="playRadio('${s.id}')" class="bg-black/40 border border-slate-800 hover:border-cyan-400/50 rounded-xl p-4 flex items-center gap-4 cursor-pointer transition transform hover:-translate-y-0.5 group">
+          <div class="w-14 h-14 rounded-full overflow-hidden border-2 border-cyan-500/40 shadow-md bg-black flex-shrink-0 flex items-center justify-center">
             <img src="${s.logo}" alt="${s.name}" class="w-full h-full object-cover group-hover:scale-110 transition" onerror="this.src='avatar.png'">
           </div>
-          <div class="font-bold text-xs text-white truncate w-full">${s.name}</div>
-          <div class="text-[10px] text-gray-400 mt-0.5">مباشر</div>
+          <div>
+            <div class="font-bold text-sm text-white group-hover:text-cyan-400 transition">${s.name}</div>
+            <div class="text-xs text-cyan-400 flex items-center gap-1 mt-1">
+              <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span> استماع مباشر
+            </div>
+          </div>
         </div>
       `).join('');
     }
@@ -475,26 +465,6 @@
 
     function setVolume(val) {
       audioPlayer.volume = val;
-    }
-
-    function filterCategory(cat, btn) {
-      document.querySelectorAll('.cat-btn').forEach(b => {
-        b.classList.remove('bg-cyan-500/20', 'text-cyan-400', 'border-cyan-500/40');
-        b.classList.add('bg-black/40', 'text-gray-400');
-      });
-      btn.classList.remove('bg-black/40', 'text-gray-400');
-      btn.classList.add('bg-cyan-500/20', 'text-cyan-400', 'border-cyan-500/40');
-
-      if (cat === 'all') {
-        renderRadioGrid(radioStations);
-      } else {
-        renderRadioGrid(radioStations.filter(s => s.category === cat));
-      }
-    }
-
-    function filterRadios() {
-      const query = document.getElementById('radioSearch').value.toLowerCase();
-      renderRadioGrid(radioStations.filter(s => s.name.toLowerCase().includes(query)));
     }
 
     // ================= PROBLEM REPORT / SUPPORT SYSTEM =================
