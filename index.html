@@ -84,21 +84,32 @@
       object-position: center;
     }
 
-    /* Slick Slider Style for Kick Streamers */
-    .kick-sling-container {
+    /* Moving Marquee ("Sanța") Animation from Right to Left */
+    .marquee-container {
+      overflow: hidden;
+      width: 100%;
+      position: relative;
       display: flex;
-      overflow-x: auto;
-      gap: 12px;
-      padding-bottom: 8px;
-      scrollbar-width: thin;
-      scrollbar-color: #00f0ff #101424;
     }
-    .kick-sling-container::-webkit-scrollbar {
-      height: 6px;
+
+    .marquee-track {
+      display: flex;
+      gap: 16px;
+      width: max-content;
+      animation: scrollMarquee 25s linear infinite;
     }
-    .kick-sling-container::-webkit-scrollbar-thumb {
-      background: #00f0ff;
-      border-radius: 4px;
+
+    .marquee-container:hover .marquee-track {
+      animation-play-state: paused;
+    }
+
+    @keyframes scrollMarquee {
+      0% {
+        transform: translateX(0);
+      }
+      100% {
+        transform: translateX(-50%);
+      }
     }
   </style>
 </head>
@@ -215,21 +226,23 @@
         </div>
       </div>
 
-      <!-- KICK MOROCCAN STREAMERS SLING (Instead of Chat) -->
+      <!-- MOROCCAN KICK STREAMERS MOVING MARQUEE ("SANTA") -->
       <div>
         <h2 class="text-xl font-bold mb-4 flex items-center justify-between border-b border-slate-800 pb-2 gradient-text-multi">
           <span class="flex items-center gap-2">
-            <i class="fas fa-satellite-dish text-emerald-400 animate-pulse"></i> البثوث الحية المغربية على Kick (Live)
+            <i class="fas fa-satellite-dish text-emerald-400 animate-pulse"></i> البثوث الحية المغربية على Kick (مباشر)
           </span>
-          <span class="text-[10px] bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 px-2.5 py-1 rounded-full">مباشر الآن</span>
+          <span class="text-[10px] bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 px-2.5 py-1 rounded-full">شريط مباشر</span>
         </h2>
 
         <div class="bg-cyber-card/90 border border-emerald-500/30 rounded-xl p-4 backdrop-blur-md shadow-lg shadow-emerald-950/10">
-          <p class="text-xs text-gray-400 mb-3">شاهد أحدث البثوث الحية لصناع المحتوى المغاربة على منصة Kick:</p>
+          <p class="text-xs text-gray-400 mb-3">تابع أطوار البثوث الحية لأبرز صناع المحتوى المغاربة:</p>
           
-          <!-- Streamers Horizontal Sling -->
-          <div id="kickStreamersContainer" class="kick-sling-container">
-            <!-- Streamer cards will be loaded dynamically here -->
+          <!-- Moving Marquee Container ("Sanța") -->
+          <div class="marquee-container py-2">
+            <div id="kickMarqueeTrack" class="marquee-track">
+              <!-- Dynamically duplicated items for infinite smooth scrolling -->
+            </div>
           </div>
         </div>
       </div>
@@ -378,19 +391,20 @@
       }).catch(err => console.log("Discord error:", err));
     }
 
-    // ================= KICK MOROCCAN STREAMERS SLING SYSTEM =================
+    // ================= MOROCCAN KICK STREAMERS MOVING MARQUEE ("SANTA") =================
     const moroccanKickStreamers = [
       { name: "Lhaj Moha", username: "lhaj-mohaa", category: "GTA V / FiveM", avatar: "avatar.png", url: "https://kick.com/lhaj-mohaa" },
-      { name: "Moroccan Streamer 1", username: "moroccan_gamer", category: "Just Chatting", avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80", url: "https://kick.com" },
-      { name: "Atlas Live", username: "atlas_live", category: "Valorant", avatar: "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=100&auto=format&fit=crop&q=80", url: "https://kick.com" },
-      { name: "Maghrib Gaming", username: "maghrib_gaming", category: "GTA V RP", avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80", url: "https://kick.com" }
+      { name: "Ilyas Elmaliki", username: "ilyas_elmaliki", category: "Just Chatting", avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80", url: "https://kick.com" },
+      { name: "Simo Live", username: "simo_live", category: "Valorant", avatar: "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=100&auto=format&fit=crop&q=80", url: "https://kick.com" },
+      { name: "Atlas Gaming", username: "atlas_gaming", category: "GTA V RP", avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80", url: "https://kick.com" },
+      { name: "Maroc Stream", username: "maroc_stream", category: "Fifa 26", avatar: "https://images.unsplash.com/photo-1628157582853-a796fa650a6a?w=100&auto=format&fit=crop&q=80", url: "https://kick.com" }
     ];
 
-    function renderKickStreamers() {
-      const container = document.getElementById('kickStreamersContainer');
-      if (!container) return;
+    function renderKickMarquee() {
+      const track = document.getElementById('kickMarqueeTrack');
+      if (!track) return;
 
-      container.innerHTML = moroccanKickStreamers.map(streamer => `
+      const cardsHTML = moroccanKickStreamers.map(streamer => `
         <a href="${streamer.url}" target="_blank" class="flex-shrink-0 w-44 bg-black/60 border border-slate-800 hover:border-emerald-400/60 rounded-xl p-3 flex flex-col items-center text-center transition hover:-translate-y-1 group">
           <div class="relative mb-2">
             <img src="${streamer.avatar}" alt="${streamer.name}" class="w-14 h-14 rounded-full object-cover border-2 border-emerald-500/50 group-hover:border-emerald-400">
@@ -401,6 +415,9 @@
           <span class="mt-2 text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-2.5 py-0.5 rounded-full font-bold">مشاهدة اللايف</span>
         </a>
       `).join('');
+
+      // Duplicate HTML to create a seamless infinite loop ("Sanța")
+      track.innerHTML = cardsHTML + cardsHTML;
     }
 
     // ================= RADIO STATIONS SYSTEM =================
@@ -514,7 +531,7 @@
 
     document.addEventListener('DOMContentLoaded', () => {
       renderRadioGrid(radioStations);
-      renderKickStreamers();
+      renderKickMarquee();
     });
   </script>
 </body>
