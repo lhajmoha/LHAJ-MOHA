@@ -239,13 +239,7 @@
     // ================= RADIO STATIONS SYSTEM =================
     const radioStations = [
       { id: 'hitradio', name: 'Hit Radio', category: 'music', stream: 'https://hitradio-maroc.ice.infomaniak.ch/hitradio-maroc-128.mp3', color: 'from-amber-500 to-rose-500' },
-      { id: 'radio2m', name: 'Radio 2M', category: 'news', stream: 'https://stream.radio2m.ma/radio2m', color: 'from-blue-500 to-cyan-500' },
-      { id: 'medradio', name: 'Med Radio', category: 'news', stream: 'https://medradio-maroc.ice.infomaniak.ch/medradio-maroc-64.mp3', color: 'from-red-600 to-rose-700' },
-      { id: 'radiomars', name: 'Radio Mars', category: 'sports', stream: 'https://radiomars.ice.infomaniak.ch/radiomars-128.mp3', color: 'from-emerald-500 to-teal-700' },
-      { id: 'snrtnat', name: 'الإذاعة الوطنية', category: 'news', stream: 'https://snrt.ice.infomaniak.ch/snrt-nationale.mp3', color: 'from-cyan-600 to-blue-800' },
-      { id: 'chada', name: 'Chada FM', category: 'music', stream: 'https://chadafm.ice.infomaniak.ch/chadafm-64.mp3', color: 'from-orange-500 to-amber-600' },
-      { id: 'aswat', name: 'Radio Aswat', category: 'news', stream: 'https://aswat.ice.infomaniak.ch/aswat-high.mp3', color: 'from-rose-500 to-purple-600' },
-      { id: 'quran', name: 'محمد السادس للقرآن', category: 'news', stream: 'https://snrt.ice.infomaniak.ch/snrt-coran.mp3', color: 'from-emerald-600 to-green-800' }
+      { id: 'radiomars', name: 'Radio Mars', category: 'sports', stream: 'https://radiomars.ice.infomaniak.ch/radiomars-128.mp3', color: 'from-emerald-500 to-teal-700' }
     ];
 
     let currentStation = null;
@@ -357,7 +351,7 @@
       } else if (text.includes('live') || text.includes('بث') || text.includes('kick') || text.includes('youtube')) {
         return "يمكنك متابعة البثور الحية واللعب المباشر على منصة Kick أو قناتنا على YouTube الموجودة في الأزرار بالأسفل!";
       } else if (text.includes('radio') || text.includes('راديو') || text.includes('إذاعة')) {
-        return "يمكنك الاستماع لأشهر الإذاعات المغربية المباشرة (Hit Radio, 2M, Med Radio...) مباشرة من قسم الراديو المكتشف فوق!";
+        return "يمكنك الاستماع لأشهر الإذاعات المباشرة المتبقية مباشرة من قسم الراديو فوق!";
       } else if (text.includes('salam') || text.includes('salut') || text.includes('السلام') || text.includes('مرحباً')) {
         return "وعليكم السلام ورحمة الله! كيف أساعدك اليوم في بوابة الحاج موحا؟";
       } else {
