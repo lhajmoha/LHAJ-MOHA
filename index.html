@@ -84,7 +84,7 @@
       object-position: center;
     }
 
-    /* Moving Marquee ("Sanța") Animation from Right to Left */
+    /* Moving Marquee Animation from Right to Left */
     .marquee-container {
       overflow: hidden;
       width: 100%;
@@ -226,7 +226,7 @@
         </div>
       </div>
 
-      <!-- KICK MOROCCAN STREAMERS MOVING MARQUEE ("SANTA") -->
+      <!-- KICK MOROCCAN STREAMERS MOVING MARQUEE -->
       <div>
         <h2 class="text-xl font-bold mb-4 flex items-center justify-between border-b border-slate-800 pb-2 gradient-text-multi">
           <span class="flex items-center gap-2">
@@ -236,12 +236,11 @@
         </h2>
 
         <div class="bg-cyber-card/90 border border-emerald-500/30 rounded-xl p-4 backdrop-blur-md shadow-lg shadow-emerald-950/10">
-          <p class="text-xs text-gray-400 mb-3">تابع أطوار البثوث الحية لأبرز صناع المحتوى المغاربة[cite: 2]:</p>
+          <p class="text-xs text-gray-400 mb-3">تابع أطوار البثوث الحية لأبرز صناع المحتوى المغاربة:</p>
           
-          <!-- Moving Marquee Container ("Sanța") -->
           <div class="marquee-container py-2">
             <div id="kickMarqueeTrack" class="marquee-track">
-              <!-- Dynamically duplicated items for infinite smooth scrolling -->
+              <!-- JS Injected Streamers -->
             </div>
           </div>
         </div>
@@ -268,7 +267,7 @@
           </div>
 
           <div id="radioGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-72 overflow-y-auto pr-1">
-            <!-- Radio items -->
+            <!-- JS Injected Radios -->
           </div>
         </div>
       </div>
@@ -391,7 +390,7 @@
       }).catch(err => console.log("Discord error:", err));
     }
 
-    // ================= KICK MOROCCAN STREAMERS WITH KICK.PNG =================
+    // ================= KICK MOROCCAN STREAMERS =================
     const moroccanKickStreamers = [
       { name: "Lhaj Moha", category: "GTA V / FiveM", avatar: "kick.png", url: "https://kick.com/lhaj-mohaa" },[cite: 2]
       { name: "Adilovitch", category: "Gaming", avatar: "kick.png", url: "https://kick.com/adilovitch-gaming" },[cite: 2]
@@ -410,7 +409,7 @@
       const cardsHTML = moroccanKickStreamers.map(streamer => `
         <a href="${streamer.url}" target="_blank" class="flex-shrink-0 w-44 bg-black/60 border border-slate-800 hover:border-emerald-400/60 rounded-xl p-3 flex flex-col items-center text-center transition hover:-translate-y-1 group">
           <div class="relative mb-2">
-            <img src="${streamer.avatar}" alt="Kick Logo" class="w-14 h-14 rounded-full object-cover border-2 border-emerald-500/50 group-hover:border-emerald-400 bg-black p-1 shadow-lg shadow-emerald-500/30">
+            <img src="${streamer.avatar}" alt="Kick Logo" class="w-14 h-14 rounded-full object-cover border-2 border-emerald-500/50 group-hover:border-emerald-400 bg-black p-1 shadow-lg shadow-emerald-500/30" onerror="this.src='avatar.png'">
             <span class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-emerald-500 border-2 border-black rounded-full animate-pulse"></span>
           </div>
           <div class="font-bold text-white text-xs truncate w-full group-hover:text-emerald-400 transition">${streamer.name}</div>
@@ -422,7 +421,7 @@
       track.innerHTML = cardsHTML + cardsHTML;
     }
 
-    // ================= RADIO STATIONS SYSTEM (WITH CUSTOM IMAGES) =================
+    // ================= RADIO STATIONS SYSTEM =================
     const radioStations = [
       { id: 'hitradio', name: 'Hit Radio', category: 'music', stream: 'https://hitradio-maroc.ice.infomaniak.ch/hitradio-maroc-128.mp3', logo: 'hit radio.png' },[cite: 4]
       { id: 'radiomars', name: 'Radio Mars', category: 'sports', stream: 'https://radiomars.ice.infomaniak.ch/radiomars-128.mp3', logo: 'radio maras.jpg' }[cite: 3]
@@ -439,7 +438,7 @@
       grid.innerHTML = stations.map(s => `
         <div onclick="playRadio('${s.id}')" class="bg-black/40 border border-slate-800 hover:border-cyan-400/50 rounded-lg p-3 flex flex-col items-center text-center cursor-pointer transition transform hover:-translate-y-0.5 group">
           <div class="w-12 h-12 rounded-full overflow-hidden border-2 border-cyan-500/40 mb-2 shadow-md bg-black flex items-center justify-center">
-            <img src="${s.logo}" alt="${s.name}" class="w-full h-full object-cover group-hover:scale-110 transition">
+            <img src="${s.logo}" alt="${s.name}" class="w-full h-full object-cover group-hover:scale-110 transition" onerror="this.src='avatar.png'">
           </div>
           <div class="font-bold text-xs text-white truncate w-full">${s.name}</div>
           <div class="text-[10px] text-gray-400 mt-0.5">مباشر[cite: 2]</div>
@@ -531,6 +530,7 @@
       }, 600);
     }
 
+    // Initialize everything on load
     document.addEventListener('DOMContentLoaded', () => {
       renderRadioGrid(radioStations);
       renderKickMarquee();
