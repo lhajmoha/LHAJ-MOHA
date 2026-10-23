@@ -44,16 +44,39 @@
       -webkit-text-fill-color: transparent;
     }
 
-    /* إظهار البنر بالكامل بدون أي زوم أو قص للعناصر */
-    .banner-exact {
+    /* خلفية متناسقة للبنر تعمر الشاشة وتمنع الفراغات السوداء */
+    .banner-wrapper {
+      position: relative;
+      width: 100%;
+      height: 220px;
+      overflow: hidden;
+      background-color: #080a12;
+    }
+
+    @media (min-width: 768px) {
+      .banner-wrapper {
+        height: 280px;
+      }
+    }
+
+    .banner-bg-blur {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: blur(15px) brightness(0.6);
+      transform: scale(1.1);
+    }
+
+    .banner-main-img {
+      position: relative;
+      z-index: 2;
       width: 100%;
       height: 100%;
       object-fit: contain;
-      object-position: center;
-      background-color: #000;
     }
 
-    /* إظهار اللوغو الرئيسي فـ الأفاتار الدائري بشكل ممتاز */
     .avatar-exact {
       width: 100%;
       height: 100%;
@@ -69,13 +92,16 @@
     <!-- Header Banner & Avatar -->
     <div class="relative bg-cyber-card/90 backdrop-blur-md border border-cyan-500/30 rounded-2xl overflow-hidden shadow-2xl shadow-cyan-950/50 mb-8">
       
-      <!-- إطار البنر العريض -->
-      <div class="w-full h-56 md:h-72 bg-black overflow-hidden relative flex items-center justify-center">
-        <img src="https://i.ibb.co/Q7qdZv5y/image.png" alt="Lhaj Moha Banner" class="banner-exact border-b border-cyan-500/30">
+      <!-- البنر الذكي بدون فراغات سوداء وبدون اقتطاع الشعار -->
+      <div class="banner-wrapper border-b border-cyan-500/30">
+        <!-- الصورة الضبابية فـ الخلفية لتعبئة الفراغات -->
+        <img src="https://i.ibb.co/Q7qdZv5y/image.png" class="banner-bg-blur" alt="Background Blur">
+        <!-- الصورة الواضحة فـ المركز -->
+        <img src="https://i.ibb.co/Q7qdZv5y/image.png" alt="Lhaj Moha Banner" class="banner-main-img">
       </div>
       
       <div class="p-6 flex flex-col md:flex-row items-center gap-6 -mt-14 relative z-10">
-        <!-- الأفاتار الجديد الأزرق/الأحمر مع هالة نيون -->
+        <!-- الأفاتار الأزرق والأحمر -->
         <div class="w-24 h-24 md:w-28 md:h-28 p-[3px] rounded-full bg-gradient-to-tr from-cyan-400 to-rose-600 shadow-xl shadow-cyan-500/40 flex-shrink-0">
           <img src="https://i.ibb.co/Q7qdZv5y/image.png" alt="Lhaj Moha Avatar" class="rounded-full avatar-exact bg-black">
         </div>
