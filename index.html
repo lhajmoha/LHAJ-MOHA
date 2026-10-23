@@ -239,9 +239,7 @@
           <p class="text-xs text-gray-400 mb-3">تابع أطوار البثوث الحية لأبرز صناع المحتوى المغاربة:</p>
           
           <div class="marquee-container py-2">
-            <div id="kickMarqueeTrack" class="marquee-track">
-              <!-- Dynamically injected via JavaScript -->
-            </div>
+            <div id="kickMarqueeTrack" class="marquee-track"></div>
           </div>
         </div>
       </div>
@@ -253,9 +251,7 @@
         </h2>
 
         <div class="bg-cyber-card/90 border border-slate-800 rounded-xl p-4 backdrop-blur-md">
-          <div id="radioGrid" class="grid grid-cols-2 gap-4">
-            <!-- Dynamically injected via JavaScript -->
-          </div>
+          <div id="radioGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
         </div>
       </div>
 
@@ -377,7 +373,7 @@
       }).catch(err => console.log("Discord error:", err));
     }
 
-    // ================= EXACT KICK STREAMERS LIST =================
+    // ================= KICK STREAMERS =================
     const moroccanKickStreamers = [
       { name: "Lhaj Moha", category: "GTA V / FiveM", avatar: "kick.png", url: "https://kick.com/lhaj-mohaa" },
       { name: "Adilovitch", category: "Gaming", avatar: "kick.png", url: "https://kick.com/adilovitch-gaming" },
@@ -393,48 +389,55 @@
       const track = document.getElementById('kickMarqueeTrack');
       if (!track) return;
 
-      const cardsHTML = moroccanKickStreamers.map(streamer => `
-        <a href="${streamer.url}" target="_blank" class="flex-shrink-0 w-44 bg-black/60 border border-slate-800 hover:border-emerald-400/60 rounded-xl p-3 flex flex-col items-center text-center transition hover:-translate-y-1 group">
-          <div class="relative mb-2">
-            <img src="${streamer.avatar}" alt="Kick Logo" class="w-14 h-14 rounded-full object-cover border-2 border-emerald-500/50 group-hover:border-emerald-400 bg-black p-1 shadow-lg shadow-emerald-500/30" onerror="this.src='avatar.png'">
-            <span class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-emerald-500 border-2 border-black rounded-full animate-pulse"></span>
-          </div>
-          <div class="font-bold text-white text-xs truncate w-full group-hover:text-emerald-400 transition">${streamer.name}</div>
-          <div class="text-[10px] text-gray-400 truncate w-full mt-0.5">${streamer.category}</div>
-          <span class="mt-2 text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-2.5 py-0.5 rounded-full font-bold">بث مباشر من كيك</span>
-        </a>
-      `).join('');
+      let html = '';
+      moroccanKickStreamers.forEach(streamer => {
+        html += `
+          <a href="${streamer.url}" target="_blank" class="flex-shrink-0 w-44 bg-black/60 border border-slate-800 hover:border-emerald-400/60 rounded-xl p-3 flex flex-col items-center text-center transition hover:-translate-y-1 group">
+            <div class="relative mb-2">
+              <img src="${streamer.avatar}" alt="Kick Logo" class="w-14 h-14 rounded-full object-cover border-2 border-emerald-500/50 group-hover:border-emerald-400 bg-black p-1 shadow-lg shadow-emerald-500/30" onerror="this.src='avatar.png'">
+              <span class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-emerald-500 border-2 border-black rounded-full animate-pulse"></span>
+            </div>
+            <div class="font-bold text-white text-xs truncate w-full group-hover:text-emerald-400 transition">${streamer.name}</div>
+            <div class="text-[10px] text-gray-400 truncate w-full mt-0.5">${streamer.category}</div>
+            <span class="mt-2 text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-2.5 py-0.5 rounded-full font-bold">بث مباشر من كيك</span>
+          </a>
+        `;
+      });
 
-      track.innerHTML = cardsHTML + cardsHTML;
+      track.innerHTML = html + html;
     }
 
-    // ================= RADIO STATIONS SYSTEM (HIT RADIO & RADIO MARS ONLY) =================
+    // ================= RADIO STATIONS =================
     const radioStations = [
-      { id: 'hitradio', name: 'Hit Radio', stream: 'https://hitradio-maroc.ice.infomaniak.ch/hitradio-maroc-128.mp3', logo: 'hit radio.png' },[cite: 4]
-      { id: 'radiomars', name: 'Radio Mars', stream: 'https://radiomars.ice.infomaniak.ch/radiomars-128.mp3', logo: 'radio maras.jpg' }[cite: 3]
+      { id: 'hitradio', name: 'Hit Radio', stream: 'https://hitradio-maroc.ice.infomaniak.ch/hitradio-maroc-128.mp3', logo: 'hit_radio.png' },
+      { id: 'radiomars', name: 'Radio Mars', stream: 'https://radiomars.ice.infomaniak.ch/radiomars-128.mp3', logo: 'radio_maras.jpg' }
     ];
 
     let currentStation = null;
     let isPlaying = false;
     const audioPlayer = document.getElementById('globalAudioPlayer');
 
-    function renderRadioGrid(stations) {
+    function renderRadioGrid() {
       const grid = document.getElementById('radioGrid');
       if (!grid) return;
       
-      grid.innerHTML = stations.map(s => `
-        <div onclick="playRadio('${s.id}')" class="bg-black/40 border border-slate-800 hover:border-cyan-400/50 rounded-xl p-4 flex items-center gap-4 cursor-pointer transition transform hover:-translate-y-0.5 group">
-          <div class="w-14 h-14 rounded-full overflow-hidden border-2 border-cyan-500/40 shadow-md bg-black flex-shrink-0 flex items-center justify-center">
-            <img src="${s.logo}" alt="${s.name}" class="w-full h-full object-cover group-hover:scale-110 transition" onerror="this.src='avatar.png'">
-          </div>
-          <div>
-            <div class="font-bold text-sm text-white group-hover:text-cyan-400 transition">${s.name}</div>
-            <div class="text-xs text-cyan-400 flex items-center gap-1 mt-1">
-              <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span> استماع مباشر
+      let html = '';
+      radioStations.forEach(s => {
+        html += `
+          <div onclick="playRadio('${s.id}')" class="bg-black/40 border border-slate-800 hover:border-cyan-400/50 rounded-xl p-4 flex items-center gap-4 cursor-pointer transition transform hover:-translate-y-0.5 group">
+            <div class="w-14 h-14 rounded-full overflow-hidden border-2 border-cyan-500/40 shadow-md bg-black flex-shrink-0 flex items-center justify-center">
+              <img src="${s.logo}" alt="${s.name}" class="w-full h-full object-cover group-hover:scale-110 transition" onerror="this.src='avatar.png'">
+            </div>
+            <div>
+              <div class="font-bold text-sm text-white group-hover:text-cyan-400 transition">${s.name}</div>
+              <div class="text-xs text-cyan-400 flex items-center gap-1 mt-1">
+                <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span> استماع مباشر
+              </div>
             </div>
           </div>
-        </div>
-      `).join('');
+        `;
+      });
+      grid.innerHTML = html;
     }
 
     function playRadio(stationId) {
@@ -467,7 +470,7 @@
       audioPlayer.volume = val;
     }
 
-    // ================= PROBLEM REPORT / SUPPORT SYSTEM =================
+    // ================= PROBLEM REPORT =================
     function sendMessage() {
       const input = document.getElementById('userInput');
       const text = input.value.trim();
@@ -501,11 +504,11 @@
       }, 600);
     }
 
-    // ================= INITIALIZE ON LOAD =================
-    document.addEventListener('DOMContentLoaded', () => {
-      renderRadioGrid(radioStations);
+    // EXECUTE
+    window.onload = function() {
+      renderRadioGrid();
       renderKickMarquee();
-    });
+    };
   </script>
 </body>
 </html>
