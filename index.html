@@ -84,7 +84,7 @@
       object-position: center;
     }
 
-    /* Moving Marquee Animation from Right to Left */
+    /* Moving Marquee ("Sanța") Animation from Right to Left */
     .marquee-container {
       overflow: hidden;
       width: 100%;
@@ -226,7 +226,7 @@
         </div>
       </div>
 
-      <!-- KICK MOROCCAN STREAMERS MOVING MARQUEE -->
+      <!-- KICK MOROCCAN STREAMERS MOVING MARQUEE ("SANTA") -->
       <div>
         <h2 class="text-xl font-bold mb-4 flex items-center justify-between border-b border-slate-800 pb-2 gradient-text-multi">
           <span class="flex items-center gap-2">
@@ -236,11 +236,12 @@
         </h2>
 
         <div class="bg-cyber-card/90 border border-emerald-500/30 rounded-xl p-4 backdrop-blur-md shadow-lg shadow-emerald-950/10">
-          <p class="text-xs text-gray-400 mb-3">تابع أطوار البثوث الحية لأبرز صناع المحتوى المغاربة:</p>
+          <p class="text-xs text-gray-400 mb-3">تابع أطوار البثوث الحية لأبرز صناع المحتوى المغاربة[cite: 2]:</p>
           
+          <!-- Moving Marquee Container ("Sanța") -->
           <div class="marquee-container py-2">
             <div id="kickMarqueeTrack" class="marquee-track">
-              <!-- JS Injected Streamers -->
+              <!-- Dynamically injected via JavaScript -->
             </div>
           </div>
         </div>
@@ -267,7 +268,7 @@
           </div>
 
           <div id="radioGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-72 overflow-y-auto pr-1">
-            <!-- JS Injected Radios -->
+            <!-- Dynamically injected via JavaScript -->
           </div>
         </div>
       </div>
@@ -530,7 +531,7 @@
       }, 600);
     }
 
-    // Initialize everything on load
+    // ================= INITIALIZE ON LOAD =================
     document.addEventListener('DOMContentLoaded', () => {
       renderRadioGrid(radioStations);
       renderKickMarquee();
