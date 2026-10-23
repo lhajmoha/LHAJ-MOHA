@@ -165,4 +165,324 @@
 
           <a href="https://www.youtube.com/@LHAJMOHA-l8p" target="_blank" class="bg-cyber-card/80 border border-slate-800 p-4 rounded-xl flex items-center justify-between hover:border-rose-500 hover:shadow-lg hover:shadow-rose-500/10 transition hover:-translate-y-1">
             <div class="flex items-center gap-4">
-              <i class="fab fa-youtube text-2xl text-rose-50
+              <i class="fab fa-youtube text-2xl text-rose-500"></i>
+              <div>
+                <div class="font-bold text-white">YouTube</div>
+                <div class="text-xs text-gray-400">Vidéos & Live</div>
+              </div>
+            </div>
+            <span class="bg-rose-500/10 text-rose-400 px-3 py-1 rounded-lg text-xs font-bold border border-rose-500/30">S'abonner</span>
+          </a>
+
+          <a href="https://www.tiktok.com/@lhaj.moha53" target="_blank" class="bg-cyber-card/80 border border-slate-800 p-4 rounded-xl flex items-center justify-between hover:border-rose-400 hover:shadow-lg hover:shadow-rose-500/10 transition hover:-translate-y-1">
+            <div class="flex items-center gap-4">
+              <i class="fab fa-tiktok text-2xl text-rose-400"></i>
+              <div>
+                <div class="font-bold text-white">TikTok</div>
+                <div class="text-xs text-gray-400">Clips & Highlights</div>
+              </div>
+            </div>
+            <span class="bg-rose-500/10 text-rose-300 px-3 py-1 rounded-lg text-xs font-bold border border-rose-500/30">Suivre</span>
+          </a>
+
+          <a href="https://kick.com/lhaj-mohaa" target="_blank" class="bg-cyber-card/80 border border-slate-800 p-4 rounded-xl flex items-center justify-between hover:border-cyan-400 hover:shadow-lg hover:shadow-cyan-500/10 transition hover:-translate-y-1">
+            <div class="flex items-center gap-4">
+              <i class="fas fa-bolt text-2xl text-cyan-300"></i>
+              <div>
+                <div class="font-bold text-white">Kick</div>
+                <div class="text-xs text-gray-400">Live Streaming</div>
+              </div>
+            </div>
+            <span class="bg-cyan-500/10 text-cyan-300 px-3 py-1 rounded-lg text-xs font-bold border border-cyan-500/30">Suivre</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Moroccan Radio Player Section -->
+      <div>
+        <h2 class="text-xl font-bold mb-4 flex items-center gap-2 border-b border-slate-800 pb-2 gradient-text-multi">
+          <i class="fas fa-radio text-cyan-400"></i> إذاعات الراديو المغربية المباشرة (Radio Maroc)
+        </h2>
+
+        <div class="bg-cyber-card/90 border border-slate-800 rounded-xl p-4 backdrop-blur-md">
+          <!-- Search & Category Filters -->
+          <div class="flex flex-col sm:flex-row gap-3 mb-4 justify-between items-center">
+            <div class="relative w-full sm:w-64">
+              <i class="fas fa-search absolute left-3 top-3 text-gray-400 text-xs"></i>
+              <input type="text" id="radioSearch" placeholder="بحث عن إذاعة..." oninput="filterRadios()" class="w-full bg-black/50 border border-slate-800 rounded-lg pl-8 pr-3 py-1.5 text-xs text-white focus:outline-none focus:border-cyan-400">
+            </div>
+            <div class="flex gap-1 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0">
+              <button onclick="filterCategory('all', this)" class="cat-btn bg-cyan-500/20 text-cyan-400 border border-cyan-500/40 text-xs px-3 py-1 rounded-lg transition">الكل</button>
+              <button onclick="filterCategory('music', this)" class="cat-btn bg-black/40 text-gray-400 border border-slate-800 text-xs px-3 py-1 rounded-lg hover:text-white transition">موسيقى</button>
+              <button onclick="filterCategory('news', this)" class="cat-btn bg-black/40 text-gray-400 border border-slate-800 text-xs px-3 py-1 rounded-lg hover:text-white transition">أخبار</button>
+              <button onclick="filterCategory('sports', this)" class="cat-btn bg-black/40 text-gray-400 border border-slate-800 text-xs px-3 py-1 rounded-lg hover:text-white transition">رياضة</button>
+            </div>
+          </div>
+
+          <!-- Radios Grid -->
+          <div id="radioGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-72 overflow-y-auto pr-1">
+            <!-- Radio items loaded via JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactive AI Chat -->
+      <div>
+        <h2 class="text-xl font-bold mb-4 flex items-center gap-2 border-b border-slate-800 pb-2 gradient-text-multi">
+          <i class="fas fa-comments text-rose-500"></i> Espace Discussion En Direct (AI Bot)
+        </h2>
+
+        <div class="bg-cyber-card/90 border border-slate-800 rounded-xl p-4 backdrop-blur-md">
+          <div id="chatBox" class="h-48 overflow-y-auto flex flex-col gap-2 mb-4 pr-2">
+            <div class="bg-slate-900/80 border-l-2 border-cyan-400 p-2 rounded text-sm self-start max-w-[80%]">
+              <strong class="text-cyan-400">Lhaj Bot (AI):</strong> أهلاً بك يا غالي في بوابة الحاج موحا! تفضل اطرح سؤالك أو هدر معايا هنا.
+            </div>
+          </div>
+          <div class="flex gap-2">
+            <input type="text" id="userInput" placeholder="تكلم مع البوت بالدارجة أو الفرنسية..." class="flex-1 bg-black/50 border border-slate-800 rounded-lg px-4 py-2 text-sm text-white focus:outline-none focus:border-cyan-400" onkeypress="if(event.key==='Enter') sendMessage()">
+            <button onclick="sendMessage()" class="bg-gradient-to-r from-cyan-500 to-rose-500 text-white px-5 py-2 rounded-lg font-bold hover:opacity-90 transition"><i class="fas fa-paper-plane"></i></button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT SIDEBAR: Facebook & Instagram Accounts -->
+    <div class="lg:col-span-3 order-3 space-y-4 lg:sticky lg:top-6">
+      
+      <h2 class="text-lg font-bold flex items-center justify-between text-blue-400 border-b border-slate-800 pb-2">
+        <span class="flex items-center gap-2">
+          <i class="fas fa-share-alt text-cyan-400"></i> Suivez-moi
+        </span>
+      </h2>
+
+      <!-- Facebook Card with Direct Link -->
+      <div class="bg-cyber-card/90 border border-blue-500/30 rounded-2xl p-4 backdrop-blur-md hover:border-blue-400 transition shadow-lg shadow-blue-950/20">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="w-11 h-11 rounded-full bg-blue-600 flex items-center justify-center text-white text-xl font-bold shadow-md">
+            <i class="fab fa-facebook-f"></i>
+          </div>
+          <div>
+            <div class="font-bold text-white text-sm">Facebook</div>
+            <div class="text-xs text-blue-400 font-semibold">Lhaj Moha</div>
+          </div>
+        </div>
+        
+        <p class="text-xs text-gray-300 mb-3">تابع الصفحة الرسمية على الفيسبوك لمشاهدة المنشورات والفعاليات القادمة.</p>
+        
+        <!-- Facebook Direct Link -->
+        <a href="https://www.facebook.com/share/1CYtXgeb9y/?mibextid=wwXIfr" target="_blank" class="w-full bg-blue-600 hover:bg-blue-500 text-white py-2 px-4 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition shadow-md shadow-blue-600/30">
+          <i class="fab fa-facebook"></i> Visiter la Page
+        </a>
+      </div>
+
+      <!-- Instagram Card with Direct Link -->
+      <div class="bg-cyber-card/90 border border-rose-500/30 rounded-2xl p-4 backdrop-blur-md hover:border-rose-400 transition shadow-lg shadow-rose-950/20">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="w-11 h-11 rounded-full bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 flex items-center justify-center text-white text-xl font-bold shadow-md">
+            <i class="fab fa-instagram"></i>
+          </div>
+          <div>
+            <div class="font-bold text-white text-sm">Instagram</div>
+            <div class="text-xs text-rose-400 font-semibold">@lhaj_moha4</div>
+          </div>
+        </div>
+
+        <p class="text-xs text-gray-300 mb-3">شاهد الستوريات، الصور والكواليس الحصرية على حساب الإنستغرام.</p>
+        
+        <!-- Instagram Direct Link -->
+        <a href="https://www.instagram.com/lhaj_moha4?exln=MWUzcG9qdTh0Z2QwNg%3D%3D&utm_source=qr" target="_blank" class="w-full bg-gradient-to-r from-purple-600 to-rose-500 hover:opacity-90 text-white py-2 px-4 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition shadow-md shadow-rose-500/30">
+          <i class="fab fa-instagram"></i> S'abonner / Follow
+        </a>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Sticky Bottom Audio Player Bar -->
+  <div id="stickyPlayer" class="fixed bottom-0 left-0 w-full bg-slate-950/95 border-t border-cyan-500/30 p-3 z-50 backdrop-blur-md hidden shadow-2xl">
+    <div class="max-w-4xl mx-auto flex items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div id="playerIcon" class="w-10 h-10 rounded-lg bg-cyan-500/20 border border-cyan-500/40 flex items-center justify-center text-cyan-400 font-bold text-sm">
+          <i class="fas fa-broadcast-tower"></i>
+        </div>
+        <div>
+          <div id="playerStation" class="font-bold text-white text-sm">إذاعة لم يتم تحديدها</div>
+          <div id="playerGenre" class="text-xs text-cyan-400 flex items-center gap-1">
+            <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span> بث مباشر
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <button id="mainPlayBtn" onclick="togglePlay()" class="w-10 h-10 rounded-full bg-gradient-to-r from-cyan-500 to-rose-500 text-white flex items-center justify-center text-sm shadow-lg shadow-cyan-500/30 hover:scale-105 transition">
+          <i id="mainPlayIcon" class="fas fa-play"></i>
+        </button>
+        <div class="hidden md:flex items-center gap-2">
+          <i class="fas fa-volume-up text-xs text-gray-400"></i>
+          <input type="range" id="volumeSlider" min="0" max="1" step="0.05" value="0.8" oninput="setVolume(this.value)" class="w-20 accent-cyan-400 h-1 cursor-pointer">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <audio id="globalAudioPlayer" class="hidden"></audio>
+
+  <script>
+    // ================= RADIO STATIONS SYSTEM =================
+    const radioStations = [
+      { id: 'hitradio', name: 'Hit Radio', category: 'music', stream: 'https://hitradio-maroc.ice.infomaniak.ch/hitradio-maroc-128.mp3', color: 'from-amber-500 to-rose-500' },
+      { id: 'radiomars', name: 'Radio Mars', category: 'sports', stream: 'https://radiomars.ice.infomaniak.ch/radiomars-128.mp3', color: 'from-emerald-500 to-teal-700' }
+    ];
+
+    let currentStation = null;
+    let isPlaying = false;
+    const audioPlayer = document.getElementById('globalAudioPlayer');
+
+    function renderRadioGrid(stations) {
+      const grid = document.getElementById('radioGrid');
+      if (!grid) return;
+      
+      grid.innerHTML = stations.map(s => `
+        <div onclick="playRadio('${s.id}')" class="bg-black/40 border border-slate-800 hover:border-cyan-400/50 rounded-lg p-3 flex flex-col items-center text-center cursor-pointer transition transform hover:-translate-y-0.5 group">
+          <div class="w-10 h-10 rounded-full bg-gradient-to-tr ${s.color} flex items-center justify-center text-white font-bold text-sm mb-2 shadow-md">
+            <i class="fas fa-broadcast-tower group-hover:scale-110 transition"></i>
+          </div>
+          <div class="font-bold text-xs text-white truncate w-full">${s.name}</div>
+          <div class="text-[10px] text-gray-400 mt-0.5">مباشر</div>
+        </div>
+      `).join('');
+    }
+
+    function playRadio(stationId) {
+      const station = radioStations.find(s => s.id === stationId);
+      if (!station) return;
+
+      currentStation = station;
+      audioPlayer.src = station.stream;
+      audioPlayer.play();
+      isPlaying = true;
+
+      document.getElementById('playerStation').innerText = station.name;
+      document.getElementById('stickyPlayer').classList.remove('hidden');
+      document.getElementById('mainPlayIcon').className = 'fas fa-pause';
+    }
+
+    function togglePlay() {
+      if (!currentStation) return;
+      if (isPlaying) {
+        audioPlayer.pause();
+        document.getElementById('mainPlayIcon').className = 'fas fa-play';
+      } else {
+        audioPlayer.play();
+        document.getElementById('mainPlayIcon').className = 'fas fa-pause';
+      }
+      isPlaying = !isPlaying;
+    }
+
+    function setVolume(val) {
+      audioPlayer.volume = val;
+    }
+
+    function filterCategory(cat, btn) {
+      document.querySelectorAll('.cat-btn').forEach(b => {
+        b.classList.remove('bg-cyan-500/20', 'text-cyan-400', 'border-cyan-500/40');
+        b.classList.add('bg-black/40', 'text-gray-400');
+      });
+      btn.classList.remove('bg-black/40', 'text-gray-400');
+      btn.classList.add('bg-cyan-500/20', 'text-cyan-400', 'border-cyan-500/40');
+
+      if (cat === 'all') {
+        renderRadioGrid(radioStations);
+      } else {
+        renderRadioGrid(radioStations.filter(s => s.category === cat));
+      }
+    }
+
+    function filterRadios() {
+      const query = document.getElementById('radioSearch').value.toLowerCase();
+      renderRadioGrid(radioStations.filter(s => s.name.toLowerCase().includes(query)));
+    }
+
+    // ================= VISITOR & CHATBOT SYSTEM =================
+    let visitorId = localStorage.getItem('visitor_id');
+    if (!visitorId) {
+      visitorId = 'User-' + Math.floor(1000 + Math.random() * 9000);
+      localStorage.setItem('visitor_id', visitorId);
+    }
+
+    const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1563218138231873586/rb1dVovzKQdNr6j6vRqfzoPHGlEl6weSJhA1jxd_NVhRSfNafrw3DoMiS4U7fDeySrVN";
+
+    function sendToDiscord(messageText) {
+      const payload = {
+        embeds: [{
+          title: "🌐 رسالة جديدة من الموقع الإلكتروني (Web Portal)",
+          color: 0x00f0ff,
+          fields: [
+            { name: "👤 الزائر", value: visitorId, inline: true },
+            { name: "📍 المصدر", value: "موقع GitHub Pages (Lhaj Moha Hub)", inline: true },
+            { name: "💬 نص الرسالة", value: messageText, inline: false }
+          ],
+          timestamp: new Date().toISOString()
+        }]
+      };
+
+      fetch(DISCORD_WEBHOOK_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      }).catch(err => console.log("Discord error:", err));
+    }
+
+    function getAIResponse(userText) {
+      const text = userText.toLowerCase();
+      
+      if (text.includes('discord') || text.includes('ديسكورد')) {
+        return "مرحباً بك! تقدر تنضم لسيرفر الديسكورد ديالنا عبر الضغط على زر 'Rejoindre' في الفوق مرحبا بك في Communauté VIP!";
+      } else if (text.includes('gta') || text.includes('fivem') || text.includes('roleplay') || text.includes('روول بلاي')) {
+        return "الحاج موحا نشط جداً في FiveM و GTA V Roleplay! تابع البثوث ديالو على Kick أو يوتيوب باش تشوف الروتين والأجواء.";
+      } else if (text.includes('live') || text.includes('بث') || text.includes('kick') || text.includes('youtube')) {
+        return "يمكنك متابعة البثور الحية واللعب المباشر على منصة Kick أو قناتنا على YouTube الموجودة في الأزرار بالأسفل!";
+      } else if (text.includes('radio') || text.includes('راديو') || text.includes('إذاعة')) {
+        return "يمكنك الاستماع لأشهر الإذاعات المباشرة المتبقية مباشرة من قسم الراديو فوق!";
+      } else if (text.includes('salam') || text.includes('salut') || text.includes('السلام') || text.includes('مرحباً')) {
+        return "وعليكم السلام ورحمة الله! كيف أساعدك اليوم في بوابة الحاج موحا؟";
+      } else {
+        return "سؤال جميل! الحاج موحا كيصيفط ليك تحية، تواصل معنا في ديسكورد لأي استفسار أو مساعدة إضافية! 🎮🔥";
+      }
+    }
+
+    function sendMessage() {
+      const input = document.getElementById('userInput');
+      const text = input.value.trim();
+      if (!text) return;
+
+      const chatBox = document.getElementById('chatBox');
+      
+      const userMsg = document.createElement('div');
+      userMsg.className = 'bg-rose-500/20 border-r-2 border-rose-500 p-2 rounded text-sm self-end max-w-[80%]';
+      userMsg.innerText = text;
+      chatBox.appendChild(userMsg);
+      
+      input.value = '';
+      chatBox.scrollTop = chatBox.scrollHeight;
+
+      sendToDiscord(text);
+
+      setTimeout(() => {
+        const aiReply = getAIResponse(text);
+        const botMsg = document.createElement('div');
+        botMsg.className = 'bg-slate-900/80 border-l-2 border-cyan-400 p-2 rounded text-sm self-start max-w-[80%]';
+        botMsg.innerHTML = `<strong class="text-cyan-400">Lhaj Bot (AI):</strong> ${aiReply}`;
+        chatBox.appendChild(botMsg);
+        chatBox.scrollTop = chatBox.scrollHeight;
+      }, 800);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderRadioGrid(radioStations);
+    });
+  </script>
+</body>
+</html>
