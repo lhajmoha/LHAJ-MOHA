@@ -391,7 +391,7 @@
       }).catch(err => console.log("Discord error:", err));
     }
 
-    // ================= EXACT KICK STREAMERS LIST WITH OFFICIAL AVATARS API =================
+    // ================= KICK STREAMERS LIST WITH ACCURATE PROFILES =================
     const moroccanKickStreamers = [
       { name: "Lhaj Moha", username: "lhaj-mohaa", category: "GTA V / FiveM", avatar: "avatar.png", url: "https://kick.com/lhaj-mohaa" },
       { name: "Adilovitch", username: "adilovitch-gaming", category: "Gaming", avatar: "https://files.kick.com/images/user/3856100/profile_image/conversion/webp", url: "https://kick.com/adilovitch-gaming" },
@@ -419,7 +419,6 @@
         </a>
       `).join('');
 
-      // Duplicate HTML to create a seamless infinite loop ("Sanța")
       track.innerHTML = cardsHTML + cardsHTML;
     }
 
