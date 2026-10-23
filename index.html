@@ -44,7 +44,6 @@
       -webkit-text-fill-color: transparent;
     }
 
-    /* خلفية متناسقة للبنر تعمر الشاشة وتمنع الفراغات السوداء */
     .banner-wrapper {
       position: relative;
       width: 100%;
@@ -92,16 +91,12 @@
     <!-- Header Banner & Avatar -->
     <div class="relative bg-cyber-card/90 backdrop-blur-md border border-cyan-500/30 rounded-2xl overflow-hidden shadow-2xl shadow-cyan-950/50 mb-8">
       
-      <!-- البنر الذكي بدون فراغات سوداء وبدون اقتطاع الشعار -->
       <div class="banner-wrapper border-b border-cyan-500/30">
-        <!-- الصورة الضبابية في الخلفية لتعبئة الفراغات (مربوطة مع banner.png) -->
         <img src="banner.png" class="banner-bg-blur" alt="Background Blur">
-        <!-- الصورة الواضحة في المركز (مربوطة مع banner.png) -->
         <img src="banner.png" alt="Lhaj Moha Banner" class="banner-main-img">
       </div>
       
       <div class="p-6 flex flex-col md:flex-row items-center gap-6 -mt-14 relative z-10">
-        <!-- الأفاتار الأزرق والأحمر (مربوط مع avatar.png) -->
         <div class="w-24 h-24 md:w-28 md:h-28 p-[3px] rounded-full bg-gradient-to-tr from-cyan-400 to-rose-600 shadow-xl shadow-cyan-500/40 flex-shrink-0">
           <img src="avatar.png" alt="Lhaj Moha Avatar" class="rounded-full avatar-exact bg-black">
         </div>
@@ -121,7 +116,6 @@
     </h2>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-      <!-- Discord -->
       <a href="https://discord.gg/K6MQ4G3Xk" target="_blank" class="bg-cyber-card/80 border border-slate-800 p-4 rounded-xl flex items-center justify-between hover:border-cyan-400 hover:shadow-lg hover:shadow-cyan-500/10 transition hover:-translate-y-1">
         <div class="flex items-center gap-4">
           <i class="fab fa-discord text-2xl text-cyan-400"></i>
@@ -133,7 +127,6 @@
         <span class="bg-cyan-500/10 text-cyan-400 px-3 py-1 rounded-lg text-xs font-bold border border-cyan-500/30">Rejoindre</span>
       </a>
 
-      <!-- YouTube -->
       <a href="https://www.youtube.com/@LHAJMOHA-l8p" target="_blank" class="bg-cyber-card/80 border border-slate-800 p-4 rounded-xl flex items-center justify-between hover:border-rose-500 hover:shadow-lg hover:shadow-rose-500/10 transition hover:-translate-y-1">
         <div class="flex items-center gap-4">
           <i class="fab fa-youtube text-2xl text-rose-500"></i>
@@ -145,7 +138,6 @@
         <span class="bg-rose-500/10 text-rose-400 px-3 py-1 rounded-lg text-xs font-bold border border-rose-500/30">S'abonner</span>
       </a>
 
-      <!-- TikTok -->
       <a href="https://www.tiktok.com/@lhaj.moha53" target="_blank" class="bg-cyber-card/80 border border-slate-800 p-4 rounded-xl flex items-center justify-between hover:border-rose-400 hover:shadow-lg hover:shadow-rose-500/10 transition hover:-translate-y-1">
         <div class="flex items-center gap-4">
           <i class="fab fa-tiktok text-2xl text-rose-400"></i>
@@ -157,7 +149,6 @@
         <span class="bg-rose-500/10 text-rose-300 px-3 py-1 rounded-lg text-xs font-bold border border-rose-500/30">Suivre</span>
       </a>
 
-      <!-- Kick -->
       <a href="https://kick.com/lhaj-mohaa" target="_blank" class="bg-cyber-card/80 border border-slate-800 p-4 rounded-xl flex items-center justify-between hover:border-cyan-400 hover:shadow-lg hover:shadow-cyan-500/10 transition hover:-translate-y-1">
         <div class="flex items-center gap-4">
           <i class="fas fa-bolt text-2xl text-cyan-300"></i>
@@ -170,19 +161,19 @@
       </a>
     </div>
 
-    <!-- Interactive Chat -->
+    <!-- Interactive AI Chat -->
     <h2 class="text-xl font-bold mb-4 flex items-center gap-2 border-b border-slate-800 pb-2 gradient-text-multi">
-      <i class="fas fa-comments text-rose-500"></i> Espace Discussion En Direct
+      <i class="fas fa-comments text-rose-500"></i> Espace Discussion En Direct (AI Bot)
     </h2>
 
     <div class="bg-cyber-card/90 border border-slate-800 rounded-xl p-4 backdrop-blur-md mb-8">
-      <div id="chatBox" class="h-40 overflow-y-auto flex flex-col gap-2 mb-4 pr-2">
+      <div id="chatBox" class="h-48 overflow-y-auto flex flex-col gap-2 mb-4 pr-2">
         <div class="bg-slate-900/80 border-l-2 border-cyan-400 p-2 rounded text-sm self-start max-w-[80%]">
-          <strong class="text-cyan-400">Lhaj Bot:</strong> مرحباً بك في بوابة الحاج موحا! اترك رسالتك هنا.
+          <strong class="text-cyan-400">Lhaj Bot (AI):</strong> أهلاً بك يا غالي في بوابة الحاج موحا! تفضل اطرح سؤالك أو هدر معايا هنا.
         </div>
       </div>
       <div class="flex gap-2">
-        <input type="text" id="userInput" placeholder="Écrivez votre message..." class="flex-1 bg-black/50 border border-slate-800 rounded-lg px-4 py-2 text-sm text-white focus:outline-none focus:border-cyan-400" onkeypress="if(event.key==='Enter') sendMessage()">
+        <input type="text" id="userInput" placeholder="تكلم مع البوت بالدارجة أو الفرنسية..." class="flex-1 bg-black/50 border border-slate-800 rounded-lg px-4 py-2 text-sm text-white focus:outline-none focus:border-cyan-400" onkeypress="if(event.key==='Enter') sendMessage()">
         <button onclick="sendMessage()" class="bg-gradient-to-r from-cyan-500 to-rose-500 text-white px-5 py-2 rounded-lg font-bold hover:opacity-90 transition"><i class="fas fa-paper-plane"></i></button>
       </div>
     </div>
@@ -190,26 +181,79 @@
   </div>
 
   <script>
+    // إنشاء معرف فريد للزائر فاش كيدخل لأول مرة للسيت
+    let visitorId = localStorage.getItem('visitor_id');
+    if (!visitorId) {
+      visitorId = 'User-' + Math.floor(1000 + Math.random() * 9000);
+      localStorage.setItem('visitor_id', visitorId);
+    }
+
+    // رابط الـ Webhook الخاص بك مدمج بنجاح
+    const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1563218138231873586/rb1dVovzKQdNr6j6vRqfzoPHGlEl6weSJhA1jxd_NVhRSfNafrw3DoMiS4U7fDeySrVN";
+
+    function sendToDiscord(messageText) {
+      const payload = {
+        embeds: [{
+          title: "🌐 رسالة جديدة من الموقع الإلكتروني (Web Portal)",
+          color: 0x00f0ff,
+          fields: [
+            { name: "👤 الزائر", value: visitorId, inline: true },
+            { name: "📍 المصدر", value: "موقع GitHub Pages (Lhaj Moha Hub)", inline: true },
+            { name: "💬 نص الرسالة", value: messageText, inline: false }
+          ],
+          timestamp: new Date().toISOString()
+        }]
+      };
+
+      fetch(DISCORD_WEBHOOK_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      }).catch(err => console.log("Discord error:", err));
+    }
+
+    function getAIResponse(userText) {
+      const text = userText.toLowerCase();
+      
+      if (text.includes('discord') || text.includes('ديسكورد')) {
+        return "مرحباً بك! تقدر تنضم لسيرفر الديسكورد ديالنا عبر الضغط على زر 'Rejoindre' في الفوق مرحبا بك في Communauté VIP!";
+      } else if (text.includes('gta') || text.includes('fivem') || text.includes('roleplay') || text.includes('روول بلاي')) {
+        return "الحاج موحا نشط جداً في FiveM و GTA V Roleplay! تابع البثوث ديالو على Kick أو يوتيوب باش تشوف الروتين والأجواء.";
+      } else if (text.includes('live') || text.includes('بث') || text.includes('kick') || text.includes('youtube')) {
+        return "يمكنك متابعة البثور الحية واللعب المباشر على منصة Kick أو قناتنا على YouTube الموجودة في الأزرار بالأسفل!";
+      } else if (text.includes('salam') || text.includes('salut') || text.includes('السلام') || text.includes('مرحباً')) {
+        return "وعليكم السلام ورحمة الله! كيف أساعدك اليوم في بوابة الحاج موحا؟";
+      } else {
+        return "سؤال جميل! الحاج موحا كيصيفط ليك تحية، تواصل معنا في ديسكورد لأي استفسار أو مساعدة إضافية! 🎮🔥";
+      }
+    }
+
     function sendMessage() {
       const input = document.getElementById('userInput');
       const text = input.value.trim();
       if (!text) return;
 
       const chatBox = document.getElementById('chatBox');
+      
       const userMsg = document.createElement('div');
       userMsg.className = 'bg-rose-500/20 border-r-2 border-rose-500 p-2 rounded text-sm self-end max-w-[80%]';
       userMsg.innerText = text;
       chatBox.appendChild(userMsg);
+      
       input.value = '';
       chatBox.scrollTop = chatBox.scrollHeight;
 
+      // إرسال الإشعار للديسكورد مباشرة مع تحديد المصدر والهوية
+      sendToDiscord(text);
+
       setTimeout(() => {
+        const aiReply = getAIResponse(text);
         const botMsg = document.createElement('div');
         botMsg.className = 'bg-slate-900/80 border-l-2 border-cyan-400 p-2 rounded text-sm self-start max-w-[80%]';
-        botMsg.innerHTML = '<strong class="text-cyan-400">Lhaj Bot:</strong> شكراً لتفاعلك! انضم إلى سيرفر الديسكورد للتواصل المباشر مع الحاج موحا.';
+        botMsg.innerHTML = `<strong class="text-cyan-400">Lhaj Bot (AI):</strong> ${aiReply}`;
         chatBox.appendChild(botMsg);
         chatBox.scrollTop = chatBox.scrollHeight;
-      }, 1000);
+      }, 800);
     }
   </script>
 </body>
