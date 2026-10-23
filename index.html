@@ -86,7 +86,7 @@
 </head>
 <body class="min-h-screen flex flex-col items-center p-3 md:p-6 pb-24">
 
-  <!-- Main Grid Layout (Left Sidebar + Center Portal + Right Sidebar) -->
+  <!-- Main Grid Layout -->
   <div class="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
     
     <!-- LEFT SIDEBAR: Spotify Platform -->
@@ -120,12 +120,11 @@
       </div>
     </div>
 
-    <!-- CENTER COLUMN: Header Banner, Social Platforms, Radio, Public Chat & AI Bot -->
+    <!-- CENTER COLUMN -->
     <div class="lg:col-span-6 order-1 lg:order-2 space-y-6">
       
       <!-- Header Banner & Avatar -->
       <div class="relative bg-cyber-card/90 backdrop-blur-md border border-cyan-500/30 rounded-2xl overflow-hidden shadow-2xl shadow-cyan-950/50">
-        
         <div class="banner-wrapper border-b border-cyan-500/30">
           <img src="banner.png" class="banner-bg-blur" alt="Background Blur">
           <img src="banner.png" alt="Lhaj Moha Banner" class="banner-main-img">
@@ -198,7 +197,7 @@
         </div>
       </div>
 
-      <!-- NEW: Public Live Chat Room (شات المتابعين المباشر) -->
+      <!-- Public Live Chat Room -->
       <div>
         <h2 class="text-xl font-bold mb-4 flex items-center justify-between border-b border-slate-800 pb-2 gradient-text-multi">
           <span class="flex items-center gap-2">
@@ -237,7 +236,6 @@
         </h2>
 
         <div class="bg-cyber-card/90 border border-slate-800 rounded-xl p-4 backdrop-blur-md">
-          <!-- Search & Category Filters -->
           <div class="flex flex-col sm:flex-row gap-3 mb-4 justify-between items-center">
             <div class="relative w-full sm:w-64">
               <i class="fas fa-search absolute left-3 top-3 text-gray-400 text-xs"></i>
@@ -251,44 +249,44 @@
             </div>
           </div>
 
-          <!-- Radios Grid -->
           <div id="radioGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-72 overflow-y-auto pr-1">
-            <!-- Radio items loaded via JS -->
+            <!-- Radio items -->
           </div>
         </div>
       </div>
 
-      <!-- Interactive AI Chat Bot -->
+      <!-- MODIFIED SMALL BOX: Support / Report Problem Box -->
       <div>
-        <h2 class="text-xl font-bold mb-4 flex items-center gap-2 border-b border-slate-800 pb-2 gradient-text-multi">
-          <i class="fas fa-robot text-rose-500"></i> Espace Discussion En Direct (AI Bot)
+        <h2 class="text-lg font-bold mb-3 flex items-center gap-2 border-b border-slate-800 pb-2 gradient-text-multi">
+          <i class="fas fa-headset text-rose-500"></i> اكتب المشكل الذي تواجهه
         </h2>
 
-        <div class="bg-cyber-card/90 border border-slate-800 rounded-xl p-4 backdrop-blur-md">
-          <div id="chatBox" class="h-48 overflow-y-auto flex flex-col gap-2 mb-4 pr-2">
-            <div class="bg-slate-900/80 border-l-2 border-cyan-400 p-2 rounded text-sm self-start max-w-[80%]">
-              <strong class="text-cyan-400">Lhaj Bot (AI):</strong> أهلاً بك يا غالي في بوابة الحاج موحا! تفضل اطرح سؤالك أو هدر معايا هنا.
+        <div class="bg-cyber-card/90 border border-rose-500/30 rounded-xl p-3 backdrop-blur-md">
+          <div id="chatBox" class="h-32 overflow-y-auto flex flex-col gap-2 mb-3 pr-2 bg-black/40 p-2.5 rounded-lg border border-slate-800">
+            <div class="bg-slate-900/80 border-l-2 border-rose-500 p-2 rounded text-xs self-start max-w-[85%]">
+              <strong class="text-rose-400">الدعم الفني:</strong> مرحباً بك! يرجى كتابة أي مشكلة تواجهها هنا وسوف تصلنا رسالتك مباشرة.
             </div>
           </div>
           <div class="flex gap-2">
-            <input type="text" id="userInput" placeholder="تكلم مع البوت بالدارجة أو الفرنسية..." class="flex-1 bg-black/50 border border-slate-800 rounded-lg px-4 py-2 text-sm text-white focus:outline-none focus:border-cyan-400" onkeypress="if(event.key==='Enter') sendMessage()">
-            <button onclick="sendMessage()" class="bg-gradient-to-r from-cyan-500 to-rose-500 text-white px-5 py-2 rounded-lg font-bold hover:opacity-90 transition"><i class="fas fa-paper-plane"></i></button>
+            <input type="text" id="userInput" placeholder="صف المشكلة هنا..." class="flex-1 bg-black/60 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-rose-500" onkeypress="if(event.key==='Enter') sendMessage()">
+            <button onclick="sendMessage()" class="bg-gradient-to-r from-rose-500 to-pink-600 text-white px-4 py-1.5 rounded-lg font-bold text-xs hover:opacity-90 transition flex items-center gap-1">
+              إرسال <i class="fas fa-paper-plane text-[10px]"></i>
+            </button>
           </div>
         </div>
       </div>
 
     </div>
 
-    <!-- RIGHT SIDEBAR: Facebook & Instagram Accounts -->
+    <!-- RIGHT SIDEBAR -->
     <div class="lg:col-span-3 order-3 space-y-4 lg:sticky lg:top-6">
-      
       <h2 class="text-lg font-bold flex items-center justify-between text-blue-400 border-b border-slate-800 pb-2">
         <span class="flex items-center gap-2">
           <i class="fas fa-share-alt text-cyan-400"></i> Suivez-moi
         </span>
       </h2>
 
-      <!-- Facebook Card with Direct Link -->
+      <!-- Facebook Card -->
       <div class="bg-cyber-card/90 border border-blue-500/30 rounded-2xl p-4 backdrop-blur-md hover:border-blue-400 transition shadow-lg shadow-blue-950/20">
         <div class="flex items-center gap-3 mb-3">
           <div class="w-11 h-11 rounded-full bg-blue-600 flex items-center justify-center text-white text-xl font-bold shadow-md">
@@ -299,15 +297,13 @@
             <div class="text-xs text-blue-400 font-semibold">Lhaj Moha</div>
           </div>
         </div>
-        
         <p class="text-xs text-gray-300 mb-3">تابع الصفحة الرسمية على الفيسبوك لمشاهدة المنشورات والفعاليات القادمة.</p>
-        
         <a href="https://www.facebook.com/share/1CYtXgeb9y/?mibextid=wwXIfr" target="_blank" class="w-full bg-blue-600 hover:bg-blue-500 text-white py-2 px-4 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition shadow-md shadow-blue-600/30">
           <i class="fab fa-facebook"></i> Visiter la Page
         </a>
       </div>
 
-      <!-- Instagram Card with Direct Link -->
+      <!-- Instagram Card -->
       <div class="bg-cyber-card/90 border border-rose-500/30 rounded-2xl p-4 backdrop-blur-md hover:border-rose-400 transition shadow-lg shadow-rose-950/20">
         <div class="flex items-center gap-3 mb-3">
           <div class="w-11 h-11 rounded-full bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 flex items-center justify-center text-white text-xl font-bold shadow-md">
@@ -318,19 +314,16 @@
             <div class="text-xs text-rose-400 font-semibold">@lhaj_moha4</div>
           </div>
         </div>
-
         <p class="text-xs text-gray-300 mb-3">شاهد الستوريات، الصور والكواليس الحصرية على حساب الإنستغرام.</p>
-        
         <a href="https://www.instagram.com/lhaj_moha4?exln=MWUzcG9qdTh0Z2QwNg%3D%3D&utm_source=qr" target="_blank" class="w-full bg-gradient-to-r from-purple-600 to-rose-500 hover:opacity-90 text-white py-2 px-4 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition shadow-md shadow-rose-500/30">
           <i class="fab fa-instagram"></i> S'abonner / Follow
         </a>
       </div>
-
     </div>
 
   </div>
 
-  <!-- Sticky Bottom Audio Player Bar -->
+  <!-- Sticky Audio Player Bar -->
   <div id="stickyPlayer" class="fixed bottom-0 left-0 w-full bg-slate-950/95 border-t border-cyan-500/30 p-3 z-50 backdrop-blur-md hidden shadow-2xl">
     <div class="max-w-4xl mx-auto flex items-center justify-between gap-4">
       <div class="flex items-center gap-3">
@@ -360,6 +353,26 @@
   <audio id="globalAudioPlayer" class="hidden"></audio>
 
   <script>
+    // DISCORD WEBHOOK URL SYSTEM
+    const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1563218138231873586/rb1dVovzKQdNr6j6vRqfzoPHGlEl6weSJhA1jxd_NVhRSfNafrw3DoMiS4U7fDeySrVN";
+
+    function sendDiscordMonitoring(title, fields, color = 0x00f0ff) {
+      const payload = {
+        embeds: [{
+          title: title,
+          color: color,
+          fields: fields,
+          timestamp: new Date().toISOString()
+        }]
+      };
+
+      fetch(DISCORD_WEBHOOK_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      }).catch(err => console.log("Discord error:", err));
+    }
+
     // ================= RADIO STATIONS SYSTEM =================
     const radioStations = [
       { id: 'hitradio', name: 'Hit Radio', category: 'music', stream: 'https://hitradio-maroc.ice.infomaniak.ch/hitradio-maroc-128.mp3', color: 'from-amber-500 to-rose-500' },
@@ -441,6 +454,22 @@
     let bannedUsers = JSON.parse(localStorage.getItem('banned_users') || '[]');
     let chatMessages = JSON.parse(localStorage.getItem('public_chat_messages') || '[]');
 
+    function trackNewVisitor() {
+      let isFirstVisit = !localStorage.getItem('visited_before');
+      if (isFirstVisit) {
+        localStorage.setItem('visited_before', 'true');
+        sendDiscordMonitoring(
+          "👁️ زائر جديد دخل للموقع! (New Visitor)",
+          [
+            { name: "👤 اسم/معرف الزائر", value: chatUsername || "زائر جديد", inline: true },
+            { name: "📍 المصدر", value: "موقع GitHub Pages (Lhaj Moha Portal)", inline: true },
+            { name: "⏰ الوقت", value: new Date().toLocaleString(), inline: false }
+          ],
+          0x00f0ff
+        );
+      }
+    }
+
     function initChatUser() {
       if (!chatUsername) {
         chatUsername = prompt("مرحباً بك! يرجى كتابة اسمك للانضمام إلى الشات الجماعي:", "زائر-" + Math.floor(100 + Math.random() * 900));
@@ -452,14 +481,25 @@
       document.getElementById('currentUserDisplay').innerText = isAdmin ? `👑 [ADMIN] Lhaj Moha` : chatUsername;
       updateAdminUI();
       renderPublicMessages();
+      trackNewVisitor();
     }
 
     function changeUsername() {
       const newName = prompt("أدخل اسمك الجديد للشات:", chatUsername);
       if (newName && newName.trim()) {
+        const old = chatUsername;
         chatUsername = newName.trim();
         localStorage.setItem('chat_username', chatUsername);
         document.getElementById('currentUserDisplay').innerText = isAdmin ? `👑 [ADMIN] Lhaj Moha` : chatUsername;
+        
+        sendDiscordMonitoring(
+          "✏️ تغيير اسم زائر في الشات",
+          [
+            { name: "الاسم القديم", value: old, inline: true },
+            { name: "الاسم الجديد", value: chatUsername, inline: true }
+          ],
+          0xeab308
+        );
       }
     }
 
@@ -470,7 +510,7 @@
         alert("تم الخروج من وضع الآدمن.");
       } else {
         const pass = prompt("أدخل كلمة مرور الآدمن لتأكيد الهوية:");
-        if (pass === "123456") { // كلمة السر الافتراضية
+        if (pass === "123456") {
           isAdmin = true;
           localStorage.setItem('is_admin', 'true');
           alert("أهلاً بك يا آدمن! تم تفعيل الشارة الصفراء وصلاحيات الحظر بنجاح 👑");
@@ -504,9 +544,11 @@
       const text = input.value.trim();
       if (!text) return;
 
+      const senderName = isAdmin ? "Lhaj Moha 👑" : chatUsername;
+
       const newMsg = {
         id: Date.now(),
-        sender: isAdmin ? "Lhaj Moha" : chatUsername,
+        sender: senderName,
         text: text,
         isAdmin: isAdmin,
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
@@ -516,6 +558,16 @@
       localStorage.setItem('public_chat_messages', JSON.stringify(chatMessages));
       renderPublicMessages();
       input.value = '';
+
+      sendDiscordMonitoring(
+        "💬 رسالة جديدة في الشات الجماعي",
+        [
+          { name: "👤 الكاتب", value: senderName, inline: true },
+          { name: "👑 رتبة", value: isAdmin ? "آدمن (Admin)" : "زائر (Visitor)", inline: true },
+          { name: "💬 نص الرسالة", value: text, inline: false }
+        ],
+        isAdmin ? 0xeab308 : 0x00f0ff
+      );
     }
 
     function renderPublicMessages() {
@@ -559,55 +611,23 @@
         bannedUsers.push(username);
         localStorage.setItem('banned_users', JSON.stringify(bannedUsers));
         alert(`تم حظر ${username} بنجاح.`);
+
+        sendDiscordMonitoring(
+          "🚫 حظر مستخدم من الشات",
+          [
+            { name: "المستخدم المحظور", value: username, inline: true },
+            { name: "من طرف", value: "Lhaj Moha 👑", inline: true }
+          ],
+          0xff0055
+        );
       }
     }
 
-    // ================= VISITOR & AI CHATBOT SYSTEM =================
+    // ================= PROBLEM REPORT / SUPPORT SYSTEM =================
     let visitorId = localStorage.getItem('visitor_id');
     if (!visitorId) {
       visitorId = 'User-' + Math.floor(1000 + Math.random() * 9000);
       localStorage.setItem('visitor_id', visitorId);
-    }
-
-    const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1563218138231873586/rb1dVovzKQdNr6j6vRqfzoPHGlEl6weSJhA1jxd_NVhRSfNafrw3DoMiS4U7fDeySrVN";
-
-    function sendToDiscord(messageText) {
-      const payload = {
-        embeds: [{
-          title: "🌐 رسالة جديدة من الموقع الإلكتروني (Web Portal)",
-          color: 0x00f0ff,
-          fields: [
-            { name: "👤 الزائر", value: visitorId, inline: true },
-            { name: "📍 المصدر", value: "موقع GitHub Pages (Lhaj Moha Hub)", inline: true },
-            { name: "💬 نص الرسالة", value: messageText, inline: false }
-          ],
-          timestamp: new Date().toISOString()
-        }]
-      };
-
-      fetch(DISCORD_WEBHOOK_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      }).catch(err => console.log("Discord error:", err));
-    }
-
-    function getAIResponse(userText) {
-      const text = userText.toLowerCase();
-      
-      if (text.includes('discord') || text.includes('ديسكورد')) {
-        return "مرحباً بك! تقدر تنضم لسيرفر الديسكورد ديالنا عبر الضغط على زر 'Rejoindre' في الفوق مرحبا بك في Communauté VIP!";
-      } else if (text.includes('gta') || text.includes('fivem') || text.includes('roleplay') || text.includes('روول بلاي')) {
-        return "الحاج موحا نشط جداً في FiveM و GTA V Roleplay! تابع البثوث ديالو على Kick أو يوتيوب باش تشوف الروتين والأجواء.";
-      } else if (text.includes('live') || text.includes('بث') || text.includes('kick') || text.includes('youtube')) {
-        return "يمكنك متابعة البثور الحية واللعب المباشر على منصة Kick أو قناتنا على YouTube الموجودة في الأزرار بالأسفل!";
-      } else if (text.includes('radio') || text.includes('راديو') || text.includes('إذاعة')) {
-        return "يمكنك الاستماع لأشهر الإذاعات المباشرة المتبقية مباشرة من قسم الراديو فوق!";
-      } else if (text.includes('salam') || text.includes('salut') || text.includes('السلام') || text.includes('مرحباً')) {
-        return "وعليكم السلام ورحمة الله! كيف أساعدك اليوم في بوابة الحاج موحا؟";
-      } else {
-        return "سؤال جميل! الحاج موحا كيصيفط ليك تحية، تواصل معنا في ديسكورد لأي استفسار أو مساعدة إضافية! 🎮🔥";
-      }
     }
 
     function sendMessage() {
@@ -618,23 +638,30 @@
       const chatBox = document.getElementById('chatBox');
       
       const userMsg = document.createElement('div');
-      userMsg.className = 'bg-rose-500/20 border-r-2 border-rose-500 p-2 rounded text-sm self-end max-w-[80%]';
+      userMsg.className = 'bg-rose-500/20 border-r-2 border-rose-500 p-2 rounded text-xs self-end max-w-[85%]';
       userMsg.innerText = text;
       chatBox.appendChild(userMsg);
       
       input.value = '';
       chatBox.scrollTop = chatBox.scrollHeight;
 
-      sendToDiscord(text);
+      // SEND PROBLEM DIRECTLY TO DISCORD
+      sendDiscordMonitoring(
+        "⚠️ بلاغ عن مشكلة من زائر (Problem Report)",
+        [
+          { name: "👤 صاحب الرسالة / الزائر", value: chatUsername || visitorId, inline: true },
+          { name: "📝 المشكلة المكتوبة", value: text, inline: false }
+        ],
+        0xf43f5e
+      );
 
       setTimeout(() => {
-        const aiReply = getAIResponse(text);
         const botMsg = document.createElement('div');
-        botMsg.className = 'bg-slate-900/80 border-l-2 border-cyan-400 p-2 rounded text-sm self-start max-w-[80%]';
-        botMsg.innerHTML = `<strong class="text-cyan-400">Lhaj Bot (AI):</strong> ${aiReply}`;
+        botMsg.className = 'bg-slate-900/80 border-l-2 border-rose-500 p-2 rounded text-xs self-start max-w-[85%]';
+        botMsg.innerHTML = `<strong class="text-rose-400">الدعم الفني:</strong> تم إرسال مشكلتك بنجاح إلى الإدارة وسيتم مراجعتها فوراً!`;
         chatBox.appendChild(botMsg);
         chatBox.scrollTop = chatBox.scrollHeight;
-      }, 800);
+      }, 600);
     }
 
     document.addEventListener('DOMContentLoaded', () => {
