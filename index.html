@@ -96,7 +96,7 @@
       display: flex;
       gap: 16px;
       width: max-content;
-      animation: scrollMarquee 25s linear infinite;
+      animation: scrollMarquee 30s linear infinite;
     }
 
     .marquee-container:hover .marquee-track {
@@ -226,7 +226,7 @@
         </div>
       </div>
 
-      <!-- MOROCCAN KICK STREAMERS MOVING MARQUEE ("SANTA") -->
+      <!-- KICK MOROCCAN STREAMERS MOVING MARQUEE ("SANTA") -->
       <div>
         <h2 class="text-xl font-bold mb-4 flex items-center justify-between border-b border-slate-800 pb-2 gradient-text-multi">
           <span class="flex items-center gap-2">
@@ -391,13 +391,16 @@
       }).catch(err => console.log("Discord error:", err));
     }
 
-    // ================= MOROCCAN KICK STREAMERS MOVING MARQUEE ("SANTA") =================
+    // ================= EXACT KICK STREAMERS LIST =================
     const moroccanKickStreamers = [
       { name: "Lhaj Moha", username: "lhaj-mohaa", category: "GTA V / FiveM", avatar: "avatar.png", url: "https://kick.com/lhaj-mohaa" },
-      { name: "Ilyas Elmaliki", username: "ilyas_elmaliki", category: "Just Chatting", avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80", url: "https://kick.com" },
-      { name: "Simo Live", username: "simo_live", category: "Valorant", avatar: "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=100&auto=format&fit=crop&q=80", url: "https://kick.com" },
-      { name: "Atlas Gaming", username: "atlas_gaming", category: "GTA V RP", avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80", url: "https://kick.com" },
-      { name: "Maroc Stream", username: "maroc_stream", category: "Fifa 26", avatar: "https://images.unsplash.com/photo-1628157582853-a796fa650a6a?w=100&auto=format&fit=crop&q=80", url: "https://kick.com" }
+      { name: "Adilovitch", username: "adilovitch-gaming", category: "Gaming", avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80", url: "https://kick.com/adilovitch-gaming" },
+      { name: "Shobeex", username: "shobeex", category: "Streaming", avatar: "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=100&auto=format&fit=crop&q=80", url: "https://kick.com/shobeex" },
+      { name: "Itsmazzoo", username: "itsmazzoo", category: "Live Stream", avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80", url: "https://kick.com/itsmazzoo" },
+      { name: "Snnsei", username: "snnsei", category: "Gaming & Chat", avatar: "https://images.unsplash.com/photo-1628157582853-a796fa650a6a?w=100&auto=format&fit=crop&q=80", url: "https://kick.com/snnsei" },
+      { name: "Vergasse", username: "vergasse", category: "FiveM RP", avatar: "https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=100&auto=format&fit=crop&q=80", url: "https://kick.com/vergasse" },
+      { name: "Vliferp", username: "vliferp", category: "V-Life Roleplay", avatar: "https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=100&auto=format&fit=crop&q=80", url: "https://kick.com/vliferp" },
+      { name: "Hamza Gaming", username: "hamzagaming33", category: "GTA V Stream", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80", url: "https://kick.com/hamzagaming33" }
     ];
 
     function renderKickMarquee() {
