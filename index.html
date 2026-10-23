@@ -201,7 +201,7 @@
       <div>
         <h2 class="text-xl font-bold mb-4 flex items-center justify-between border-b border-slate-800 pb-2 gradient-text-multi">
           <span class="flex items-center gap-2">
-            <i class="fas fa-users text-yellow-400"></i> شات المتابعين والزوار
+            <i class="fas fa-users text-yellow-400"></i> شات المتابعين والزوار (عام)
           </span>
           <div class="flex items-center gap-2">
             <button onclick="toggleUnbanPanel()" id="unbanControlBtn" class="text-xs bg-emerald-500/10 border border-emerald-500/40 text-emerald-400 px-3 py-1 rounded-lg hover:bg-emerald-500/20 transition hidden">
@@ -228,8 +228,7 @@
 
         <div class="bg-cyber-card/90 border border-yellow-500/30 rounded-xl p-4 backdrop-blur-md shadow-lg shadow-yellow-950/10">
           <div class="flex items-center justify-between text-xs text-gray-400 mb-2 border-b border-slate-800/80 pb-2">
-            <div>اسمك في الشات: <strong id="currentUserDisplay" class="text-cyan-400">...</strong></div>
-            <button onclick="changeUsername()" class="text-gray-400 hover:text-white underline text-[11px]">تغيير الاسم</button>
+            <div>اسمك المثبت في الشات: <strong id="currentUserDisplay" class="text-cyan-400">...</strong></div>
           </div>
 
           <!-- Messages Container -->
@@ -469,11 +468,18 @@
       renderRadioGrid(radioStations.filter(s => s.name.toLowerCase().includes(query)));
     }
 
-    // ================= PUBLIC CHAT & ADMIN SYSTEM =================
-    let chatUsername = localStorage.getItem('chat_username');
+    // ================= PUBLIC CHAT & FIXED SINGLE USERNAME SYSTEM =================
+    let visitorId = localStorage.getItem('unique_visitor_id');
+    if (!visitorId) {
+      visitorId = 'User-' + Math.floor(1000 + Math.random() * 9000);
+      localStorage.setItem('unique_visitor_id', visitorId);
+    }
+
+    // Fixed username setup (Entered once, cannot be changed afterwards)
+    let chatUsername = localStorage.getItem('chat_fixed_username');
+
     let isAdmin = localStorage.getItem('is_admin') === 'true';
     let bannedUsers = JSON.parse(localStorage.getItem('banned_users') || '[]');
-    let chatMessages = JSON.parse(localStorage.getItem('public_chat_messages') || '[]');
 
     function trackNewVisitor() {
       let isFirstVisit = !localStorage.getItem('visited_before');
@@ -482,7 +488,7 @@
         sendDiscordMonitoring(
           "👁️ زائر جديد دخل للموقع! (New Visitor)",
           [
-            { name: "👤 اسم/معرف الزائر", value: chatUsername || "زائر جديد", inline: true },
+            { name: "👤 اسم/معرف الزائر", value: chatUsername || visitorId, inline: true },
             { name: "📍 المصدر", value: "موقع GitHub Pages (Lhaj Moha Portal)", inline: true },
             { name: "⏰ الوقت", value: new Date().toLocaleString(), inline: false }
           ],
@@ -493,35 +499,18 @@
 
     function initChatUser() {
       if (!chatUsername) {
-        chatUsername = prompt("مرحباً بك! يرجى كتابة اسمك للانضمام إلى الشات الجماعي:", "زائر-" + Math.floor(100 + Math.random() * 900));
-        if (!chatUsername || !chatUsername.trim()) {
-          chatUsername = "زائر-" + Math.floor(100 + Math.random() * 900);
+        let enteredName = prompt("مرحباً بك! يرجى إدخال اسمك للانضمام للشات العام (لن تتمكن من تغييره لاحقاً):");
+        if (!enteredName || !enteredName.trim()) {
+          enteredName = "زائر-" + Math.floor(100 + Math.random() * 900);
         }
-        localStorage.setItem('chat_username', chatUsername.trim());
+        chatUsername = enteredName.trim();
+        localStorage.setItem('chat_fixed_username', chatUsername);
       }
+
       document.getElementById('currentUserDisplay').innerText = isAdmin ? `👑 [ADMIN] Lhaj Moha` : chatUsername;
       updateAdminUI();
       renderPublicMessages();
       trackNewVisitor();
-    }
-
-    function changeUsername() {
-      const newName = prompt("أدخل اسمك الجديد للشات:", chatUsername);
-      if (newName && newName.trim()) {
-        const old = chatUsername;
-        chatUsername = newName.trim();
-        localStorage.setItem('chat_username', chatUsername);
-        document.getElementById('currentUserDisplay').innerText = isAdmin ? `👑 [ADMIN] Lhaj Moha` : chatUsername;
-        
-        sendDiscordMonitoring(
-          "✏️ تغيير اسم زائر في الشات",
-          [
-            { name: "الاسم القديم", value: old, inline: true },
-            { name: "الاسم الجديد", value: chatUsername, inline: true }
-          ],
-          0xeab308
-        );
-      }
     }
 
     function toggleAdminMode() {
@@ -575,6 +564,8 @@
       const container = document.getElementById('bannedListContainer');
       if (!container) return;
 
+      bannedUsers = JSON.parse(localStorage.getItem('banned_users') || '[]');
+
       if (bannedUsers.length === 0) {
         container.innerHTML = `<div class="text-xs text-gray-500 py-1 text-center">لا يوجد أي مستخدم محظور حالياً.</div>`;
         return;
@@ -590,10 +581,11 @@
       `).join('');
     }
 
-    function unbanUser(username) {
+    function unbanUser(target) {
       if (!isAdmin) return;
       
-      bannedUsers = bannedUsers.filter(u => u !== username);
+      bannedUsers = JSON.parse(localStorage.getItem('banned_users') || '[]');
+      bannedUsers = bannedUsers.filter(u => u !== target);
       localStorage.setItem('banned_users', JSON.stringify(bannedUsers));
       renderBannedUsersList();
       renderPublicMessages();
@@ -601,18 +593,21 @@
       sendDiscordMonitoring(
         "🔓 إزالة حظر مستخدم من الأدمن (Unban)",
         [
-          { name: "👤 المستخدم المرفوع عنه الحظر", value: username, inline: true },
+          { name: "👤 المستهدف المرفوع عنه الحظر", value: target, inline: true },
           { name: "👑 من طرف", value: "Lhaj Moha 👑", inline: true }
         ],
         0x10b981
       );
 
-      alert(`تم فك الحظر بنجاح عن الزائر (${username}) ويمكنه الآن المشاركة في الشات.`);
+      alert(`تم فك الحظر بنجاح عن (${target}) ويمكنه الآن المشاركة في الشات.`);
     }
 
     function sendPublicMessage() {
-      if (bannedUsers.includes(chatUsername)) {
-        alert("عذراً، لقد تم حظرك من الكتابة في هذا الشات من طرف الأدمن أو بسبب وضع روابط.");
+      bannedUsers = JSON.parse(localStorage.getItem('banned_users') || '[]');
+
+      // Check Ban Status for Username and Visitor ID
+      if (bannedUsers.includes(chatUsername) || bannedUsers.includes(visitorId)) {
+        alert("عذراً، لقد تم حظرك من الكتابة في هذا الشات نهائياً من طرف الأدمن.");
         return;
       }
 
@@ -622,15 +617,15 @@
 
       // AUTOMATIC BAN ON LINK SENT (FOR NON-ADMIN USERS)
       if (!isAdmin && urlPattern.test(text)) {
-        if (!bannedUsers.includes(chatUsername)) {
-          bannedUsers.push(chatUsername);
-          localStorage.setItem('banned_users', JSON.stringify(bannedUsers));
-        }
+        if (!bannedUsers.includes(chatUsername)) bannedUsers.push(chatUsername);
+        if (!bannedUsers.includes(visitorId)) bannedUsers.push(visitorId);
+        localStorage.setItem('banned_users', JSON.stringify(bannedUsers));
         
         sendDiscordMonitoring(
           "🚨 حظر أوتوماتيكي (Auto-Ban): محاولة نشر رابط!",
           [
-            { name: "👤 المستخدم المحظور", value: chatUsername, inline: true },
+            { name: "👤 اسم المستخدم", value: chatUsername, inline: true },
+            { name: "🆔 معرّف الجهاز", value: visitorId, inline: true },
             { name: "🔗 الرابط المرفوض", value: text, inline: false },
             { name: "⚡ الإجراء", value: "تم حظره أوتوماتيكياً من الشات", inline: false }
           ],
@@ -644,9 +639,12 @@
 
       const senderName = isAdmin ? "Lhaj Moha 👑" : chatUsername;
 
+      let chatMessages = JSON.parse(localStorage.getItem('public_chat_messages') || '[]');
+
       const newMsg = {
         id: Date.now(),
         sender: senderName,
+        senderId: visitorId,
         text: text,
         isAdmin: isAdmin,
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
@@ -658,7 +656,7 @@
       input.value = '';
 
       sendDiscordMonitoring(
-        "💬 رسالة جديدة في الشات الجماعي",
+        "💬 رسالة جديدة في الشات الجماعي العام",
         [
           { name: "👤 الكاتب", value: senderName, inline: true },
           { name: "👑 رتبة", value: isAdmin ? "آدمن (Admin)" : "زائر (Visitor)", inline: true },
@@ -672,6 +670,8 @@
       const chatBox = document.getElementById('publicChatBox');
       if (!chatBox) return;
 
+      let chatMessages = JSON.parse(localStorage.getItem('public_chat_messages') || '[]');
+
       if (chatMessages.length === 0) {
         chatBox.innerHTML = `<div class="text-center text-xs text-gray-500 my-auto">لا توجد رسائل بعد، كن أول من يكتب في الشات!</div>`;
         return;
@@ -683,7 +683,7 @@
           : `<span class="text-cyan-400 font-bold mr-1 text-xs">${msg.sender}:</span>`;
 
         const banBtn = (isAdmin && !msg.isAdmin) 
-          ? `<button onclick="banUser('${msg.sender}')" class="text-[10px] bg-red-600/80 hover:bg-red-600 text-white px-2 py-0.5 rounded transition">🚫 حظر</button>` 
+          ? `<button onclick="banUser('${msg.sender}', '${msg.senderId}')" class="text-[10px] bg-red-600/80 hover:bg-red-600 text-white px-2 py-0.5 rounded transition">🚫 حظر</button>` 
           : '';
 
         return `
@@ -703,33 +703,37 @@
       chatBox.scrollTop = chatBox.scrollHeight;
     }
 
-    function banUser(username) {
+    function banUser(targetName, targetId) {
       if (!isAdmin) return;
-      if (confirm(`هل أنت تأكد من حظر الزائر (${username}) لمنعه من الكتابة في الشات؟`)) {
-        if (!bannedUsers.includes(username)) {
-          bannedUsers.push(username);
-          localStorage.setItem('banned_users', JSON.stringify(bannedUsers));
-        }
-        alert(`تم حظر ${username} بنجاح.`);
+      if (confirm(`هل أنت تأكد من حظر الزائر (${targetName}) لمنعه من الكتابة في الشات؟`)) {
+        bannedUsers = JSON.parse(localStorage.getItem('banned_users') || '[]');
+        if (targetName && !bannedUsers.includes(targetName)) bannedUsers.push(targetName);
+        if (targetId && !bannedUsers.includes(targetId)) bannedUsers.push(targetId);
+        
+        localStorage.setItem('banned_users', JSON.stringify(bannedUsers));
+        alert(`تم حظر ${targetName} بنجاح.`);
 
+        // Send Ban Alert to Discord Directly
         sendDiscordMonitoring(
           "🚫 حظر مستخدم يدوي من الأدمن",
           [
-            { name: "المستخدم المحظور", value: username, inline: true },
+            { name: "المستخدم المحظور", value: targetName || "غير محدد", inline: true },
+            { name: "معرّف الجهاز", value: targetId || "غير محدد", inline: true },
             { name: "من طرف", value: "Lhaj Moha 👑", inline: true }
           ],
           0xff0055
         );
+
+        renderPublicMessages();
       }
     }
 
-    // ================= PROBLEM REPORT / SUPPORT SYSTEM =================
-    let visitorId = localStorage.getItem('visitor_id');
-    if (!visitorId) {
-      visitorId = 'User-' + Math.floor(1000 + Math.random() * 9000);
-      localStorage.setItem('visitor_id', visitorId);
-    }
+    // Auto-refresh chat messages every 1.5 seconds for real-time global experience
+    setInterval(() => {
+      renderPublicMessages();
+    }, 1500);
 
+    // ================= PROBLEM REPORT / SUPPORT SYSTEM =================
     function sendMessage() {
       const input = document.getElementById('userInput');
       const text = input.value.trim();
@@ -748,7 +752,7 @@
       sendDiscordMonitoring(
         "⚠️ بلاغ عن مشكلة من زائر (Problem Report)",
         [
-          { name: "👤 صاحب الرسالة / الزائر", value: chatUsername || visitorId, inline: true },
+          { name: "👤 صاحب الرسالة / الاسم", value: chatUsername || visitorId, inline: true },
           { name: "📝 المشكلة المكتوبة", value: text, inline: false }
         ],
         0xf43f5e
