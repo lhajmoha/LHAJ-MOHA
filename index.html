@@ -236,7 +236,7 @@
         </h2>
 
         <div class="bg-cyber-card/90 border border-emerald-500/30 rounded-xl p-4 backdrop-blur-md shadow-lg shadow-emerald-950/10">
-          <p class="text-xs text-gray-400 mb-3">تابع أطوار البثوث الحية لأبرز صناع المحتوى المغاربة:</p>
+          <p class="text-xs text-gray-400 mb-3">تابع أطوار البثوث الحية لأبرز صناع المحتوى المغاربة[cite: 2]:</p>
           
           <!-- Moving Marquee Container ("Sanța") -->
           <div class="marquee-container py-2">
@@ -391,16 +391,16 @@
       }).catch(err => console.log("Discord error:", err));
     }
 
-    // ================= KICK STREAMERS LIST WITH GREEN K AVATARS =================
+    // ================= KICK MOROCCAN STREAMERS WITH KICK.PNG =================
     const moroccanKickStreamers = [
-      { name: "Lhaj Moha", category: "GTA V / FiveM", url: "https://kick.com/lhaj-mohaa" },
-      { name: "Adilovitch", category: "Gaming", url: "https://kick.com/adilovitch-gaming" },
-      { name: "Shobeex", category: "Streaming", url: "https://kick.com/shobeex" },
-      { name: "Itsmazzoo", category: "Live Stream", url: "https://kick.com/itsmazzoo" },
-      { name: "Snnsei", category: "Gaming & Chat", url: "https://kick.com/snnsei" },
-      { name: "Vergasse", category: "FiveM RP", url: "https://kick.com/vergasse" },
-      { name: "Vliferp", category: "V-Life Roleplay", url: "https://kick.com/vliferp" },
-      { name: "Hamza Gaming", category: "GTA V Stream", url: "https://kick.com/hamzagaming33" }
+      { name: "Lhaj Moha", category: "GTA V / FiveM", avatar: "kick.png", url: "https://kick.com/lhaj-mohaa" },[cite: 2]
+      { name: "Adilovitch", category: "Gaming", avatar: "kick.png", url: "https://kick.com/adilovitch-gaming" },[cite: 2]
+      { name: "Shobeex", category: "Streaming", avatar: "kick.png", url: "https://kick.com/shobeex" },[cite: 2]
+      { name: "Itsmazzoo", category: "Live Stream", avatar: "kick.png", url: "https://kick.com/itsmazzoo" },[cite: 2]
+      { name: "Snnsei", category: "Gaming & Chat", avatar: "kick.png", url: "https://kick.com/snnsei" },[cite: 2]
+      { name: "Vergasse", category: "FiveM RP", avatar: "kick.png", url: "https://kick.com/vergasse" },[cite: 2]
+      { name: "Vliferp", category: "V-Life Roleplay", avatar: "kick.png", url: "https://kick.com/vliferp" },[cite: 2]
+      { name: "Hamza Gaming", category: "GTA V Stream", avatar: "kick.png", url: "https://kick.com/hamzagaming33" }[cite: 2]
     ];
 
     function renderKickMarquee() {
@@ -410,25 +410,22 @@
       const cardsHTML = moroccanKickStreamers.map(streamer => `
         <a href="${streamer.url}" target="_blank" class="flex-shrink-0 w-44 bg-black/60 border border-slate-800 hover:border-emerald-400/60 rounded-xl p-3 flex flex-col items-center text-center transition hover:-translate-y-1 group">
           <div class="relative mb-2">
-            <!-- Green Kick 'K' Avatar Circle -->
-            <div class="w-14 h-14 rounded-full bg-slate-900 border-2 border-emerald-500 flex items-center justify-center text-emerald-400 font-black text-2xl shadow-lg shadow-emerald-500/30 group-hover:scale-105 transition">
-              K
-            </div>
+            <img src="${streamer.avatar}" alt="Kick Logo" class="w-14 h-14 rounded-full object-cover border-2 border-emerald-500/50 group-hover:border-emerald-400 bg-black p-1 shadow-lg shadow-emerald-500/30">
             <span class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-emerald-500 border-2 border-black rounded-full animate-pulse"></span>
           </div>
           <div class="font-bold text-white text-xs truncate w-full group-hover:text-emerald-400 transition">${streamer.name}</div>
           <div class="text-[10px] text-gray-400 truncate w-full mt-0.5">${streamer.category}</div>
-          <span class="mt-2 text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-2.5 py-0.5 rounded-full font-bold">مشاهدة اللايف</span>
+          <span class="mt-2 text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-2.5 py-0.5 rounded-full font-bold">مشاهدة اللايف[cite: 2]</span>
         </a>
       `).join('');
 
       track.innerHTML = cardsHTML + cardsHTML;
     }
 
-    // ================= RADIO STATIONS SYSTEM =================
+    // ================= RADIO STATIONS SYSTEM (WITH CUSTOM IMAGES) =================
     const radioStations = [
-      { id: 'hitradio', name: 'Hit Radio', category: 'music', stream: 'https://hitradio-maroc.ice.infomaniak.ch/hitradio-maroc-128.mp3', color: 'from-amber-500 to-rose-500' },
-      { id: 'radiomars', name: 'Radio Mars', category: 'sports', stream: 'https://radiomars.ice.infomaniak.ch/radiomars-128.mp3', color: 'from-emerald-500 to-teal-700' }
+      { id: 'hitradio', name: 'Hit Radio', category: 'music', stream: 'https://hitradio-maroc.ice.infomaniak.ch/hitradio-maroc-128.mp3', logo: 'hit radio.png' },[cite: 4]
+      { id: 'radiomars', name: 'Radio Mars', category: 'sports', stream: 'https://radiomars.ice.infomaniak.ch/radiomars-128.mp3', logo: 'radio maras.jpg' }[cite: 3]
     ];
 
     let currentStation = null;
@@ -441,11 +438,11 @@
       
       grid.innerHTML = stations.map(s => `
         <div onclick="playRadio('${s.id}')" class="bg-black/40 border border-slate-800 hover:border-cyan-400/50 rounded-lg p-3 flex flex-col items-center text-center cursor-pointer transition transform hover:-translate-y-0.5 group">
-          <div class="w-10 h-10 rounded-full bg-gradient-to-tr ${s.color} flex items-center justify-center text-white font-bold text-sm mb-2 shadow-md">
-            <i class="fas fa-broadcast-tower group-hover:scale-110 transition"></i>
+          <div class="w-12 h-12 rounded-full overflow-hidden border-2 border-cyan-500/40 mb-2 shadow-md bg-black flex items-center justify-center">
+            <img src="${s.logo}" alt="${s.name}" class="w-full h-full object-cover group-hover:scale-110 transition">
           </div>
           <div class="font-bold text-xs text-white truncate w-full">${s.name}</div>
-          <div class="text-[10px] text-gray-400 mt-0.5">مباشر</div>
+          <div class="text-[10px] text-gray-400 mt-0.5">مباشر[cite: 2]</div>
         </div>
       `).join('');
     }
