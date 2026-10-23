@@ -44,12 +44,13 @@
       -webkit-text-fill-color: transparent;
     }
 
-    /* البانر يملأ المساحة بشكل احترافي */
+    /* خلفية متناسقة للبنر تعمر الشاشة وتمنع الفراغات السوداء */
     .banner-wrapper {
       position: relative;
       width: 100%;
       height: 220px;
       overflow: hidden;
+      background-color: #080a12;
     }
 
     @media (min-width: 768px) {
@@ -58,12 +59,22 @@
       }
     }
 
-    .banner-main-img {
+    .banner-bg-blur {
+      position: absolute;
+      inset: 0;
       width: 100%;
       height: 100%;
       object-fit: cover;
-      object-position: center;
-      display: block;
+      filter: blur(15px) brightness(0.6);
+      transform: scale(1.1);
+    }
+
+    .banner-main-img {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
     }
 
     .avatar-exact {
@@ -78,30 +89,29 @@
 
   <div class="w-full max-w-4xl">
     
-    <!-- Header Banner & Avatar Card -->
+    <!-- Header Banner & Avatar -->
     <div class="relative bg-cyber-card/90 backdrop-blur-md border border-cyan-500/30 rounded-2xl overflow-hidden shadow-2xl shadow-cyan-950/50 mb-8">
       
-      <!-- غلاف البانر (مربوط مع banner.png) -->
+      <!-- البنر الذكي بدون فراغات سوداء وبدون اقتطاع الشعار -->
       <div class="banner-wrapper border-b border-cyan-500/30">
+        <!-- الصورة الضبابية في الخلفية لتعبئة الفراغات (مربوطة مع banner.png) -->
+        <img src="banner.png" class="banner-bg-blur" alt="Background Blur">
+        <!-- الصورة الواضحة في المركز (مربوطة مع banner.png) -->
         <img src="banner.png" alt="Lhaj Moha Banner" class="banner-main-img">
       </div>
       
-      <!-- قسم الأفاتار والمعلومات -->
-      <div class="px-6 pb-6 pt-0 flex flex-col md:flex-row items-center md:items-end gap-5 -mt-12 md:-mt-14 relative z-10">
-        
-        <!-- الأفاتار (مربوط مع avatar.png) -->
-        <div class="w-24 h-24 md:w-28 md:h-28 p-[3px] rounded-full bg-gradient-to-tr from-cyan-400 to-rose-600 shadow-xl shadow-cyan-500/30 flex-shrink-0 bg-cyber-card">
-          <img src="avatar.png" alt="Lhaj Moha Avatar" class="rounded-full avatar-exact bg-black border-2 border-cyber-card">
+      <div class="p-6 flex flex-col md:flex-row items-center gap-6 -mt-14 relative z-10">
+        <!-- الأفاتار الأزرق والأحمر (مربوط مع avatar.png) -->
+        <div class="w-24 h-24 md:w-28 md:h-28 p-[3px] rounded-full bg-gradient-to-tr from-cyan-400 to-rose-600 shadow-xl shadow-cyan-500/40 flex-shrink-0">
+          <img src="avatar.png" alt="Lhaj Moha Avatar" class="rounded-full avatar-exact bg-black">
         </div>
 
-        <!-- اسم الحساب والوصف -->
-        <div class="text-center md:text-left">
-          <h1 class="text-2xl md:text-3xl font-black text-white flex items-center justify-center md:justify-start gap-2 tracking-wide">
+        <div class="text-center md:text-left mt-1 md:mt-10">
+          <h1 class="text-3xl font-black text-white flex items-center justify-center md:justify-start gap-2 tracking-wide">
             Lhaj Moha <i class="fas fa-check-circle text-cyan-400 text-xl"></i>
           </h1>
           <p class="text-gray-400 text-sm mt-1">Gaming Creator | GTA V & FiveM Streamer | Official Portal</p>
         </div>
-
       </div>
     </div>
 
