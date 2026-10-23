@@ -236,9 +236,8 @@
         </h2>
 
         <div class="bg-cyber-card/90 border border-emerald-500/30 rounded-xl p-4 backdrop-blur-md shadow-lg shadow-emerald-950/10">
-          <p class="text-xs text-gray-400 mb-3">تابع أطوار البثوث الحية لأبرز صناع المحتوى المغاربة[cite: 2]:</p>
+          <p class="text-xs text-gray-400 mb-3">تابع أطوار البثوث الحية لأبرز صناع المحتوى المغاربة:</p>
           
-          <!-- Moving Marquee Container ("Sanța") -->
           <div class="marquee-container py-2">
             <div id="kickMarqueeTrack" class="marquee-track">
               <!-- Dynamically injected via JavaScript -->
@@ -391,16 +390,16 @@
       }).catch(err => console.log("Discord error:", err));
     }
 
-    // ================= KICK MOROCCAN STREAMERS =================
+    // ================= EXACT KICK STREAMERS LIST =================
     const moroccanKickStreamers = [
-      { name: "Lhaj Moha", category: "GTA V / FiveM", avatar: "kick.png", url: "https://kick.com/lhaj-mohaa" },[cite: 2]
-      { name: "Adilovitch", category: "Gaming", avatar: "kick.png", url: "https://kick.com/adilovitch-gaming" },[cite: 2]
-      { name: "Shobeex", category: "Streaming", avatar: "kick.png", url: "https://kick.com/shobeex" },[cite: 2]
-      { name: "Itsmazzoo", category: "Live Stream", avatar: "kick.png", url: "https://kick.com/itsmazzoo" },[cite: 2]
-      { name: "Snnsei", category: "Gaming & Chat", avatar: "kick.png", url: "https://kick.com/snnsei" },[cite: 2]
-      { name: "Vergasse", category: "FiveM RP", avatar: "kick.png", url: "https://kick.com/vergasse" },[cite: 2]
-      { name: "Vliferp", category: "V-Life Roleplay", avatar: "kick.png", url: "https://kick.com/vliferp" },[cite: 2]
-      { name: "Hamza Gaming", category: "GTA V Stream", avatar: "kick.png", url: "https://kick.com/hamzagaming33" }[cite: 2]
+      { name: "Lhaj Moha", category: "GTA V / FiveM", avatar: "kick.png", url: "https://kick.com/lhaj-mohaa" },
+      { name: "Adilovitch", category: "Gaming", avatar: "kick.png", url: "https://kick.com/adilovitch-gaming" },
+      { name: "Shobeex", category: "Streaming", avatar: "kick.png", url: "https://kick.com/shobeex" },
+      { name: "Itsmazzoo", category: "Live Stream", avatar: "kick.png", url: "https://kick.com/itsmazzoo" },
+      { name: "Snnsei", category: "Gaming & Chat", avatar: "kick.png", url: "https://kick.com/snnsei" },
+      { name: "Vergasse", category: "FiveM RP", avatar: "kick.png", url: "https://kick.com/vergasse" },
+      { name: "Vliferp", category: "V-Life Roleplay", avatar: "kick.png", url: "https://kick.com/vliferp" },
+      { name: "Hamza Gaming", category: "GTA V Stream", avatar: "kick.png", url: "https://kick.com/hamzagaming33" }
     ];
 
     function renderKickMarquee() {
@@ -415,7 +414,7 @@
           </div>
           <div class="font-bold text-white text-xs truncate w-full group-hover:text-emerald-400 transition">${streamer.name}</div>
           <div class="text-[10px] text-gray-400 truncate w-full mt-0.5">${streamer.category}</div>
-          <span class="mt-2 text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-2.5 py-0.5 rounded-full font-bold">مشاهدة اللايف[cite: 2]</span>
+          <span class="mt-2 text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-2.5 py-0.5 rounded-full font-bold">مشاهدة اللايف</span>
         </a>
       `).join('');
 
@@ -442,7 +441,7 @@
             <img src="${s.logo}" alt="${s.name}" class="w-full h-full object-cover group-hover:scale-110 transition" onerror="this.src='avatar.png'">
           </div>
           <div class="font-bold text-xs text-white truncate w-full">${s.name}</div>
-          <div class="text-[10px] text-gray-400 mt-0.5">مباشر[cite: 2]</div>
+          <div class="text-[10px] text-gray-400 mt-0.5">مباشر</div>
         </div>
       `).join('');
     }
