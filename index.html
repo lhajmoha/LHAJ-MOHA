@@ -120,7 +120,7 @@
       </div>
     </div>
 
-    <!-- CENTER COLUMN: Header Banner, Social Platforms, Radio & AI Chat -->
+    <!-- CENTER COLUMN: Header Banner, Social Platforms, Radio, Public Chat & AI Bot -->
     <div class="lg:col-span-6 order-1 lg:order-2 space-y-6">
       
       <!-- Header Banner & Avatar -->
@@ -198,6 +198,38 @@
         </div>
       </div>
 
+      <!-- NEW: Public Live Chat Room (شات المتابعين المباشر) -->
+      <div>
+        <h2 class="text-xl font-bold mb-4 flex items-center justify-between border-b border-slate-800 pb-2 gradient-text-multi">
+          <span class="flex items-center gap-2">
+            <i class="fas fa-users text-yellow-400"></i> شات المتابعين والزوار
+          </span>
+          <button onclick="toggleAdminMode()" id="adminAuthBtn" class="text-xs bg-yellow-500/10 border border-yellow-500/40 text-yellow-400 px-3 py-1 rounded-lg hover:bg-yellow-500/20 transition">
+            🔑 دخول الأدمن
+          </button>
+        </h2>
+
+        <div class="bg-cyber-card/90 border border-yellow-500/30 rounded-xl p-4 backdrop-blur-md shadow-lg shadow-yellow-950/10">
+          <div class="flex items-center justify-between text-xs text-gray-400 mb-2 border-b border-slate-800/80 pb-2">
+            <div>اسمك في الشات: <strong id="currentUserDisplay" class="text-cyan-400">...</strong></div>
+            <button onclick="changeUsername()" class="text-gray-400 hover:text-white underline text-[11px]">تغيير الاسم</button>
+          </div>
+
+          <!-- Messages Container -->
+          <div id="publicChatBox" class="h-56 overflow-y-auto flex flex-col gap-2 mb-3 pr-2 bg-black/50 p-3 rounded-lg border border-slate-800">
+            <!-- Messages render here -->
+          </div>
+
+          <!-- Send Input -->
+          <div class="flex gap-2">
+            <input type="text" id="chatMessageInput" placeholder="اكتب رسالتك للجميع هنا..." class="flex-1 bg-black/60 border border-slate-800 rounded-lg px-4 py-2 text-sm text-white focus:outline-none focus:border-yellow-400" onkeypress="if(event.key==='Enter') sendPublicMessage()">
+            <button onclick="sendPublicMessage()" class="bg-gradient-to-r from-yellow-500 to-amber-600 text-black font-bold px-5 py-2 rounded-lg hover:opacity-90 transition flex items-center gap-1 text-sm">
+              إرسال <i class="fas fa-paper-plane text-xs"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
       <!-- Moroccan Radio Player Section -->
       <div>
         <h2 class="text-xl font-bold mb-4 flex items-center gap-2 border-b border-slate-800 pb-2 gradient-text-multi">
@@ -226,10 +258,10 @@
         </div>
       </div>
 
-      <!-- Interactive AI Chat -->
+      <!-- Interactive AI Chat Bot -->
       <div>
         <h2 class="text-xl font-bold mb-4 flex items-center gap-2 border-b border-slate-800 pb-2 gradient-text-multi">
-          <i class="fas fa-comments text-rose-500"></i> Espace Discussion En Direct (AI Bot)
+          <i class="fas fa-robot text-rose-500"></i> Espace Discussion En Direct (AI Bot)
         </h2>
 
         <div class="bg-cyber-card/90 border border-slate-800 rounded-xl p-4 backdrop-blur-md">
@@ -270,7 +302,6 @@
         
         <p class="text-xs text-gray-300 mb-3">تابع الصفحة الرسمية على الفيسبوك لمشاهدة المنشورات والفعاليات القادمة.</p>
         
-        <!-- Facebook Direct Link -->
         <a href="https://www.facebook.com/share/1CYtXgeb9y/?mibextid=wwXIfr" target="_blank" class="w-full bg-blue-600 hover:bg-blue-500 text-white py-2 px-4 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition shadow-md shadow-blue-600/30">
           <i class="fab fa-facebook"></i> Visiter la Page
         </a>
@@ -290,7 +321,6 @@
 
         <p class="text-xs text-gray-300 mb-3">شاهد الستوريات، الصور والكواليس الحصرية على حساب الإنستغرام.</p>
         
-        <!-- Instagram Direct Link -->
         <a href="https://www.instagram.com/lhaj_moha4?exln=MWUzcG9qdTh0Z2QwNg%3D%3D&utm_source=qr" target="_blank" class="w-full bg-gradient-to-r from-purple-600 to-rose-500 hover:opacity-90 text-white py-2 px-4 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition shadow-md shadow-rose-500/30">
           <i class="fab fa-instagram"></i> S'abonner / Follow
         </a>
@@ -405,7 +435,134 @@
       renderRadioGrid(radioStations.filter(s => s.name.toLowerCase().includes(query)));
     }
 
-    // ================= VISITOR & CHATBOT SYSTEM =================
+    // ================= PUBLIC CHAT & ADMIN SYSTEM =================
+    let chatUsername = localStorage.getItem('chat_username');
+    let isAdmin = localStorage.getItem('is_admin') === 'true';
+    let bannedUsers = JSON.parse(localStorage.getItem('banned_users') || '[]');
+    let chatMessages = JSON.parse(localStorage.getItem('public_chat_messages') || '[]');
+
+    function initChatUser() {
+      if (!chatUsername) {
+        chatUsername = prompt("مرحباً بك! يرجى كتابة اسمك للانضمام إلى الشات الجماعي:", "زائر-" + Math.floor(100 + Math.random() * 900));
+        if (!chatUsername || !chatUsername.trim()) {
+          chatUsername = "زائر-" + Math.floor(100 + Math.random() * 900);
+        }
+        localStorage.setItem('chat_username', chatUsername.trim());
+      }
+      document.getElementById('currentUserDisplay').innerText = isAdmin ? `👑 [ADMIN] Lhaj Moha` : chatUsername;
+      updateAdminUI();
+      renderPublicMessages();
+    }
+
+    function changeUsername() {
+      const newName = prompt("أدخل اسمك الجديد للشات:", chatUsername);
+      if (newName && newName.trim()) {
+        chatUsername = newName.trim();
+        localStorage.setItem('chat_username', chatUsername);
+        document.getElementById('currentUserDisplay').innerText = isAdmin ? `👑 [ADMIN] Lhaj Moha` : chatUsername;
+      }
+    }
+
+    function toggleAdminMode() {
+      if (isAdmin) {
+        isAdmin = false;
+        localStorage.setItem('is_admin', 'false');
+        alert("تم الخروج من وضع الآدمن.");
+      } else {
+        const pass = prompt("أدخل كلمة مرور الآدمن لتأكيد الهوية:");
+        if (pass === "123456") { // كلمة السر الافتراضية
+          isAdmin = true;
+          localStorage.setItem('is_admin', 'true');
+          alert("أهلاً بك يا آدمن! تم تفعيل الشارة الصفراء وصلاحيات الحظر بنجاح 👑");
+        } else {
+          alert("كلمة المرور غير صحيحة!");
+        }
+      }
+      document.getElementById('currentUserDisplay').innerText = isAdmin ? `👑 [ADMIN] Lhaj Moha` : chatUsername;
+      updateAdminUI();
+      renderPublicMessages();
+    }
+
+    function updateAdminUI() {
+      const btn = document.getElementById('adminAuthBtn');
+      if (isAdmin) {
+        btn.innerHTML = `👑 تم تفعيل الآدمن (خروج)`;
+        btn.className = "text-xs bg-yellow-500 text-black font-bold px-3 py-1 rounded-lg border border-yellow-400 shadow-md shadow-yellow-500/30";
+      } else {
+        btn.innerHTML = `🔑 دخول الأدمن`;
+        btn.className = "text-xs bg-yellow-500/10 border border-yellow-500/40 text-yellow-400 px-3 py-1 rounded-lg hover:bg-yellow-500/20 transition";
+      }
+    }
+
+    function sendPublicMessage() {
+      if (bannedUsers.includes(chatUsername)) {
+        alert("عذراً، لقد تم حظرك من الكتابة في هذا الشات من طرف الأدمن.");
+        return;
+      }
+
+      const input = document.getElementById('chatMessageInput');
+      const text = input.value.trim();
+      if (!text) return;
+
+      const newMsg = {
+        id: Date.now(),
+        sender: isAdmin ? "Lhaj Moha" : chatUsername,
+        text: text,
+        isAdmin: isAdmin,
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      };
+
+      chatMessages.push(newMsg);
+      localStorage.setItem('public_chat_messages', JSON.stringify(chatMessages));
+      renderPublicMessages();
+      input.value = '';
+    }
+
+    function renderPublicMessages() {
+      const chatBox = document.getElementById('publicChatBox');
+      if (!chatBox) return;
+
+      if (chatMessages.length === 0) {
+        chatBox.innerHTML = `<div class="text-center text-xs text-gray-500 my-auto">لا توجد رسائل بعد، كن أول من يكتب في الشات!</div>`;
+        return;
+      }
+
+      chatBox.innerHTML = chatMessages.map(msg => {
+        const badge = msg.isAdmin 
+          ? `<span class="bg-yellow-400 text-black text-[10px] font-black px-2 py-0.5 rounded-full shadow-md shadow-yellow-500/40 mr-1">👑 [ADMIN]</span>`
+          : `<span class="text-cyan-400 font-bold mr-1 text-xs">${msg.sender}:</span>`;
+
+        const banBtn = (isAdmin && !msg.isAdmin) 
+          ? `<button onclick="banUser('${msg.sender}')" class="text-[10px] bg-red-600/80 hover:bg-red-600 text-white px-2 py-0.5 rounded transition">🚫 حظر</button>` 
+          : '';
+
+        return `
+          <div class="flex items-start justify-between bg-slate-900/80 p-2 rounded border border-slate-800/80 text-xs">
+            <div class="flex-1 pr-2">
+              <div class="flex items-center gap-1 mb-0.5">
+                ${badge}
+                <span class="text-[10px] text-gray-500">${msg.time}</span>
+              </div>
+              <div class="text-gray-200 text-xs">${msg.text}</div>
+            </div>
+            ${banBtn}
+          </div>
+        `;
+      }).join('');
+
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function banUser(username) {
+      if (!isAdmin) return;
+      if (confirm(`هل أنت تأكد من حظر الزائر (${username}) لمنعه من الكتابة في الشات؟`)) {
+        bannedUsers.push(username);
+        localStorage.setItem('banned_users', JSON.stringify(bannedUsers));
+        alert(`تم حظر ${username} بنجاح.`);
+      }
+    }
+
+    // ================= VISITOR & AI CHATBOT SYSTEM =================
     let visitorId = localStorage.getItem('visitor_id');
     if (!visitorId) {
       visitorId = 'User-' + Math.floor(1000 + Math.random() * 9000);
@@ -482,6 +639,7 @@
 
     document.addEventListener('DOMContentLoaded', () => {
       renderRadioGrid(radioStations);
+      initChatUser();
     });
   </script>
 </body>
