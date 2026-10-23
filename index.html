@@ -10,10 +10,6 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
-  <!-- Firebase SDKs for Realtime Global Chat -->
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-
   <script>
     tailwind.config = {
       darkMode: 'class',
@@ -86,6 +82,23 @@
       height: 100%;
       object-fit: cover;
       object-position: center;
+    }
+
+    /* Slick Slider Style for Kick Streamers */
+    .kick-sling-container {
+      display: flex;
+      overflow-x: auto;
+      gap: 12px;
+      padding-bottom: 8px;
+      scrollbar-width: thin;
+      scrollbar-color: #00f0ff #101424;
+    }
+    .kick-sling-container::-webkit-scrollbar {
+      height: 6px;
+    }
+    .kick-sling-container::-webkit-scrollbar-thumb {
+      background: #00f0ff;
+      border-radius: 4px;
     }
   </style>
 </head>
@@ -202,51 +215,21 @@
         </div>
       </div>
 
-      <!-- Public Live Chat Room -->
+      <!-- KICK MOROCCAN STREAMERS SLING (Instead of Chat) -->
       <div>
         <h2 class="text-xl font-bold mb-4 flex items-center justify-between border-b border-slate-800 pb-2 gradient-text-multi">
           <span class="flex items-center gap-2">
-            <i class="fas fa-users text-yellow-400"></i> شات المتابعين والزوار (عام)
+            <i class="fas fa-satellite-dish text-emerald-400 animate-pulse"></i> البثوث الحية المغربية على Kick (Live)
           </span>
-          <div class="flex items-center gap-2">
-            <button onclick="toggleUnbanPanel()" id="unbanControlBtn" class="text-xs bg-emerald-500/10 border border-emerald-500/40 text-emerald-400 px-3 py-1 rounded-lg hover:bg-emerald-500/20 transition hidden">
-              🔓 إدارة المحظورين (Unban)
-            </button>
-            <button onclick="toggleAdminMode()" id="adminAuthBtn" class="text-xs bg-yellow-500/10 border border-yellow-500/40 text-yellow-400 px-3 py-1 rounded-lg hover:bg-yellow-500/20 transition">
-              🔑 دخول الأدمن
-            </button>
-          </div>
+          <span class="text-[10px] bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 px-2.5 py-1 rounded-full">مباشر الآن</span>
         </h2>
 
-        <!-- UNBAN PANEL FOR ADMIN -->
-        <div id="unbanPanel" class="bg-slate-900 border border-emerald-500/40 rounded-xl p-3 mb-3 hidden">
-          <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-2">
-            <span class="text-xs font-bold text-emerald-400 flex items-center gap-1">
-              <i class="fas fa-user-shield"></i> قائمة المحظورين حالياً من الشات
-            </span>
-            <button onclick="toggleUnbanPanel()" class="text-gray-400 hover:text-white text-xs">✕ إغلاق</button>
-          </div>
-          <div id="bannedListContainer" class="max-h-36 overflow-y-auto space-y-1.5 pr-1">
-            <!-- Banned Users List render here -->
-          </div>
-        </div>
-
-        <div class="bg-cyber-card/90 border border-yellow-500/30 rounded-xl p-4 backdrop-blur-md shadow-lg shadow-yellow-950/10">
-          <div class="flex items-center justify-between text-xs text-gray-400 mb-2 border-b border-slate-800/80 pb-2">
-            <div>اسمك المثبت في الشات: <strong id="currentUserDisplay" class="text-cyan-400">...</strong></div>
-          </div>
-
-          <!-- Messages Container -->
-          <div id="publicChatBox" class="h-56 overflow-y-auto flex flex-col gap-2 mb-3 pr-2 bg-black/50 p-3 rounded-lg border border-slate-800">
-            <!-- Messages render here in real-time -->
-          </div>
-
-          <!-- Send Input -->
-          <div class="flex gap-2">
-            <input type="text" id="chatMessageInput" placeholder="اكتب رسالتك للجميع هنا..." class="flex-1 bg-black/60 border border-slate-800 rounded-lg px-4 py-2 text-sm text-white focus:outline-none focus:border-yellow-400" onkeypress="if(event.key==='Enter') sendPublicMessage()">
-            <button onclick="sendPublicMessage()" class="bg-gradient-to-r from-yellow-500 to-amber-600 text-black font-bold px-5 py-2 rounded-lg hover:opacity-90 transition flex items-center gap-1 text-sm">
-              إرسال <i class="fas fa-paper-plane text-xs"></i>
-            </button>
+        <div class="bg-cyber-card/90 border border-emerald-500/30 rounded-xl p-4 backdrop-blur-md shadow-lg shadow-emerald-950/10">
+          <p class="text-xs text-gray-400 mb-3">شاهد أحدث البثوث الحية لصناع المحتوى المغاربة على منصة Kick:</p>
+          
+          <!-- Streamers Horizontal Sling -->
+          <div id="kickStreamersContainer" class="kick-sling-container">
+            <!-- Streamer cards will be loaded dynamically here -->
           </div>
         </div>
       </div>
@@ -395,15 +378,30 @@
       }).catch(err => console.log("Discord error:", err));
     }
 
-    // REGEX TO DETECT ALL URLS/LINKS
-    const urlPattern = /(https?:\/\/|www\.|[a-zA-Z0-9-]+\.(com|net|org|io|gg|me|co|ma|xyz|tk|link))/i;
+    // ================= KICK MOROCCAN STREAMERS SLING SYSTEM =================
+    const moroccanKickStreamers = [
+      { name: "Lhaj Moha", username: "lhaj-mohaa", category: "GTA V / FiveM", avatar: "avatar.png", url: "https://kick.com/lhaj-mohaa" },
+      { name: "Moroccan Streamer 1", username: "moroccan_gamer", category: "Just Chatting", avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80", url: "https://kick.com" },
+      { name: "Atlas Live", username: "atlas_live", category: "Valorant", avatar: "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=100&auto=format&fit=crop&q=80", url: "https://kick.com" },
+      { name: "Maghrib Gaming", username: "maghrib_gaming", category: "GTA V RP", avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80", url: "https://kick.com" }
+    ];
 
-    // ================= FIREBASE REALTIME DATABASE CONFIG =================
-    const firebaseConfig = {
-      databaseURL: "https://lhajmoha-default-rtdb.firebaseio.com/"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
+    function renderKickStreamers() {
+      const container = document.getElementById('kickStreamersContainer');
+      if (!container) return;
+
+      container.innerHTML = moroccanKickStreamers.map(streamer => `
+        <a href="${streamer.url}" target="_blank" class="flex-shrink-0 w-44 bg-black/60 border border-slate-800 hover:border-emerald-400/60 rounded-xl p-3 flex flex-col items-center text-center transition hover:-translate-y-1 group">
+          <div class="relative mb-2">
+            <img src="${streamer.avatar}" alt="${streamer.name}" class="w-14 h-14 rounded-full object-cover border-2 border-emerald-500/50 group-hover:border-emerald-400">
+            <span class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-emerald-500 border-2 border-black rounded-full animate-pulse"></span>
+          </div>
+          <div class="font-bold text-white text-xs truncate w-full group-hover:text-emerald-400 transition">${streamer.name}</div>
+          <div class="text-[10px] text-gray-400 truncate w-full mt-0.5">${streamer.category}</div>
+          <span class="mt-2 text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-2.5 py-0.5 rounded-full font-bold">مشاهدة اللايف</span>
+        </a>
+      `).join('');
+    }
 
     // ================= RADIO STATIONS SYSTEM =================
     const radioStations = [
@@ -480,250 +478,6 @@
       renderRadioGrid(radioStations.filter(s => s.name.toLowerCase().includes(query)));
     }
 
-    // ================= GLOBAL REALTIME CHAT SYSTEM =================
-    let visitorId = localStorage.getItem('unique_visitor_id');
-    if (!visitorId) {
-      visitorId = 'User-' + Math.floor(1000 + Math.random() * 9000);
-      localStorage.setItem('unique_visitor_id', visitorId);
-    }
-
-    let chatUsername = localStorage.getItem('chat_fixed_username');
-    let isAdmin = localStorage.getItem('is_admin') === 'true';
-    let globalBannedList = {};
-
-    // Listen to banned users real-time updates from Firebase
-    db.ref('bannedUsers').on('value', (snapshot) => {
-      globalBannedList = snapshot.val() || {};
-      if (isAdmin) {
-        renderBannedUsersList();
-      }
-    });
-
-    // Listen to real-time messages from Firebase
-    db.ref('messages').limitToLast(50).on('value', (snapshot) => {
-      const data = snapshot.val();
-      renderPublicMessages(data);
-    });
-
-    function initChatUser() {
-      if (!chatUsername) {
-        let enteredName = prompt("مرحباً بك! يرجى إدخال اسمك للانضمام للشات العام (لن تتمكن من تغييره لاحقاً):");
-        if (!enteredName || !enteredName.trim()) {
-          enteredName = "زائر-" + Math.floor(100 + Math.random() * 900);
-        }
-        chatUsername = enteredName.trim();
-        localStorage.setItem('chat_fixed_username', chatUsername);
-      }
-
-      document.getElementById('currentUserDisplay').innerText = isAdmin ? `👑 [ADMIN] Lhaj Moha` : chatUsername;
-      updateAdminUI();
-    }
-
-    function toggleAdminMode() {
-      if (isAdmin) {
-        isAdmin = false;
-        localStorage.setItem('is_admin', 'false');
-        document.getElementById('unbanPanel').classList.add('hidden');
-        alert("تم الخروج من وضع الآدمن.");
-      } else {
-        const pass = prompt("أدخل كلمة مرور الآدمن لتأكيد الهوية:");
-        if (pass === "3andak99") { // ADMIN PASSWORD
-          isAdmin = true;
-          localStorage.setItem('is_admin', 'true');
-          alert("أهلاً بك يا آدمن! تم تفعيل الشارة الصفراء وصلاحيات إدارة الحظر بنجاح 👑");
-        } else {
-          alert("كلمة المرور غير صحيحة!");
-        }
-      }
-      document.getElementById('currentUserDisplay').innerText = isAdmin ? `👑 [ADMIN] Lhaj Moha` : chatUsername;
-      updateAdminUI();
-      db.ref('messages').limitToLast(50).once('value', (snap) => renderPublicMessages(snap.val()));
-    }
-
-    function updateAdminUI() {
-      const btn = document.getElementById('adminAuthBtn');
-      const unbanBtn = document.getElementById('unbanControlBtn');
-      
-      if (isAdmin) {
-        btn.innerHTML = `👑 تم تفعيل الآدمن (خروج)`;
-        btn.className = "text-xs bg-yellow-500 text-black font-bold px-3 py-1 rounded-lg border border-yellow-400 shadow-md shadow-yellow-500/30";
-        unbanBtn.classList.remove('hidden');
-      } else {
-        btn.innerHTML = `🔑 دخول الأدمن`;
-        btn.className = "text-xs bg-yellow-500/10 border border-yellow-500/40 text-yellow-400 px-3 py-1 rounded-lg hover:bg-yellow-500/20 transition";
-        unbanBtn.classList.add('hidden');
-      }
-    }
-
-    function toggleUnbanPanel() {
-      const panel = document.getElementById('unbanPanel');
-      if (panel.classList.contains('hidden')) {
-        renderBannedUsersList();
-        panel.classList.remove('hidden');
-      } else {
-        panel.classList.add('hidden');
-      }
-    }
-
-    function renderBannedUsersList() {
-      const container = document.getElementById('bannedListContainer');
-      if (!container) return;
-
-      const keys = Object.keys(globalBannedList);
-      if (keys.length === 0) {
-        container.innerHTML = `<div class="text-xs text-gray-500 py-1 text-center">لا يوجد أي مستخدم محظور حالياً.</div>`;
-        return;
-      }
-
-      container.innerHTML = keys.map(key => {
-        const item = globalBannedList[key];
-        return `
-          <div class="flex items-center justify-between bg-black/50 p-2 rounded border border-slate-800 text-xs">
-            <span class="text-rose-400 font-bold"><i class="fas fa-user-slash text-[10px] mr-1"></i> ${item.name || key}</span>
-            <button onclick="unbanUser('${key}')" class="bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] px-2 py-0.5 rounded transition font-bold">
-              🔓 إزالة الحظر (Unban)
-            </button>
-          </div>
-        `;
-      }).join('');
-    }
-
-    function unbanUser(banKey) {
-      if (!isAdmin) return;
-      
-      db.ref('bannedUsers/' + banKey).remove().then(() => {
-        sendDiscordMonitoring(
-          "🔓 إزالة حظر مستخدم من الأدمن (Unban)",
-          [
-            { name: "👤 المستهدف المرفوع عنه الحظر", value: banKey, inline: true },
-            { name: "👑 من طرف", value: "Lhaj Moha 👑", inline: true }
-          ],
-          0x10b981
-        );
-        alert(`تم فك الحظر بنجاح عن (${banKey}).`);
-      });
-    }
-
-    function sendPublicMessage() {
-      const sanitizeKey = (str) => (str || '').replace(/[.#$\[\]]/g, '_');
-
-      const isUserBanned = globalBannedList[sanitizeKey(chatUsername)] || globalBannedList[sanitizeKey(visitorId)];
-      if (isUserBanned) {
-        alert("عذراً، لقد تم حظرك من الكتابة في هذا الشات نهائياً من طرف الأدمن.");
-        return;
-      }
-
-      const input = document.getElementById('chatMessageInput');
-      const text = input.value.trim();
-      if (!text) return;
-
-      // AUTOMATIC BAN ON LINK SENT (FOR NON-ADMIN USERS)
-      if (!isAdmin && urlPattern.test(text)) {
-        const banData = { name: chatUsername, visitorId: visitorId, reason: "نشر رابط" };
-        db.ref('bannedUsers/' + sanitizeKey(chatUsername)).set(banData);
-        db.ref('bannedUsers/' + sanitizeKey(visitorId)).set(banData);
-
-        sendDiscordMonitoring(
-          "🚨 حظر أوتوماتيكي (Auto-Ban): محاولة نشر رابط!",
-          [
-            { name: "👤 اسم المستخدم", value: chatUsername, inline: true },
-            { name: "🆔 معرّف الجهاز", value: visitorId, inline: true },
-            { name: "🔗 الرابط المرفوض", value: text, inline: false },
-            { name: "⚡ الإجراء", value: "تم حظره أوتوماتيكياً من الشات", inline: false }
-          ],
-          0xff0055
-        );
-
-        alert("🚫 يمنع نشر الروابط في الشات! لقد تم حظرك تلقائياً من الكتابة.");
-        input.value = '';
-        return;
-      }
-
-      const senderName = isAdmin ? "Lhaj Moha 👑" : chatUsername;
-
-      const newMsg = {
-        sender: senderName,
-        senderId: visitorId,
-        text: text,
-        isAdmin: isAdmin,
-        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        timestamp: firebase.database.ServerValue.TIMESTAMP
-      };
-
-      db.ref('messages').push(newMsg);
-      input.value = '';
-
-      sendDiscordMonitoring(
-        "💬 رسالة جديدة في الشات الجماعي العام",
-        [
-          { name: "👤 الكاتب", value: senderName, inline: true },
-          { name: "👑 رتبة", value: isAdmin ? "آدمن (Admin)" : "زائر (Visitor)", inline: true },
-          { name: "💬 نص الرسالة", value: text, inline: false }
-        ],
-        isAdmin ? 0xeab308 : 0x00f0ff
-      );
-    }
-
-    function renderPublicMessages(data) {
-      const chatBox = document.getElementById('publicChatBox');
-      if (!chatBox) return;
-
-      if (!data) {
-        chatBox.innerHTML = `<div class="text-center text-xs text-gray-500 my-auto">لا توجد رسائل بعد، كن أول من يكتب في الشات!</div>`;
-        return;
-      }
-
-      const msgList = Object.values(data);
-
-      chatBox.innerHTML = msgList.map(msg => {
-        const badge = msg.isAdmin 
-          ? `<span class="bg-yellow-400 text-black text-[10px] font-black px-2 py-0.5 rounded-full shadow-md shadow-yellow-500/40 mr-1">👑 [ADMIN]</span>`
-          : `<span class="text-cyan-400 font-bold mr-1 text-xs">${msg.sender}:</span>`;
-
-        const banBtn = (isAdmin && !msg.isAdmin) 
-          ? `<button onclick="banUser('${msg.sender}', '${msg.senderId}')" class="text-[10px] bg-red-600/80 hover:bg-red-600 text-white px-2 py-0.5 rounded transition">🚫 حظر</button>` 
-          : '';
-
-        return `
-          <div class="flex items-start justify-between bg-slate-900/80 p-2 rounded border border-slate-800/80 text-xs">
-            <div class="flex-1 pr-2">
-              <div class="flex items-center gap-1 mb-0.5">
-                ${badge}
-                <span class="text-[10px] text-gray-500">${msg.time}</span>
-              </div>
-              <div class="text-gray-200 text-xs">${msg.text}</div>
-            </div>
-            ${banBtn}
-          </div>
-        `;
-      }).join('');
-
-      chatBox.scrollTop = chatBox.scrollHeight;
-    }
-
-    function banUser(targetName, targetId) {
-      if (!isAdmin) return;
-      if (confirm(`هل أنت تأكد من حظر الزائر (${targetName}) لمنعه من الكتابة في الشات؟`)) {
-        const sanitizeKey = (str) => (str || '').replace(/[.#$\[\]]/g, '_');
-        const banData = { name: targetName, visitorId: targetId, reason: "حظر يدوي من الأدمن" };
-
-        if (targetName) db.ref('bannedUsers/' + sanitizeKey(targetName)).set(banData);
-        if (targetId) db.ref('bannedUsers/' + sanitizeKey(targetId)).set(banData);
-
-        sendDiscordMonitoring(
-          "🚫 حظر مستخدم يدوي من الأدمن",
-          [
-            { name: "المستخدم المحظور", value: targetName || "غير محدد", inline: true },
-            { name: "معرّف الجهاز", value: targetId || "غير محدد", inline: true },
-            { name: "من طرف", value: "Lhaj Moha 👑", inline: true }
-          ],
-          0xff0055
-        );
-
-        alert(`تم حظر ${targetName} بنجاح.`);
-      }
-    }
-
     // ================= PROBLEM REPORT / SUPPORT SYSTEM =================
     function sendMessage() {
       const input = document.getElementById('userInput');
@@ -743,7 +497,7 @@
       sendDiscordMonitoring(
         "⚠️ بلاغ عن مشكلة من زائر (Problem Report)",
         [
-          { name: "👤 صاحب الرسالة / الاسم", value: chatUsername || visitorId, inline: true },
+          { name: "👤 صاحب الرسالة", value: "زائر الموقع", inline: true },
           { name: "📝 المشكلة المكتوبة", value: text, inline: false }
         ],
         0xf43f5e
@@ -760,7 +514,7 @@
 
     document.addEventListener('DOMContentLoaded', () => {
       renderRadioGrid(radioStations);
-      initChatUser();
+      renderKickStreamers();
     });
   </script>
 </body>
