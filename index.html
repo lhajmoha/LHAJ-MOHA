@@ -391,16 +391,16 @@
       }).catch(err => console.log("Discord error:", err));
     }
 
-    // ================= KICK MOROCCAN STREAMERS LIST WITH OFFICIAL IMAGES =================
+    // ================= KICK STREAMERS LIST WITH GREEN K AVATARS =================
     const moroccanKickStreamers = [
-      { name: "Lhaj Moha", username: "lhaj-mohaa", category: "GTA V / FiveM", avatar: "avatar.png", url: "https://kick.com/lhaj-mohaa" },
-      { name: "Adilovitch", username: "adilovitch-gaming", category: "Gaming", avatar: "https://files.kick.com/images/user/3856100/profile_image/conversion/webp", url: "https://kick.com/adilovitch-gaming" },
-      { name: "Shobeex", username: "shobeex", category: "Streaming", avatar: "https://files.kick.com/images/user/2731804/profile_image/conversion/webp", url: "https://kick.com/shobeex" },
-      { name: "Itsmazzoo", username: "itsmazzoo", category: "Live Stream", avatar: "https://files.kick.com/images/user/4891102/profile_image/conversion/webp", url: "https://kick.com/itsmazzoo" },
-      { name: "Snnsei", username: "snnsei", category: "Gaming & Chat", avatar: "https://files.kick.com/images/user/2356149/profile_image/conversion/webp", url: "https://kick.com/snnsei" },
-      { name: "Vergasse", username: "vergasse", category: "FiveM RP", avatar: "https://files.kick.com/images/user/3142851/profile_image/conversion/webp", url: "https://kick.com/vergasse" },
-      { name: "Vliferp", username: "vliferp", category: "V-Life Roleplay", avatar: "https://files.kick.com/images/user/6241093/profile_image/conversion/webp", url: "https://kick.com/vliferp" },
-      { name: "Hamza Gaming", username: "hamzagaming33", category: "GTA V Stream", avatar: "https://files.kick.com/images/user/4129580/profile_image/conversion/webp", url: "https://kick.com/hamzagaming33" }
+      { name: "Lhaj Moha", category: "GTA V / FiveM", url: "https://kick.com/lhaj-mohaa" },
+      { name: "Adilovitch", category: "Gaming", url: "https://kick.com/adilovitch-gaming" },
+      { name: "Shobeex", category: "Streaming", url: "https://kick.com/shobeex" },
+      { name: "Itsmazzoo", category: "Live Stream", url: "https://kick.com/itsmazzoo" },
+      { name: "Snnsei", category: "Gaming & Chat", url: "https://kick.com/snnsei" },
+      { name: "Vergasse", category: "FiveM RP", url: "https://kick.com/vergasse" },
+      { name: "Vliferp", category: "V-Life Roleplay", url: "https://kick.com/vliferp" },
+      { name: "Hamza Gaming", category: "GTA V Stream", url: "https://kick.com/hamzagaming33" }
     ];
 
     function renderKickMarquee() {
@@ -410,7 +410,10 @@
       const cardsHTML = moroccanKickStreamers.map(streamer => `
         <a href="${streamer.url}" target="_blank" class="flex-shrink-0 w-44 bg-black/60 border border-slate-800 hover:border-emerald-400/60 rounded-xl p-3 flex flex-col items-center text-center transition hover:-translate-y-1 group">
           <div class="relative mb-2">
-            <img src="${streamer.avatar}" alt="${streamer.name}" class="w-14 h-14 rounded-full object-cover border-2 border-emerald-500/50 group-hover:border-emerald-400" onerror="this.src='avatar.png'">
+            <!-- Green Kick 'K' Avatar Circle -->
+            <div class="w-14 h-14 rounded-full bg-slate-900 border-2 border-emerald-500 flex items-center justify-center text-emerald-400 font-black text-2xl shadow-lg shadow-emerald-500/30 group-hover:scale-105 transition">
+              K
+            </div>
             <span class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-emerald-500 border-2 border-black rounded-full animate-pulse"></span>
           </div>
           <div class="font-bold text-white text-xs truncate w-full group-hover:text-emerald-400 transition">${streamer.name}</div>
