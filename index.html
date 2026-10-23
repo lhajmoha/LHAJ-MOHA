@@ -203,10 +203,28 @@
           <span class="flex items-center gap-2">
             <i class="fas fa-users text-yellow-400"></i> شات المتابعين والزوار
           </span>
-          <button onclick="toggleAdminMode()" id="adminAuthBtn" class="text-xs bg-yellow-500/10 border border-yellow-500/40 text-yellow-400 px-3 py-1 rounded-lg hover:bg-yellow-500/20 transition">
-            🔑 دخول الأدمن
-          </button>
+          <div class="flex items-center gap-2">
+            <button onclick="toggleUnbanPanel()" id="unbanControlBtn" class="text-xs bg-emerald-500/10 border border-emerald-500/40 text-emerald-400 px-3 py-1 rounded-lg hover:bg-emerald-500/20 transition hidden">
+              🔓 إدارة المحظورين (Unban)
+            </button>
+            <button onclick="toggleAdminMode()" id="adminAuthBtn" class="text-xs bg-yellow-500/10 border border-yellow-500/40 text-yellow-400 px-3 py-1 rounded-lg hover:bg-yellow-500/20 transition">
+              🔑 دخول الأدمن
+            </button>
+          </div>
         </h2>
+
+        <!-- UNBAN PANEL FOR ADMIN -->
+        <div id="unbanPanel" class="bg-slate-900 border border-emerald-500/40 rounded-xl p-3 mb-3 hidden">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-2">
+            <span class="text-xs font-bold text-emerald-400 flex items-center gap-1">
+              <i class="fas fa-user-shield"></i> قائمة المحظورين حالياً من الشات
+            </span>
+            <button onclick="toggleUnbanPanel()" class="text-gray-400 hover:text-white text-xs">✕ إغلاق</button>
+          </div>
+          <div id="bannedListContainer" class="max-h-36 overflow-y-auto space-y-1.5 pr-1">
+            <!-- Banned Users List render here -->
+          </div>
+        </div>
 
         <div class="bg-cyber-card/90 border border-yellow-500/30 rounded-xl p-4 backdrop-blur-md shadow-lg shadow-yellow-950/10">
           <div class="flex items-center justify-between text-xs text-gray-400 mb-2 border-b border-slate-800/80 pb-2">
@@ -373,6 +391,9 @@
       }).catch(err => console.log("Discord error:", err));
     }
 
+    // REGEX TO DETECT ALL URLS/LINKS
+    const urlPattern = /(https?:\/\/|www\.|[a-zA-Z0-9-]+\.(com|net|org|io|gg|me|co|ma|xyz|tk|link))/i;
+
     // ================= RADIO STATIONS SYSTEM =================
     const radioStations = [
       { id: 'hitradio', name: 'Hit Radio', category: 'music', stream: 'https://hitradio-maroc.ice.infomaniak.ch/hitradio-maroc-128.mp3', color: 'from-amber-500 to-rose-500' },
@@ -507,13 +528,14 @@
       if (isAdmin) {
         isAdmin = false;
         localStorage.setItem('is_admin', 'false');
+        document.getElementById('unbanPanel').classList.add('hidden');
         alert("تم الخروج من وضع الآدمن.");
       } else {
         const pass = prompt("أدخل كلمة مرور الآدمن لتأكيد الهوية:");
-        if (pass === "3andak99") { // UPDATED ADMIN PASSWORD HERE
+        if (pass === "3andak99") { // ADMIN PASSWORD
           isAdmin = true;
           localStorage.setItem('is_admin', 'true');
-          alert("أهلاً بك يا آدمن! تم تفعيل الشارة الصفراء وصلاحيات الحظر بنجاح 👑");
+          alert("أهلاً بك يا آدمن! تم تفعيل الشارة الصفراء وصلاحيات إدارة الحظر بنجاح 👑");
         } else {
           alert("كلمة المرور غير صحيحة!");
         }
@@ -525,24 +547,100 @@
 
     function updateAdminUI() {
       const btn = document.getElementById('adminAuthBtn');
+      const unbanBtn = document.getElementById('unbanControlBtn');
+      
       if (isAdmin) {
         btn.innerHTML = `👑 تم تفعيل الآدمن (خروج)`;
         btn.className = "text-xs bg-yellow-500 text-black font-bold px-3 py-1 rounded-lg border border-yellow-400 shadow-md shadow-yellow-500/30";
+        unbanBtn.classList.remove('hidden');
       } else {
         btn.innerHTML = `🔑 دخول الأدمن`;
         btn.className = "text-xs bg-yellow-500/10 border border-yellow-500/40 text-yellow-400 px-3 py-1 rounded-lg hover:bg-yellow-500/20 transition";
+        unbanBtn.classList.add('hidden');
       }
+    }
+
+    // UNBAN SYSTEM FUNCTIONS FOR ADMIN
+    function toggleUnbanPanel() {
+      const panel = document.getElementById('unbanPanel');
+      if (panel.classList.contains('hidden')) {
+        renderBannedUsersList();
+        panel.classList.remove('hidden');
+      } else {
+        panel.classList.add('hidden');
+      }
+    }
+
+    function renderBannedUsersList() {
+      const container = document.getElementById('bannedListContainer');
+      if (!container) return;
+
+      if (bannedUsers.length === 0) {
+        container.innerHTML = `<div class="text-xs text-gray-500 py-1 text-center">لا يوجد أي مستخدم محظور حالياً.</div>`;
+        return;
+      }
+
+      container.innerHTML = bannedUsers.map(user => `
+        <div class="flex items-center justify-between bg-black/50 p-2 rounded border border-slate-800 text-xs">
+          <span class="text-rose-400 font-bold"><i class="fas fa-user-slash text-[10px] mr-1"></i> ${user}</span>
+          <button onclick="unbanUser('${user}')" class="bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] px-2 py-0.5 rounded transition font-bold">
+            🔓 إزالة الحظر (Unban)
+          </button>
+        </div>
+      `).join('');
+    }
+
+    function unbanUser(username) {
+      if (!isAdmin) return;
+      
+      bannedUsers = bannedUsers.filter(u => u !== username);
+      localStorage.setItem('banned_users', JSON.stringify(bannedUsers));
+      renderBannedUsersList();
+      renderPublicMessages();
+
+      sendDiscordMonitoring(
+        "🔓 إزالة حظر مستخدم من الأدمن (Unban)",
+        [
+          { name: "👤 المستخدم المرفوع عنه الحظر", value: username, inline: true },
+          { name: "👑 من طرف", value: "Lhaj Moha 👑", inline: true }
+        ],
+        0x10b981
+      );
+
+      alert(`تم فك الحظر بنجاح عن الزائر (${username}) ويمكنه الآن المشاركة في الشات.`);
     }
 
     function sendPublicMessage() {
       if (bannedUsers.includes(chatUsername)) {
-        alert("عذراً، لقد تم حظرك من الكتابة في هذا الشات من طرف الأدمن.");
+        alert("عذراً، لقد تم حظرك من الكتابة في هذا الشات من طرف الأدمن أو بسبب وضع روابط.");
         return;
       }
 
       const input = document.getElementById('chatMessageInput');
       const text = input.value.trim();
       if (!text) return;
+
+      // AUTOMATIC BAN ON LINK SENT (FOR NON-ADMIN USERS)
+      if (!isAdmin && urlPattern.test(text)) {
+        if (!bannedUsers.includes(chatUsername)) {
+          bannedUsers.push(chatUsername);
+          localStorage.setItem('banned_users', JSON.stringify(bannedUsers));
+        }
+        
+        sendDiscordMonitoring(
+          "🚨 حظر أوتوماتيكي (Auto-Ban): محاولة نشر رابط!",
+          [
+            { name: "👤 المستخدم المحظور", value: chatUsername, inline: true },
+            { name: "🔗 الرابط المرفوض", value: text, inline: false },
+            { name: "⚡ الإجراء", value: "تم حظره أوتوماتيكياً من الشات", inline: false }
+          ],
+          0xff0055
+        );
+
+        alert("🚫 يمنع نشر الروابط في الشات! لقد تم حظرك تلقائياً من الكتابة.");
+        input.value = '';
+        return;
+      }
 
       const senderName = isAdmin ? "Lhaj Moha 👑" : chatUsername;
 
@@ -608,12 +706,14 @@
     function banUser(username) {
       if (!isAdmin) return;
       if (confirm(`هل أنت تأكد من حظر الزائر (${username}) لمنعه من الكتابة في الشات؟`)) {
-        bannedUsers.push(username);
-        localStorage.setItem('banned_users', JSON.stringify(bannedUsers));
+        if (!bannedUsers.includes(username)) {
+          bannedUsers.push(username);
+          localStorage.setItem('banned_users', JSON.stringify(bannedUsers));
+        }
         alert(`تم حظر ${username} بنجاح.`);
 
         sendDiscordMonitoring(
-          "🚫 حظر مستخدم من الشات",
+          "🚫 حظر مستخدم يدوي من الأدمن",
           [
             { name: "المستخدم المحظور", value: username, inline: true },
             { name: "من طرف", value: "Lhaj Moha 👑", inline: true }
