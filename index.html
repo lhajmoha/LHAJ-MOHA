@@ -84,7 +84,7 @@
       object-position: center;
     }
 
-    /* Moving Marquee ("Sanța") Animation from Right to Left */
+    /* Moving Marquee Animation from Right to Left */
     .marquee-container {
       overflow: hidden;
       width: 100%;
@@ -118,35 +118,71 @@
   <!-- Main Grid Layout -->
   <div class="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
     
-    <!-- LEFT SIDEBAR: Spotify Platform -->
-    <div class="lg:col-span-3 order-2 lg:order-1 bg-cyber-card/90 border border-emerald-500/30 rounded-2xl p-4 backdrop-blur-md shadow-xl shadow-emerald-950/20 lg:sticky lg:top-6">
-      <h2 class="text-lg font-bold mb-3 flex items-center justify-between text-emerald-400 border-b border-slate-800 pb-2">
-        <span class="flex items-center gap-2">
-          <i class="fab fa-spotify text-2xl text-emerald-400"></i> Spotify Music
-        </span>
-        <span class="text-[10px] bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 px-2 py-0.5 rounded-full">Playlist</span>
-      </h2>
-      <p class="text-xs text-gray-400 mb-3">استمع للمقاطع والتشكيلات الصوتية. يمكنك تسجيل الدخول إلى Spotify للاستماع الكامل.</p>
+    <!-- LEFT SIDEBAR: Spotify Platform & Arryadia YouTube Live Under It -->
+    <div class="lg:col-span-3 order-2 lg:order-1 space-y-6 lg:sticky lg:top-6">
       
-      <!-- Spotify Embedded Player -->
-      <div class="rounded-xl overflow-hidden border border-slate-800 bg-black/40">
-        <iframe 
-          style="border-radius:12px" 
-          src="https://open.spotify.com/embed/playlist/37i9dQZF1DXcBWIGoYBM5M?utm_source=generator&theme=0" 
-          width="100%" 
-          height="380" 
-          frameBorder="0" 
-          allowfullscreen="" 
-          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
-          loading="lazy">
-        </iframe>
+      <!-- Spotify Platform Box -->
+      <div class="bg-cyber-card/90 border border-emerald-500/30 rounded-2xl p-4 backdrop-blur-md shadow-xl shadow-emerald-950/20">
+        <h2 class="text-lg font-bold mb-3 flex items-center justify-between text-emerald-400 border-b border-slate-800 pb-2">
+          <span class="flex items-center gap-2">
+            <i class="fab fa-spotify text-2xl text-emerald-400"></i> Spotify Music
+          </span>
+          <span class="text-[10px] bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 px-2 py-0.5 rounded-full">Playlist</span>
+        </h2>
+        <p class="text-xs text-gray-400 mb-3">استمع للمقاطع والتشكيلات الصوتية. يمكنك تسجيل الدخول إلى Spotify للاستماع الكامل.</p>
+        
+        <!-- Spotify Embedded Player -->
+        <div class="rounded-xl overflow-hidden border border-slate-800 bg-black/40">
+          <iframe 
+            style="border-radius:12px" 
+            src="https://open.spotify.com/embed/playlist/37i9dQZF1DXcBWIGoYBM5M?utm_source=generator&theme=0" 
+            width="100%" 
+            height="380" 
+            frameBorder="0" 
+            allowfullscreen="" 
+            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
+            loading="lazy">
+          </iframe>
+        </div>
+        
+        <div class="mt-3 text-center">
+          <a href="https://open.spotify.com" target="_blank" class="inline-flex items-center gap-2 text-xs text-emerald-400 hover:underline">
+            <i class="fas fa-external-link-alt"></i> فتح في منصة Spotify
+          </a>
+        </div>
       </div>
-      
-      <div class="mt-3 text-center">
-        <a href="https://open.spotify.com" target="_blank" class="inline-flex items-center gap-2 text-xs text-emerald-400 hover:underline">
-          <i class="fas fa-external-link-alt"></i> فتح في منصة Spotify
-        </a>
+
+      <!-- ARRYADIA YOUTUBE LIVE PLAYER (تحت سبوتيفاي مباشرة) -->
+      <div class="bg-cyber-card/90 border border-red-500/40 rounded-2xl p-4 backdrop-blur-md shadow-xl shadow-red-950/20">
+        <div class="flex items-center justify-between mb-3 border-b border-slate-800 pb-2">
+          <span class="flex items-center gap-2 text-red-500 font-bold text-sm">
+            <i class="fab fa-youtube text-lg animate-pulse"></i> الرياضية Live (YouTube)
+          </span>
+          <span class="text-[10px] bg-red-500/10 border border-red-500/30 text-red-400 px-2 py-0.5 rounded-full">بث مباشر</span>
+        </div>
+        <p class="text-xs text-gray-400 mb-3">تفرج مباشرة في البث الحي لقناة الرياضية:</p>
+        
+        <!-- YouTube Live Screen Frame -->
+        <div class="relative w-full rounded-xl overflow-hidden border border-red-500/30 bg-black shadow-inner shadow-red-950/50" style="padding-bottom: 56.25%; height: 0;">
+          <iframe 
+            src="https://www.youtube.com/embed/live_stream?channel=UCaEb7kPgpldLuEzCRzFXsLw&autoplay=1&mute=1" 
+            class="absolute top-0 left-0 w-full h-full border-0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+            allowfullscreen>
+          </iframe>
+        </div>
+
+        <!-- Note / Status Bar -->
+        <div class="mt-2.5 bg-black/40 border border-slate-800 p-2 rounded-lg text-[11px] text-gray-400 flex items-center justify-between">
+          <span class="flex items-center gap-1.5 text-gray-300">
+            <i class="fas fa-info-circle text-cyan-400"></i> في حالة عدم وجود مباراة يكون البث متوقفاً.
+          </span>
+          <a href="https://www.youtube.com/@ArryadiaTv" target="_blank" class="text-red-400 hover:underline font-bold text-[10px] flex-shrink-0">
+            القناة <i class="fas fa-external-link-alt text-[9px]"></i>
+          </a>
+        </div>
       </div>
+
     </div>
 
     <!-- CENTER COLUMN -->
@@ -226,7 +262,7 @@
         </div>
       </div>
 
-      <!-- KICK MOROCCAN STREAMERS MOVING MARQUEE ("SANTA") -->
+      <!-- KICK MOROCCAN STREAMERS MOVING MARQUEE -->
       <div class="space-y-3">
         <h2 class="text-xl font-bold flex items-center justify-between border-b border-slate-800 pb-2 gradient-text-multi">
           <span class="flex items-center gap-2">
@@ -320,12 +356,11 @@
         </a>
       </div>
 
-      <!-- V-LIFE ROLEPLAY SERVER (Official Sponsor Card) -->
+      <!-- V-LIFE ROLEPLAY SERVER -->
       <div class="bg-cyber-card/90 border border-red-500/40 rounded-2xl p-4 backdrop-blur-md hover:border-red-400 transition shadow-xl shadow-red-950/30 relative overflow-hidden">
         <div class="absolute -top-10 -right-10 w-24 h-24 bg-red-500/10 rounded-full blur-2xl pointer-events-none"></div>
         
         <div class="flex items-center gap-3 mb-3">
-          <!-- Server Image Container -->
           <div class="w-12 h-12 rounded-xl bg-black p-1 flex items-center justify-center shadow-lg shadow-red-500/30 flex-shrink-0 overflow-hidden border border-red-500/50">
             <img src="vlife.png" alt="V-Life Roleplay Logo" class="w-full h-full object-contain rounded-lg">
           </div>
@@ -345,7 +380,6 @@
           </p>
         </div>
 
-        <!-- Direct Discord Link -->
         <a href="https://discord.gg/2KmExx5Wh" target="_blank" class="w-full bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white py-2.5 px-4 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition shadow-lg shadow-red-600/30">
           <i class="fab fa-discord text-base"></i> دخول الديسكورد الرسمي
         </a>
