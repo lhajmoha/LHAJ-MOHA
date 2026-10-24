@@ -160,41 +160,26 @@
           </span>
           <span class="text-[10px] bg-red-500/10 border border-red-500/30 text-red-400 px-2 py-0.5 rounded-full">بث مباشر</span>
         </div>
-        <p class="text-xs text-gray-400 mb-3">تفرج مباشرة في البث الحي لقناة الرياضية:</p>
+        <p class="text-xs text-gray-400 mb-3">تفرج مباشرة في البث الحي:</p>
         
-        <!-- YouTube Live Screen Frame with Offline Banner Cover -->
+        <!-- YouTube Live Screen Frame -->
         <div class="relative w-full rounded-xl overflow-hidden border border-red-500/30 bg-black shadow-inner shadow-red-950/50" style="padding-bottom: 56.25%; height: 0;">
           <iframe 
-            src="https://www.youtube.com/embed/live_stream?channel=UCaEb7kPgpldLuEzCRzFXsLw&autoplay=1&mute=1" 
+            src="https://www.youtube.com/embed/pThEDSk6k38" 
             class="absolute top-0 left-0 w-full h-full border-0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
             allowfullscreen>
           </iframe>
-          
-          <!-- Fallback Overlay (يظهر إذا لم يكن هناك بث مباشر أو كغطاء تنبيهي) -->
-          <div id="liveStatusOverlay" class="absolute inset-0 bg-slate-950/90 flex flex-col items-center justify-center p-4 text-center z-10 transition-opacity duration-300">
-            <div class="w-12 h-12 rounded-full bg-red-500/10 border border-red-500/30 flex items-center justify-center text-red-500 mb-2">
-              <i class="fas fa-tv text-xl"></i>
-            </div>
-            <div class="text-white font-bold text-xs mb-1">لا توجد مباراة حالياً</div>
-            <p class="text-[10px] text-gray-400 mb-3">البث متوقف مؤقتاً حتى توقيت المباراة القادمة على القناة.</p>
-            <a href="https://www.youtube.com/@ArryadiaTv" target="_blank" class="bg-red-600 hover:bg-red-500 text-white px-3 py-1.5 rounded-lg text-[10px] font-bold transition flex items-center gap-1 shadow-md">
-              <i class="fab fa-youtube"></i> زيارة القناة الرسمية
-            </a>
-            <button onclick="dismissOverlay()" class="mt-2 text-[9px] text-gray-500 hover:text-gray-300 underline">
-              إخفاء التنبيه ومشاهدة المشغل
-            </button>
-          </div>
         </div>
 
         <!-- Note / Status Bar -->
         <div class="mt-2.5 bg-black/40 border border-slate-800 p-2 rounded-lg text-[11px] text-gray-400 flex items-center justify-between">
           <span class="flex items-center gap-1.5 text-gray-300">
-            <i class="fas fa-info-circle text-cyan-400"></i> في حالة عدم وجود مباراة يكون البث متوقفاً.
+            <i class="fas fa-info-circle text-cyan-400"></i> البث المباشر للمباراة.
           </span>
-          <button onclick="resetOverlay()" class="text-red-400 hover:underline font-bold text-[10px] flex-shrink-0">
-            تحديث الحالة
-          </button>
+          <a href="https://www.youtube.com/@ArryadiaTv" target="_blank" class="text-red-400 hover:underline font-bold text-[10px] flex-shrink-0">
+            القناة <i class="fas fa-external-link-alt text-[9px]"></i>
+          </a>
         </div>
       </div>
 
@@ -434,21 +419,6 @@
   <audio id="globalAudioPlayer" class="hidden"></audio>
 
   <script>
-    // Functions for overlay status
-    function dismissOverlay() {
-      const overlay = document.getElementById('liveStatusOverlay');
-      if (overlay) overlay.style.opacity = '0';
-      setTimeout(() => { if (overlay) overlay.style.display = 'none'; }, 300);
-    }
-
-    function resetOverlay() {
-      const overlay = document.getElementById('liveStatusOverlay');
-      if (overlay) {
-        overlay.style.display = 'flex';
-        overlay.style.opacity = '1';
-      }
-    }
-
     // DISCORD WEBHOOK URL SYSTEM
     const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1563218138231873586/rb1dVovzKQdNr6j6vRqfzoPHGlEl6weSJhA1jxd_NVhRSfNafrw3DoMiS4U7fDeySrVN";
 
