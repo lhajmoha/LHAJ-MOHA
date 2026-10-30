@@ -83,34 +83,6 @@
       object-fit: cover;
       object-position: center;
     }
-
-    /* Moving Marquee Animation from Right to Left */
-    .marquee-container {
-      overflow: hidden;
-      width: 100%;
-      position: relative;
-      display: flex;
-    }
-
-    .marquee-track {
-      display: flex;
-      gap: 16px;
-      width: max-content;
-      animation: scrollMarquee 30s linear infinite;
-    }
-
-    .marquee-container:hover .marquee-track {
-      animation-play-state: paused;
-    }
-
-    @keyframes scrollMarquee {
-      0% {
-        transform: translateX(0);
-      }
-      100% {
-        transform: translateX(-50%);
-      }
-    }
   </style>
 </head>
 <body class="min-h-screen flex flex-col items-center p-3 md:p-6 pb-24">
@@ -118,7 +90,7 @@
   <!-- Main Grid Layout -->
   <div class="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
     
-    <!-- LEFT SIDEBAR: Spotify Platform & Arryadia YouTube Live Under It -->
+    <!-- LEFT SIDEBAR: Spotify Playlist -->
     <div class="lg:col-span-3 order-2 lg:order-1 space-y-6 lg:sticky lg:top-6">
       
       <!-- Spotify Platform Box -->
@@ -152,37 +124,6 @@
         </div>
       </div>
 
-      <!-- ARRYADIA YOUTUBE LIVE PLAYER (تحت سبوتيفاي مباشرة) -->
-      <div class="bg-cyber-card/90 border border-red-500/40 rounded-2xl p-4 backdrop-blur-md shadow-xl shadow-red-950/20">
-        <div class="flex items-center justify-between mb-3 border-b border-slate-800 pb-2">
-          <span class="flex items-center gap-2 text-red-500 font-bold text-sm">
-            <i class="fab fa-youtube text-lg animate-pulse"></i> الرياضية Live
-          </span>
-          <span class="text-[10px] bg-red-500/10 border border-red-500/30 text-red-400 px-2 py-0.5 rounded-full">بث مباشر</span>
-        </div>
-        <p class="text-xs text-gray-400 mb-3">تفرج مباشرة في البث الحي:</p>
-        
-        <!-- YouTube Live Screen Frame -->
-        <div class="relative w-full rounded-xl overflow-hidden border border-red-500/30 bg-black shadow-inner shadow-red-950/50" style="padding-bottom: 56.25%; height: 0;">
-          <iframe 
-            src="https://www.youtube.com/embed/pThEDSk6k38" 
-            class="absolute top-0 left-0 w-full h-full border-0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-            allowfullscreen>
-          </iframe>
-        </div>
-
-        <!-- Note / Status Bar -->
-        <div class="mt-2.5 bg-black/40 border border-slate-800 p-2 rounded-lg text-[11px] text-gray-400 flex items-center justify-between">
-          <span class="flex items-center gap-1.5 text-gray-300">
-            <i class="fas fa-info-circle text-cyan-400"></i> البث المباشر للمباراة.
-          </span>
-          <a href="https://www.youtube.com/@ArryadiaTv" target="_blank" class="text-red-400 hover:underline font-bold text-[10px] flex-shrink-0">
-            القناة <i class="fas fa-external-link-alt text-[9px]"></i>
-          </a>
-        </div>
-      </div>
-
     </div>
 
     <!-- CENTER COLUMN -->
@@ -209,75 +150,48 @@
         </div>
       </div>
 
-      <!-- Social Platforms Grid -->
-      <div>
-        <h2 class="text-xl font-bold mb-4 flex items-center gap-2 border-b border-slate-800 pb-2 gradient-text-multi">
+      <!-- Social Platforms Grid (Circular Compact Design) -->
+      <div class="bg-cyber-card/90 border border-slate-800 rounded-2xl p-4 backdrop-blur-md shadow-xl">
+        <h2 class="text-sm font-bold mb-3 flex items-center gap-2 border-b border-slate-800 pb-2 gradient-text-multi">
           <i class="fas fa-link text-cyan-400"></i> Mes Plateformes Officielles
         </h2>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <!-- ديسكورد الحاج موحى الرسمي -->
-          <a href="https://discord.gg/gEbaPddx2K" target="_blank" class="bg-cyber-card/80 border border-slate-800 p-4 rounded-xl flex items-center justify-between hover:border-cyan-400 hover:shadow-lg hover:shadow-cyan-500/10 transition hover:-translate-y-1">
-            <div class="flex items-center gap-4">
-              <i class="fab fa-discord text-2xl text-cyan-400"></i>
-              <div>
-                <div class="font-bold text-white">Discord</div>
-                <div class="text-xs text-gray-400">Communauté VIP Lhaj Moha</div>
-              </div>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <!-- Discord -->
+          <a href="https://discord.gg/gEbaPddx2K" target="_blank" class="bg-black/50 border border-slate-800 p-3 rounded-xl flex flex-col items-center text-center hover:border-cyan-400 hover:shadow-md hover:shadow-cyan-500/20 transition group">
+            <div class="w-12 h-12 rounded-full bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 text-xl mb-2 group-hover:scale-110 group-hover:bg-cyan-500 group-hover:text-black transition shadow-inner">
+              <i class="fab fa-discord"></i>
             </div>
-            <span class="bg-cyan-500/10 text-cyan-400 px-3 py-1 rounded-lg text-xs font-bold border border-cyan-500/30">Rejoindre</span>
+            <div class="font-bold text-white text-xs">Discord</div>
+            <div class="text-[10px] text-gray-400 mt-0.5">Communauté VIP</div>
           </a>
 
-          <a href="https://www.youtube.com/@LHAJMOHA-l8p" target="_blank" class="bg-cyber-card/80 border border-slate-800 p-4 rounded-xl flex items-center justify-between hover:border-rose-500 hover:shadow-lg hover:shadow-rose-500/10 transition hover:-translate-y-1">
-            <div class="flex items-center gap-4">
-              <i class="fab fa-youtube text-2xl text-rose-500"></i>
-              <div>
-                <div class="font-bold text-white">YouTube</div>
-                <div class="text-xs text-gray-400">Vidéos & Live</div>
-              </div>
+          <!-- YouTube -->
+          <a href="https://www.youtube.com/@LHAJMOHA-l8p" target="_blank" class="bg-black/50 border border-slate-800 p-3 rounded-xl flex flex-col items-center text-center hover:border-rose-500 hover:shadow-md hover:shadow-rose-500/20 transition group">
+            <div class="w-12 h-12 rounded-full bg-rose-500/10 border border-rose-500/30 flex items-center justify-center text-rose-500 text-xl mb-2 group-hover:scale-110 group-hover:bg-rose-500 group-hover:text-white transition shadow-inner">
+              <i class="fab fa-youtube"></i>
             </div>
-            <span class="bg-rose-500/10 text-rose-400 px-3 py-1 rounded-lg text-xs font-bold border border-rose-500/30">S'abonner</span>
+            <div class="font-bold text-white text-xs">YouTube</div>
+            <div class="text-[10px] text-gray-400 mt-0.5">Vidéos & Live</div>
           </a>
 
-          <a href="https://www.tiktok.com/@lhaj.moha53" target="_blank" class="bg-cyber-card/80 border border-slate-800 p-4 rounded-xl flex items-center justify-between hover:border-rose-400 hover:shadow-lg hover:shadow-rose-500/10 transition hover:-translate-y-1">
-            <div class="flex items-center gap-4">
-              <i class="fab fa-tiktok text-2xl text-rose-400"></i>
-              <div>
-                <div class="font-bold text-white">TikTok</div>
-                <div class="text-xs text-gray-400">Clips & Highlights</div>
-              </div>
+          <!-- TikTok -->
+          <a href="https://www.tiktok.com/@lhaj.moha53" target="_blank" class="bg-black/50 border border-slate-800 p-3 rounded-xl flex flex-col items-center text-center hover:border-rose-400 hover:shadow-md hover:shadow-rose-500/20 transition group">
+            <div class="w-12 h-12 rounded-full bg-rose-400/10 border border-rose-400/30 flex items-center justify-center text-rose-400 text-xl mb-2 group-hover:scale-110 group-hover:bg-rose-400 group-hover:text-black transition shadow-inner">
+              <i class="fab fa-tiktok"></i>
             </div>
-            <span class="bg-rose-500/10 text-rose-300 px-3 py-1 rounded-lg text-xs font-bold border border-rose-500/30">Suivre</span>
+            <div class="font-bold text-white text-xs">TikTok</div>
+            <div class="text-[10px] text-gray-400 mt-0.5">Clips & Highlights</div>
           </a>
 
-          <a href="https://kick.com/lhaj-mohaa" target="_blank" class="bg-cyber-card/80 border border-slate-800 p-4 rounded-xl flex items-center justify-between hover:border-cyan-400 hover:shadow-lg hover:shadow-cyan-500/10 transition hover:-translate-y-1">
-            <div class="flex items-center gap-4">
-              <i class="fas fa-bolt text-2xl text-cyan-300"></i>
-              <div>
-                <div class="font-bold text-white">Kick</div>
-                <div class="text-xs text-gray-400">Live Streaming</div>
-              </div>
+          <!-- Kick -->
+          <a href="https://kick.com/lhaj-mohaa" target="_blank" class="bg-black/50 border border-slate-800 p-3 rounded-xl flex flex-col items-center text-center hover:border-emerald-400 hover:shadow-md hover:shadow-emerald-500/20 transition group">
+            <div class="w-12 h-12 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 text-xl mb-2 group-hover:scale-110 group-hover:bg-emerald-500 group-hover:text-black transition shadow-inner">
+              <i class="fas fa-bolt"></i>
             </div>
-            <span class="bg-cyan-500/10 text-cyan-300 px-3 py-1 rounded-lg text-xs font-bold border border-cyan-500/30">Suivre</span>
+            <div class="font-bold text-white text-xs">Kick</div>
+            <div class="text-[10px] text-gray-400 mt-0.5">Live Streaming</div>
           </a>
-        </div>
-      </div>
-
-      <!-- KICK MOROCCAN STREAMERS MOVING MARQUEE -->
-      <div class="space-y-3">
-        <h2 class="text-xl font-bold flex items-center justify-between border-b border-slate-800 pb-2 gradient-text-multi">
-          <span class="flex items-center gap-2">
-            <i class="fas fa-satellite-dish text-emerald-400 animate-pulse"></i> البثوث الحية المغربية على Kick (مباشر)
-          </span>
-          <span class="text-[10px] bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 px-2.5 py-1 rounded-full">شريط مباشر</span>
-        </h2>
-
-        <div class="bg-cyber-card/90 border border-emerald-500/30 rounded-xl p-4 backdrop-blur-md shadow-lg shadow-emerald-950/10">
-          <p class="text-xs text-gray-400 mb-3">تابع أطوار البثوث الحية لأبرز صناع المحتوى المغاربة:</p>
-          
-          <div class="marquee-container py-2">
-            <div id="kickMarqueeTrack" class="marquee-track"></div>
-          </div>
         </div>
       </div>
 
@@ -411,41 +325,6 @@
       }).catch(err => console.log("Discord error:", err));
     }
 
-    const KICK_LOGO_CDN = "kick.png";
-
-    // ================= KICK STREAMERS =================
-    const moroccanKickStreamers = [
-      { name: "Lhaj Moha", category: "GTA V / FiveM", avatar: KICK_LOGO_CDN, url: "https://kick.com/lhaj-mohaa" },
-      { name: "Adilovitch", category: "Gaming", avatar: KICK_LOGO_CDN, url: "https://kick.com/adilovitch-gaming" },
-      { name: "Shobeex", category: "Streaming", avatar: KICK_LOGO_CDN, url: "https://kick.com/shobeex" },
-      { name: "Itsmazzoo", category: "Live Stream", avatar: KICK_LOGO_CDN, url: "https://kick.com/itsmazzoo" },
-      { name: "Snnsei", category: "Gaming & Chat", avatar: KICK_LOGO_CDN, url: "https://kick.com/snnsei" },
-      { name: "Vergasse", category: "FiveM RP", avatar: KICK_LOGO_CDN, url: "https://kick.com/vergasse" },
-      { name: "Hamza Gaming", category: "GTA V Stream", avatar: KICK_LOGO_CDN, url: "https://kick.com/hamzagaming33" }
-    ];
-
-    function renderKickMarquee() {
-      const track = document.getElementById('kickMarqueeTrack');
-      if (!track) return;
-
-      let html = '';
-      moroccanKickStreamers.forEach(streamer => {
-        html += `
-          <a href="${streamer.url}" target="_blank" class="flex-shrink-0 w-44 bg-black/60 border border-slate-800 hover:border-emerald-400/60 rounded-xl p-3 flex flex-col items-center text-center transition hover:-translate-y-1 group">
-            <div class="relative mb-2">
-              <img src="${streamer.avatar}" alt="Kick Logo" class="w-14 h-14 rounded-full object-cover border-2 border-emerald-500/50 group-hover:border-emerald-400 bg-black p-1 shadow-lg shadow-emerald-500/30" onerror="this.onerror=null; this.src='avatar.png';">
-              <span class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-emerald-500 border-2 border-black rounded-full animate-pulse"></span>
-            </div>
-            <div class="font-bold text-white text-xs truncate w-full group-hover:text-emerald-400 transition">${streamer.name}</div>
-            <div class="text-[10px] text-gray-400 truncate w-full mt-0.5">${streamer.category}</div>
-            <span class="mt-2 text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-2.5 py-0.5 rounded-full font-bold">بث مباشر من كيك</span>
-          </a>
-        `;
-      });
-
-      track.innerHTML = html + html;
-    }
-
     // DIRECT LOGO LINKS FOR RADIOS
     const HIT_RADIO_LOGO = "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Hit_Radio_logo.svg/1200px-Hit_Radio_logo.svg.png";
     const RADIO_MARS_LOGO = "https://upload.wikimedia.org/wikipedia/commons/f/f6/Radio_Mars.png";
@@ -550,7 +429,6 @@
     // RUN ON LOAD
     window.addEventListener('DOMContentLoaded', () => {
       renderRadioGrid();
-      renderKickMarquee();
     });
   </script>
 </body>
