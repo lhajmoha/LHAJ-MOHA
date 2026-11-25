@@ -271,6 +271,7 @@
             <i class="fab fa-steam text-cyan-400"></i> آخر ألعاب Steam
           </h2>
           <button 
+            type="button"
             onclick="loadSteamLatestGames(true)" 
             title="تحديث آخر ألعاب Steam"
             class="text-xs bg-slate-800/90 hover:bg-slate-700 border border-slate-700 text-gray-200 px-2.5 py-1 rounded-lg font-bold flex items-center gap-1.5 transition"
@@ -284,6 +285,81 @@
             <div class="col-span-full text-gray-400 py-4 text-center">
               <i class="fas fa-spinner fa-spin"></i> جاري تحميل آخر ألعاب Steam...
             </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- LIVE GROUP CHAT WITH REPLY, DELETE & DEVICE BAN -->
+      <div id="liveGroupChatSection" class="space-y-3 pt-2">
+        <div class="flex items-center justify-between gap-2 border-b border-slate-800 pb-2">
+          <h2 class="text-xl font-bold flex items-center gap-2 gradient-text-multi">
+            <i class="fas fa-comments text-cyan-400"></i> الشات الجماعية المباشرة
+          </h2>
+          <button 
+            type="button"
+            onclick="toggleAdminMode()" 
+            id="adminModeBtn"
+            class="text-[11px] bg-slate-800/90 hover:bg-slate-700 border border-slate-700 text-cyan-300 px-2.5 py-1 rounded-lg font-bold transition"
+          >
+            <i class="fas fa-shield-alt"></i> وضع الأدمن
+          </button>
+        </div>
+
+        <div class="bg-cyber-card/90 border border-slate-800 rounded-xl p-4 backdrop-blur-md space-y-3">
+          <div id="chatBanNotice" class="hidden bg-rose-950/70 border border-rose-500/50 text-rose-200 rounded-xl p-2.5 text-xs font-bold">
+            <i class="fas fa-ban text-rose-400"></i> تم حظرك من إرسال الرسائل في الشات الجماعية.
+          </div>
+
+          <div id="adminControlsBar" class="hidden bg-black/50 border border-cyan-500/30 rounded-xl p-2.5 flex flex-wrap items-center justify-between gap-2 text-[11px]">
+            <span class="text-cyan-300 font-bold"><i class="fas fa-user-shield"></i> وضع الأدمن مفعل: يمكنك حذف الرسائل وحظر المخالفين</span>
+            <button 
+              type="button"
+              onclick="unbanCurrentDeviceTest()" 
+              class="bg-slate-800 hover:bg-slate-700 text-gray-200 px-2 py-1 rounded text-[10px] font-bold transition"
+            >
+              فك حظر جهازي الحالي
+            </button>
+          </div>
+
+          <div id="liveChatBox" class="h-60 overflow-y-auto flex flex-col gap-2 bg-black/50 border border-slate-800/90 rounded-xl p-3 text-xs">
+            <div class="text-gray-400 text-center py-6">
+              <i class="fas fa-spinner fa-spin"></i> جاري تحميل الرسائل...
+            </div>
+          </div>
+
+          <div id="replyPreviewBar" class="hidden bg-cyan-950/40 border border-cyan-500/30 rounded-lg px-3 py-1.5 flex items-center justify-between gap-2 text-[11px]">
+            <span class="text-cyan-200 truncate">
+              <i class="fas fa-reply text-cyan-400"></i> الرد على <strong id="replyTargetName"></strong>: <span id="replyTargetText" class="text-gray-300"></span>
+            </span>
+            <button type="button" onclick="clearReplyTarget()" class="text-rose-400 hover:text-rose-300 font-bold text-xs">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-4 gap-2">
+            <input 
+              type="text" 
+              id="liveChatAuthor" 
+              placeholder="الاسم / اللقب..." 
+              maxlength="24"
+              class="sm:col-span-1 bg-black/60 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-400"
+            >
+            <input 
+              type="text" 
+              id="liveChatInput" 
+              placeholder="اكتب رسالتك هنا..." 
+              maxlength="350"
+              onkeypress="if(event.key==='Enter') sendLiveChatMessage()"
+              class="sm:col-span-2 bg-black/60 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-400"
+            >
+            <button 
+              type="button"
+              id="liveChatSendBtn"
+              onclick="sendLiveChatMessage()" 
+              class="sm:col-span-1 bg-gradient-to-r from-cyan-500 to-rose-500 hover:opacity-95 text-white py-2 px-3 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 transition"
+            >
+              <i class="fas fa-paper-plane"></i> إرسال
+            </button>
           </div>
         </div>
       </div>
@@ -382,7 +458,7 @@
 
         <div class="flex gap-1.5">
           <input type="text" id="userInput" placeholder="أهلا وسهلا، اكتب مشكلتك..." class="flex-1 min-w-0 bg-black/60 border border-slate-800 rounded-lg px-2.5 py-1 text-[11px] text-white focus:outline-none focus:border-rose-500" onkeypress="if(event.key==='Enter') sendMessage()">
-          <button onclick="sendMessage()" class="bg-gradient-to-r from-rose-500 to-pink-600 text-white px-2.5 py-1 rounded-lg font-bold text-[11px] hover:opacity-90 transition flex items-center gap-1 flex-shrink-0">
+          <button type="button" onclick="sendMessage()" class="bg-gradient-to-r from-rose-500 to-pink-600 text-white px-2.5 py-1 rounded-lg font-bold text-[11px] hover:opacity-90 transition flex items-center gap-1 flex-shrink-0">
             <i class="fas fa-paper-plane text-[10px]"></i>
           </button>
         </div>
@@ -431,6 +507,7 @@
             أحوال الطقس • 12h
           </span>
           <button 
+            type="button"
             onclick="loadMoroccoWeather(true)" 
             title="تحديث الطقس"
             class="text-[10px] bg-slate-800/90 hover:bg-slate-700 border border-slate-700 text-gray-200 px-2 py-0.5 rounded font-bold flex items-center gap-1 transition"
@@ -466,7 +543,7 @@
       </div>
 
       <div class="flex items-center gap-4">
-        <button id="mainPlayBtn" onclick="togglePlay()" class="w-10 h-10 rounded-full bg-gradient-to-r from-cyan-500 to-rose-500 text-white flex items-center justify-center text-sm shadow-lg shadow-cyan-500/30 hover:scale-105 transition">
+        <button type="button" id="mainPlayBtn" onclick="togglePlay()" class="w-10 h-10 rounded-full bg-gradient-to-r from-cyan-500 to-rose-500 text-white flex items-center justify-center text-sm shadow-lg shadow-cyan-500/30 hover:scale-105 transition">
           <i id="mainPlayIcon" class="fas fa-play"></i>
         </button>
         <div class="hidden md:flex items-center gap-2">
@@ -621,6 +698,302 @@
       } finally {
         isLoadingSteamGames = false;
       }
+    }
+
+    // ================= LIVE GROUP CHAT (FIREBASE REST + REPLY + DELETE + DEVICE BAN) =================
+    const FIREBASE_DATABASE_URL = ""; // مثال: "https://my-chat-default-rtdb.firebaseio.com"
+    const ADMIN_PASSCODE = "LhajMohaAdmin2026"; // غيّرها لكلمة سر ديالك أنت فقط
+    const CHAT_DISCORD_WEBHOOK_URL = ""; // اختياري: رابط Discord Webhook خاص بالشات
+
+    const DEVICE_STORAGE_KEY = "lhajmoha_chat_device_id";
+    let isChatAdmin = false;
+    let currentReplyTo = null;
+    let bannedDeviceSet = new Set();
+    let lastRenderedMessagesHash = "";
+
+    function getOrCreateDeviceId() {
+      let id = localStorage.getItem(DEVICE_STORAGE_KEY);
+      if (!id) {
+        id = "dev_" + Math.random().toString(36).slice(2, 12) + "_" + Date.now().toString(36);
+        localStorage.setItem(DEVICE_STORAGE_KEY, id);
+      }
+      return id;
+    }
+
+    const MY_DEVICE_ID = getOrCreateDeviceId();
+
+    function escapeChatHtml(str) {
+      return String(str || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    function getDbBaseUrl() {
+      return FIREBASE_DATABASE_URL.replace(/\/+$/, "");
+    }
+
+    function setReplyTarget(msgId, author, text) {
+      currentReplyTo = {
+        id: msgId,
+        author: author || "عضو",
+        text: (text || "").slice(0, 80)
+      };
+      const bar = document.getElementById("replyPreviewBar");
+      const nameEl = document.getElementById("replyTargetName");
+      const textEl = document.getElementById("replyTargetText");
+      if (bar && nameEl && textEl) {
+        nameEl.textContent = currentReplyTo.author;
+        textEl.textContent = currentReplyTo.text;
+        bar.classList.remove("hidden");
+      }
+      document.getElementById("liveChatInput")?.focus();
+    }
+
+    function clearReplyTarget() {
+      currentReplyTo = null;
+      document.getElementById("replyPreviewBar")?.classList.add("hidden");
+    }
+
+    function updateBanUiState() {
+      const isBanned = bannedDeviceSet.has(MY_DEVICE_ID) && !isChatAdmin;
+      const banNotice = document.getElementById("chatBanNotice");
+      const sendBtn = document.getElementById("liveChatSendBtn");
+      const inputEl = document.getElementById("liveChatInput");
+
+      if (banNotice) banNotice.classList.toggle("hidden", !isBanned);
+      if (sendBtn) sendBtn.disabled = isBanned;
+      if (inputEl) {
+        inputEl.disabled = isBanned;
+        inputEl.placeholder = isBanned ? "أنت محظور من الكتابة في الشات..." : "اكتب رسالتك هنا...";
+      }
+    }
+
+    function toggleAdminMode() {
+      const btn = document.getElementById("adminModeBtn");
+      const bar = document.getElementById("adminControlsBar");
+
+      if (!isChatAdmin) {
+        const pass = prompt("أدخل رمز الأدمن:");
+        if (!pass) return;
+        if (pass !== ADMIN_PASSCODE) {
+          alert("رمز الأدمن غير صحيح.");
+          return;
+        }
+        isChatAdmin = true;
+      } else {
+        isChatAdmin = false;
+      }
+
+      if (btn) {
+        btn.innerHTML = isChatAdmin
+          ? '<i class="fas fa-user-shield"></i> خروج من الأدمن'
+          : '<i class="fas fa-shield-alt"></i> وضع الأدمن';
+      }
+      if (bar) bar.classList.toggle("hidden", !isChatAdmin);
+
+      updateBanUiState();
+      syncLiveChat();
+    }
+
+    async function fetchBannedDevices() {
+      if (!FIREBASE_DATABASE_URL) return;
+      try {
+        const res = await fetch(`${getDbBaseUrl()}/bannedDevices.json?t=${Date.now()}`, { cache: "no-store" });
+        if (!res.ok) return;
+        const data = await res.json();
+        bannedDeviceSet = new Set(data && typeof data === "object" ? Object.keys(data) : []);
+      } catch (_) {}
+    }
+
+    async function banDeviceById(deviceId, authorName) {
+      if (!isChatAdmin || !deviceId) return;
+      if (!confirm(`واش متأكد بغيتي تحظر (${authorName || deviceId}) من الشات؟`)) return;
+
+      if (FIREBASE_DATABASE_URL) {
+        await fetch(`${getDbBaseUrl()}/bannedDevices/${encodeURIComponent(deviceId)}.json`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            bannedAt: Date.now(),
+            author: authorName || "مستخدم"
+          })
+        });
+      }
+      bannedDeviceSet.add(deviceId);
+      updateBanUiState();
+      await syncLiveChat();
+    }
+
+    async function unbanCurrentDeviceTest() {
+      if (!isChatAdmin) return;
+      if (FIREBASE_DATABASE_URL) {
+        await fetch(`${getDbBaseUrl()}/bannedDevices/${encodeURIComponent(MY_DEVICE_ID)}.json`, {
+          method: "DELETE"
+        });
+      }
+      bannedDeviceSet.delete(MY_DEVICE_ID);
+      updateBanUiState();
+      await syncLiveChat();
+    }
+
+    async function deleteChatMessage(msgId) {
+      if (!isChatAdmin || !msgId) return;
+      if (!confirm("واش بغيتي تحذف هاد الرسالة نهائياً؟")) return;
+
+      if (FIREBASE_DATABASE_URL) {
+        await fetch(`${getDbBaseUrl()}/groupChatMessages/${encodeURIComponent(msgId)}.json`, {
+          method: "DELETE"
+        });
+      }
+      lastRenderedMessagesHash = "";
+      await syncLiveChat();
+    }
+
+    function renderChatMessagesList(messagesObj) {
+      const box = document.getElementById("liveChatBox");
+      if (!box) return;
+
+      const entries = Object.entries(messagesObj || {})
+        .map(([id, val]) => ({ id, ...(val || {}) }))
+        .filter(item => item.text && (!bannedDeviceSet.has(item.deviceId) || isChatAdmin))
+        .sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0))
+        .slice(-60);
+
+      const hash = JSON.stringify(entries.map(e => [e.id, e.text, e.author, e.deviceId])) + "|admin:" + isChatAdmin;
+      if (hash === lastRenderedMessagesHash) return;
+      lastRenderedMessagesHash = hash;
+
+      if (!entries.length) {
+        box.innerHTML = `<div class="text-gray-400 text-center py-6">لا توجد رسائل بعد. كن أول من يبدأ النقاش!</div>`;
+        return;
+      }
+
+      box.innerHTML = entries.map(msg => {
+        const safeId = escapeChatHtml(msg.id);
+        const safeAuthor = escapeChatHtml(msg.author || "زائر");
+        const safeText = escapeChatHtml(msg.text || "");
+        const safeDeviceId = escapeChatHtml(msg.deviceId || "");
+        const isUserBanned = bannedDeviceSet.has(msg.deviceId);
+        const timeStr = msg.createdAt
+          ? new Date(msg.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+          : "";
+
+        const replyHtml = msg.replyTo && msg.replyTo.text
+          ? `<div class="bg-black/40 border-r-2 border-cyan-400/70 px-2 py-1 rounded mb-1 text-[10px] text-cyan-200">
+               رد على <strong>${escapeChatHtml(msg.replyTo.author || "عضو")}</strong>: ${escapeChatHtml(msg.replyTo.text)}
+             </div>`
+          : "";
+
+        const adminActionsHtml = isChatAdmin
+          ? `<span class="inline-flex items-center gap-1.5 mr-2">
+               <button type="button" onclick="deleteChatMessage('${safeId}')" class="text-amber-400 hover:underline font-bold">حذف</button>
+               <button type="button" onclick="banDeviceById('${safeDeviceId}', '${safeAuthor}')" class="text-rose-400 hover:underline font-bold">${isUserBanned ? "محظور" : "حظر"}</button>
+             </span>`
+          : "";
+
+        return `
+          <div class="bg-slate-900/90 border ${isUserBanned ? "border-rose-500/50 opacity-75" : "border-slate-800/90"} rounded-lg p-2.5 space-y-1">
+            <div class="flex items-center justify-between gap-2 text-[10px]">
+              <div class="flex items-center gap-1.5 min-w-0">
+                <strong class="text-cyan-400 truncate">${safeAuthor}</strong>
+                ${isUserBanned ? `<span class="bg-rose-500/20 text-rose-300 px-1.5 py-0.2 rounded text-[9px]">محظور</span>` : ""}
+              </div>
+              <div class="flex items-center gap-2 flex-shrink-0 text-slate-400">
+                <span>${timeStr}</span>
+                <button type="button" onclick="setReplyTarget('${safeId}', '${safeAuthor}', '${safeText}')" class="text-cyan-300 hover:underline font-bold">رد</button>
+                ${adminActionsHtml}
+              </div>
+            </div>
+            ${replyHtml}
+            <div class="text-xs text-white break-words leading-relaxed">${safeText}</div>
+          </div>
+        `;
+      }).join("");
+
+      box.scrollTop = box.scrollHeight;
+    }
+
+    async function sendLiveChatMessage() {
+      if (bannedDeviceSet.has(MY_DEVICE_ID) && !isChatAdmin) {
+        updateBanUiState();
+        return;
+      }
+
+      const authorInput = document.getElementById("liveChatAuthor");
+      const msgInput = document.getElementById("liveChatInput");
+      if (!msgInput) return;
+
+      const author = (authorInput?.value || "").trim() || "زائر";
+      const text = msgInput.value.trim();
+      if (!text) return;
+
+      const payload = {
+        author,
+        text,
+        deviceId: MY_DEVICE_ID,
+        replyTo: currentReplyTo,
+        createdAt: Date.now()
+      };
+
+      msgInput.value = "";
+      clearReplyTarget();
+
+      if (FIREBASE_DATABASE_URL) {
+        try {
+          await fetch(`${getDbBaseUrl()}/groupChatMessages.json`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          });
+          lastRenderedMessagesHash = "";
+          await syncLiveChat();
+        } catch (_) {}
+      } else {
+        renderChatMessagesList({ ["local_" + Date.now()]: payload });
+      }
+
+      if (CHAT_DISCORD_WEBHOOK_URL) {
+        fetch(CHAT_DISCORD_WEBHOOK_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            embeds: [{
+              title: "💬 رسالة في الشات الجماعية",
+              color: 0x00f0ff,
+              fields: [
+                { name: "الاسم", value: author, inline: true },
+                { name: "الرسالة", value: text, inline: false }
+              ],
+              timestamp: new Date().toISOString()
+            }]
+          })
+        }).catch(() => {});
+      }
+    }
+
+    async function syncLiveChat() {
+      await fetchBannedDevices();
+      updateBanUiState();
+
+      const box = document.getElementById("liveChatBox");
+      if (!box) return;
+
+      if (!FIREBASE_DATABASE_URL) {
+        if (!box.dataset.ready) {
+          box.dataset.ready = "1";
+          box.innerHTML = `<div class="text-amber-300 text-center py-5 text-[11px]">أضف رابط <strong>FIREBASE_DATABASE_URL</strong> ليظهر الشات مباشرة لجميع الزوار ويُحفظ الحظر مركزياً.</div>`;
+        }
+        return;
+      }
+
+      try {
+        const res = await fetch(`${getDbBaseUrl()}/groupChatMessages.json?t=${Date.now()}`, { cache: "no-store" });
+        if (!res.ok) return;
+        const data = await res.json();
+        renderChatMessagesList(data || {});
+      } catch (_) {}
     }
 
     // ================= MOROCCO WEATHER (REFRESH EVERY 12 HOURS) =================
@@ -887,6 +1260,8 @@
       renderPcSoftwareList();
       renderRadioGrid();
       loadSteamLatestGames(true);
+      syncLiveChat();
+      setInterval(syncLiveChat, 4000);
       loadMoroccoWeather(true);
       setInterval(() => loadMoroccoWeather(false), WEATHER_REFRESH_HOURS * 60 * 60 * 1000);
     });
