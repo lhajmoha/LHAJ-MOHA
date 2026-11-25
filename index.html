@@ -9,7 +9,6 @@
   
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
   
   <script>
     tailwind.config = {
@@ -50,6 +49,18 @@
       background: linear-gradient(90deg, #00f0ff 0%, #ff7eb3 50%, #ff0055 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+    }
+
+    .chat-cyber-banner {
+      background:
+        linear-gradient(120deg, rgba(0, 240, 255, 0.16), rgba(16, 20, 36, 0.92) 48%, rgba(255, 0, 85, 0.18)),
+        repeating-linear-gradient(
+          -45deg,
+          rgba(255, 255, 255, 0.02) 0px,
+          rgba(255, 255, 255, 0.02) 8px,
+          transparent 8px,
+          transparent 16px
+        );
     }
 
     .medic-gta-card {
@@ -265,12 +276,21 @@
         </div>
       </div>
 
-      <!-- LIVE GROUP CHAT (GOOGLE ACCOUNT REQUIRED TO CHAT) -->
+      <!-- LIVE GROUP CHAT WITH CYBER BANNER & SIMPLE REGISTRATION GATE -->
       <div id="liveGroupChatSection" class="space-y-3 pt-2">
-        <div class="flex items-center justify-between gap-2 border-b border-slate-800 pb-2">
-          <h2 class="text-xl font-bold flex items-center gap-2 gradient-text-multi">
-            <i class="fas fa-comments text-cyan-400"></i> الشات الجماعية المباشرة
-          </h2>
+        <div class="chat-cyber-banner border border-cyan-500/40 rounded-2xl p-3.5 flex flex-wrap items-center justify-between gap-2 shadow-lg shadow-cyan-950/30">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500/20 to-rose-500/20 border border-cyan-400/40 flex items-center justify-center text-cyan-300 text-base">
+              <i class="fas fa-comments"></i>
+            </div>
+            <div>
+              <h2 class="text-base font-black tracking-wide uppercase gradient-text-multi leading-tight">
+                Chat Communautaire Live
+              </h2>
+              <p class="text-[10px] text-gray-300">Salon officiel • Discussion instantanée</p>
+            </div>
+          </div>
+
           <div class="flex items-center gap-2">
             <span class="inline-flex items-center gap-1.5 text-[11px] font-bold text-emerald-300 bg-emerald-500/10 border border-emerald-500/30 px-2.5 py-1 rounded-lg">
               <span class="relative flex h-2 w-2">
@@ -283,57 +303,105 @@
               type="button"
               onclick="toggleAdminMode()" 
               id="adminModeBtn"
-              class="text-[11px] bg-slate-800/90 hover:bg-slate-700 border border-slate-700 text-cyan-300 px-2.5 py-1 rounded-lg font-bold transition"
+              class="text-[11px] bg-slate-900/90 hover:bg-slate-800 border border-slate-700 text-cyan-300 px-2.5 py-1 rounded-lg font-bold transition"
             >
-              <i class="fas fa-shield-alt"></i> وضع الأدمن
+              <i class="fas fa-shield-alt"></i> Admin
             </button>
           </div>
         </div>
 
-        <div class="bg-cyber-card/90 border border-slate-800 rounded-xl p-4 backdrop-blur-md space-y-3">
-          <!-- Google Auth Bar -->
-          <div id="googleAuthBar" class="bg-black/50 border border-slate-800/90 rounded-xl px-3 py-2 flex flex-wrap items-center justify-between gap-2 text-[11px]">
-            <div id="googleUserBadge" class="text-cyan-300 font-bold flex items-center gap-1.5">
-              <i class="fab fa-google text-emerald-400"></i>
-              <span id="googleUserNameLabel">Google</span>
+        <div class="bg-cyber-card/90 border border-slate-800 rounded-2xl p-4 backdrop-blur-md space-y-3">
+          <!-- Simple Access Form (Prénom, Nom, Mot de passe, Confirmation) -->
+          <div id="chatAccessCard" class="bg-black/60 border border-cyan-500/30 rounded-xl p-3.5 space-y-2.5">
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-xs font-extrabold text-cyan-300 flex items-center gap-1.5">
+                <i class="fas fa-user-plus text-cyan-400"></i> Accès au Chat
+              </span>
+              <span class="text-[10px] text-gray-400">Inscription rapide</span>
             </div>
-            <div class="flex items-center gap-2">
-              <div id="googleSignInBtnContainer"></div>
-              <button 
-                type="button" 
-                id="googleSignOutBtn" 
-                onclick="signOutGoogleChatUser()" 
-                class="hidden bg-slate-800 hover:bg-slate-700 text-rose-300 border border-rose-500/30 px-2 py-1 rounded text-[10px] font-bold transition"
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <input 
+                type="text" 
+                id="chatFirstName" 
+                placeholder="Prénom" 
+                maxlength="25"
+                class="bg-slate-900/90 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-cyan-400"
               >
-                خروج
-              </button>
+              <input 
+                type="text" 
+                id="chatLastName" 
+                placeholder="Nom" 
+                maxlength="25"
+                class="bg-slate-900/90 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-cyan-400"
+              >
+              <input 
+                type="password" 
+                id="chatPassword" 
+                placeholder="Mot de passe" 
+                maxlength="40"
+                class="bg-slate-900/90 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-cyan-400"
+              >
+              <input 
+                type="password" 
+                id="chatPasswordConfirm" 
+                placeholder="Confirmer le mot de passe" 
+                maxlength="40"
+                onkeypress="if(event.key==='Enter') submitChatAccessForm()"
+                class="bg-slate-900/90 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-cyan-400"
+              >
             </div>
+
+            <div id="chatAccessError" class="hidden text-[11px] text-rose-400 font-bold"></div>
+
+            <button 
+              type="button"
+              onclick="submitChatAccessForm()" 
+              class="w-full bg-gradient-to-r from-cyan-500 to-rose-500 hover:opacity-95 text-white py-2 px-4 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition shadow-md shadow-cyan-500/20"
+            >
+              <i class="fas fa-sign-in-alt"></i> Entrer dans le Chat
+            </button>
+          </div>
+
+          <!-- Active Member Bar (Shown once registered) -->
+          <div id="chatActiveMemberBar" class="hidden bg-black/50 border border-emerald-500/30 rounded-xl px-3 py-2 flex items-center justify-between gap-2 text-[11px]">
+            <span class="text-emerald-300 font-bold flex items-center gap-1.5 truncate">
+              <i class="fas fa-user-check text-emerald-400"></i>
+              <span id="chatActiveMemberName" class="text-white truncate"></span>
+            </span>
+            <button 
+              type="button" 
+              onclick="logoutChatMember()" 
+              class="bg-slate-800 hover:bg-slate-700 text-rose-300 border border-rose-500/30 px-2.5 py-1 rounded text-[10px] font-bold flex-shrink-0 transition"
+            >
+              Déconnexion
+            </button>
           </div>
 
           <div id="chatBanNotice" class="hidden bg-rose-950/70 border border-rose-500/50 text-rose-200 rounded-xl p-2.5 text-xs font-bold">
-            <i class="fas fa-ban text-rose-400"></i> تم حظرك من إرسال الرسائل في الشات الجماعية.
+            <i class="fas fa-ban text-rose-400"></i> Vous êtes bloqué pour l'envoi de messages dans ce chat.
           </div>
 
           <div id="adminControlsBar" class="hidden bg-black/50 border border-cyan-500/30 rounded-xl p-2.5 flex flex-wrap items-center justify-between gap-2 text-[11px]">
-            <span class="text-cyan-300 font-bold"><i class="fas fa-user-shield"></i> وضع الأدمن مفعل: يمكنك حذف الرسائل وحظر المخالفين</span>
+            <span class="text-cyan-300 font-bold"><i class="fas fa-user-shield"></i> Mode Admin actif : suppression et blocage</span>
             <button 
               type="button"
               onclick="unbanCurrentDeviceTest()" 
               class="bg-slate-800 hover:bg-slate-700 text-gray-200 px-2 py-1 rounded text-[10px] font-bold transition"
             >
-              فك حظر جهازي الحالي
+              Débloquer cet appareil
             </button>
           </div>
 
           <div id="liveChatBox" class="h-60 overflow-y-auto flex flex-col gap-2 bg-black/50 border border-slate-800/90 rounded-xl p-3 text-xs">
             <div class="text-gray-400 text-center py-6">
-              <i class="fas fa-spinner fa-spin"></i> جاري تحميل الرسائل...
+              <i class="fas fa-spinner fa-spin"></i> Chargement des messages...
             </div>
           </div>
 
           <div id="replyPreviewBar" class="hidden bg-cyan-950/40 border border-cyan-500/30 rounded-lg px-3 py-1.5 flex items-center justify-between gap-2 text-[11px]">
             <span class="text-cyan-200 truncate">
-              <i class="fas fa-reply text-cyan-400"></i> الرد على <strong id="replyTargetName"></strong>: <span id="replyTargetText" class="text-gray-300"></span>
+              <i class="fas fa-reply text-cyan-400"></i> Répondre à <strong id="replyTargetName"></strong> : <span id="replyTargetText" class="text-gray-300"></span>
             </span>
             <button type="button" onclick="clearReplyTarget()" class="text-rose-400 hover:text-rose-300 font-bold text-xs">
               <i class="fas fa-times"></i>
@@ -344,7 +412,7 @@
             <input 
               type="text" 
               id="liveChatInput" 
-              placeholder="اكتب رسالتك هنا..." 
+              placeholder="Écrivez votre message..." 
               maxlength="350"
               onkeypress="if(event.key==='Enter') sendLiveChatMessage()"
               class="flex-1 min-w-0 bg-black/60 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-400"
@@ -355,7 +423,7 @@
               onclick="sendLiveChatMessage()" 
               class="bg-gradient-to-r from-cyan-500 to-rose-500 hover:opacity-95 disabled:opacity-40 disabled:cursor-not-allowed text-white py-2 px-4 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 flex-shrink-0 transition"
             >
-              <i class="fas fa-paper-plane"></i> إرسال
+              <i class="fas fa-paper-plane"></i> Envoyer
             </button>
           </div>
         </div>
@@ -449,12 +517,12 @@
 
         <div id="chatBox" class="h-16 overflow-y-auto flex flex-col gap-1.5 mb-2 pr-1 bg-black/40 p-1.5 rounded-lg border border-slate-800/80 text-[11px]">
           <div class="bg-slate-900/90 border-l-2 border-rose-500 px-2 py-1 rounded text-gray-200 leading-tight">
-            <strong class="text-rose-400">أهلا وسهلا :</strong> مرحباً بك! اكتب مشكلتك هنا وسنرد عليك في أقرب وقت.
+            <strong class="text-rose-400">Support :</strong> Bienvenue ! Indiquez votre problème ici, nous vous répondrons rapidement.
           </div>
         </div>
 
         <div class="flex gap-1.5">
-          <input type="text" id="userInput" placeholder="أهلا وسهلا، اكتب مشكلتك..." class="flex-1 min-w-0 bg-black/60 border border-slate-800 rounded-lg px-2.5 py-1 text-[11px] text-white focus:outline-none focus:border-rose-500" onkeypress="if(event.key==='Enter') sendMessage()">
+          <input type="text" id="userInput" placeholder="Décrivez votre problème..." class="flex-1 min-w-0 bg-black/60 border border-slate-800 rounded-lg px-2.5 py-1 text-[11px] text-white focus:outline-none focus:border-rose-500" onkeypress="if(event.key==='Enter') sendMessage()">
           <button type="button" onclick="sendMessage()" class="bg-gradient-to-r from-rose-500 to-pink-600 text-white px-2.5 py-1 rounded-lg font-bold text-[11px] hover:opacity-90 transition flex items-center gap-1 flex-shrink-0">
             <i class="fas fa-paper-plane text-[10px]"></i>
           </button>
@@ -483,7 +551,7 @@
         </div>
 
         <p class="text-[11px] text-gray-300 leading-relaxed mb-3">
-          أكاديمية الحاج موحا للميديك — تكوين وتأطير عناصر الإسعاف في أجواء GTA V RP.
+          Académie médicale Lhaj Moha — Formation et encadrement des secours en immersion GTA V RP.
         </p>
 
         <a 
@@ -492,7 +560,7 @@
           rel="noopener noreferrer"
           class="w-full bg-[#5865F2] hover:bg-[#4752C4] text-white py-2 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition shadow-md shadow-[#5865F2]/30"
         >
-          <i class="fab fa-discord text-sm"></i> Discord الأكاديمية
+          <i class="fab fa-discord text-sm"></i> Discord de l'Académie
         </a>
       </div>
 
@@ -501,12 +569,12 @@
         <div class="flex items-center justify-between gap-2 mb-2 pb-2 border-b border-slate-800/90">
           <span class="text-xs font-black uppercase tracking-wider text-white flex items-center gap-1.5">
             <i class="fas fa-cloud-sun text-cyan-400"></i>
-            أحوال الطقس • 12h
+            Météo Maroc • 12h
           </span>
           <button 
             type="button"
             onclick="loadMoroccoWeather(true)" 
-            title="تحديث الطقس"
+            title="Actualiser la météo"
             class="text-[10px] bg-slate-800/90 hover:bg-slate-700 border border-slate-700 text-gray-200 px-2 py-0.5 rounded font-bold flex items-center gap-1 transition"
           >
             <i class="fas fa-sync-alt text-[9px]"></i> Refresh
@@ -515,7 +583,7 @@
 
         <div id="moroccoWeatherList" class="space-y-1 max-h-60 overflow-y-auto pr-0.5 text-[11px]">
           <div class="text-gray-400 py-3 text-center">
-            <i class="fas fa-spinner fa-spin"></i> جاري تحميل الطقس...
+            <i class="fas fa-spinner fa-spin"></i> Chargement météo...
           </div>
         </div>
       </div>
@@ -574,26 +642,25 @@
       }).catch(err => console.log("Discord error:", err));
     }
 
-    // ================= LIVE GROUP CHAT (GOOGLE ACCOUNT REQUIRED TO CHAT) =================
-    const FIREBASE_DATABASE_URL = ""; // مثال: "https://my-chat-default-rtdb.firebaseio.com"
+    // ================= LIVE GROUP CHAT (PRENOM + NOM + MOT DE PASSE + CONFIRMATION) =================
+    const FIREBASE_DATABASE_URL = ""; // Exemple : "https://votre-projet-default-rtdb.firebaseio.com"
     const ADMIN_PASSCODE = "8080@";
-    const CHAT_DISCORD_WEBHOOK_URL = ""; // اختياري
-    const GOOGLE_CLIENT_ID = ""; // حط هنا Google OAuth Client ID ديالك من Google Cloud Console
+    const CHAT_DISCORD_WEBHOOK_URL = ""; // Optionnel
 
     const DEVICE_STORAGE_KEY = "lhajmoha_chat_device_id";
     const LOCAL_MSG_STORAGE_KEY = "lhajmoha_demo_chat_messages_v1";
     const LOCAL_BAN_STORAGE_KEY = "lhajmoha_demo_chat_banned_v1";
-    const GOOGLE_CHAT_USER_KEY = "lhajmoha_google_chat_user_v1";
+    const CHAT_MEMBER_SESSION_KEY = "lhajmoha_chat_member_session_v1";
 
     let isChatAdmin = false;
     let currentReplyTo = null;
     let bannedDeviceSet = new Set();
     let lastRenderedMessagesHash = "";
-    let googleChatUser = null;
+    let activeChatMember = null;
 
     try {
-      const savedGoogle = sessionStorage.getItem(GOOGLE_CHAT_USER_KEY);
-      if (savedGoogle) googleChatUser = JSON.parse(savedGoogle);
+      const savedSession = sessionStorage.getItem(CHAT_MEMBER_SESSION_KEY);
+      if (savedSession) activeChatMember = JSON.parse(savedSession);
     } catch (_) {}
 
     const chatBroadcast = ("BroadcastChannel" in window)
@@ -611,120 +678,104 @@
       return typeof FIREBASE_DATABASE_URL === "string" && /^https:\/\/.+\.firebaseio\.com\/?$/i.test(FIREBASE_DATABASE_URL.trim());
     }
 
-    function canSendChatMessage() {
-      return Boolean(googleChatUser && googleChatUser.name);
+    function showChatAccessError(msg) {
+      const errEl = document.getElementById("chatAccessError");
+      if (!errEl) return;
+      errEl.textContent = msg;
+      errEl.classList.remove("hidden");
     }
 
-    function decodeJwtPayload(token) {
-      try {
-        const parts = String(token || "").split(".");
-        if (parts.length < 2) return null;
-        const base64 = parts[1].replace(/-/g, "+").replace(/_/g, "/");
-        const jsonPayload = decodeURIComponent(
-          atob(base64)
-            .split("")
-            .map(c => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
-            .join("")
-        );
-        return JSON.parse(jsonPayload);
-      } catch (_) {
-        return null;
+    function clearChatAccessError() {
+      const errEl = document.getElementById("chatAccessError");
+      if (!errEl) return;
+      errEl.textContent = "";
+      errEl.classList.add("hidden");
+    }
+
+    function submitChatAccessForm() {
+      clearChatAccessError();
+      const firstName = (document.getElementById("chatFirstName")?.value || "").trim();
+      const lastName = (document.getElementById("chatLastName")?.value || "").trim();
+      const password = document.getElementById("chatPassword")?.value || "";
+      const passwordConfirm = document.getElementById("chatPasswordConfirm")?.value || "";
+
+      if (!firstName || !lastName) {
+        showChatAccessError("Veuillez saisir le prénom et le nom.");
+        return;
       }
-    }
+      if (password.length < 4) {
+        showChatAccessError("Le mot de passe doit contenir au moins 4 caractères.");
+        return;
+      }
+      if (password !== passwordConfirm) {
+        showChatAccessError("La confirmation du mot de passe ne correspond pas.");
+        return;
+      }
 
-    function handleGoogleCredentialResponse(response) {
-      const payload = decodeJwtPayload(response?.credential);
-      if (!payload) return;
-
-      const email = payload.email || "";
-      const emailPrefix = email.includes("@") ? email.split("@")[0] : "";
-      const displayName = payload.name || emailPrefix || "Google User";
-
-      googleChatUser = {
-        name: displayName,
-        email: email,
-        sub: payload.sub || ""
+      activeChatMember = {
+        firstName,
+        lastName,
+        fullName: `${firstName} ${lastName}`.trim()
       };
 
       try {
-        sessionStorage.setItem(GOOGLE_CHAT_USER_KEY, JSON.stringify(googleChatUser));
+        sessionStorage.setItem(CHAT_MEMBER_SESSION_KEY, JSON.stringify(activeChatMember));
       } catch (_) {}
 
-      applyGoogleUserToUi();
+      if (document.getElementById("chatPassword")) document.getElementById("chatPassword").value = "";
+      if (document.getElementById("chatPasswordConfirm")) document.getElementById("chatPasswordConfirm").value = "";
+
+      syncChatMemberUi();
       updateChatInputAccess();
     }
 
-    function signOutGoogleChatUser() {
-      googleChatUser = null;
+    function logoutChatMember() {
+      activeChatMember = null;
       try {
-        sessionStorage.removeItem(GOOGLE_CHAT_USER_KEY);
+        sessionStorage.removeItem(CHAT_MEMBER_SESSION_KEY);
       } catch (_) {}
-      if (window.google?.accounts?.id?.disableAutoSelect) {
-        window.google.accounts.id.disableAutoSelect();
-      }
-      applyGoogleUserToUi();
+      syncChatMemberUi();
       updateChatInputAccess();
     }
 
-    function applyGoogleUserToUi() {
-      const labelEl = document.getElementById("googleUserNameLabel");
-      const signInContainer = document.getElementById("googleSignInBtnContainer");
-      const signOutBtn = document.getElementById("googleSignOutBtn");
+    function syncChatMemberUi() {
+      const accessCard = document.getElementById("chatAccessCard");
+      const memberBar = document.getElementById("chatActiveMemberBar");
+      const memberNameEl = document.getElementById("chatActiveMemberName");
 
-      if (googleChatUser) {
-        if (labelEl) {
-          labelEl.textContent = googleChatUser.email
-            ? `${googleChatUser.name} (${googleChatUser.email})`
-            : googleChatUser.name;
-        }
-        if (signInContainer) signInContainer.classList.add("hidden");
-        if (signOutBtn) signOutBtn.classList.remove("hidden");
+      if (activeChatMember && activeChatMember.fullName) {
+        if (accessCard) accessCard.classList.add("hidden");
+        if (memberBar) memberBar.classList.remove("hidden");
+        if (memberNameEl) memberNameEl.textContent = activeChatMember.fullName;
       } else {
-        if (labelEl) {
-          labelEl.textContent = "Google";
-        }
-        if (signInContainer) signInContainer.classList.remove("hidden");
-        if (signOutBtn) signOutBtn.classList.add("hidden");
+        if (accessCard) accessCard.classList.remove("hidden");
+        if (memberBar) memberBar.classList.add("hidden");
       }
     }
 
-    function initGoogleSignInButton() {
-      applyGoogleUserToUi();
-      updateChatInputAccess();
-      const container = document.getElementById("googleSignInBtnContainer");
-      if (!container || !GOOGLE_CLIENT_ID || !window.google?.accounts?.id) return;
-
-      window.google.accounts.id.initialize({
-        client_id: GOOGLE_CLIENT_ID,
-        callback: handleGoogleCredentialResponse
-      });
-
-      window.google.accounts.id.renderButton(container, {
-        theme: "outline",
-        size: "small",
-        text: "signin_with"
-      });
+    function canSendChatMessage() {
+      return Boolean(activeChatMember && activeChatMember.fullName);
     }
 
     function updateChatInputAccess() {
       const isBanned = bannedDeviceSet.has(MY_DEVICE_ID) && !isChatAdmin;
-      const isAuthed = canSendChatMessage();
+      const isAllowed = canSendChatMessage();
       const banNotice = document.getElementById("chatBanNotice");
       const sendBtn = document.getElementById("liveChatSendBtn");
       const inputEl = document.getElementById("liveChatInput");
 
       if (banNotice) banNotice.classList.toggle("hidden", !isBanned);
 
-      const allowWrite = !isBanned && isAuthed;
+      const allowWrite = !isBanned && isAllowed;
       if (sendBtn) sendBtn.disabled = !allowWrite;
       if (inputEl) {
         inputEl.disabled = !allowWrite;
         if (isBanned) {
-          inputEl.placeholder = "أنت محظور من الكتابة في الشات...";
-        } else if (!isAuthed) {
-          inputEl.placeholder = "Google Sign-In required...";
+          inputEl.placeholder = "Envoi désactivé pour ce compte/appareil...";
+        } else if (!isAllowed) {
+          inputEl.placeholder = "Remplissez Prénom, Nom et Mot de passe pour chatter...";
         } else {
-          inputEl.placeholder = "اكتب رسالتك هنا...";
+          inputEl.placeholder = "Écrivez votre message...";
         }
       }
     }
@@ -787,7 +838,7 @@
     function setReplyTarget(msgId, author, text) {
       currentReplyTo = {
         id: msgId,
-        author: author || "Google",
+        author: author || "Membre",
         text: (text || "").slice(0, 80)
       };
       const bar = document.getElementById("replyPreviewBar");
@@ -811,10 +862,10 @@
       const bar = document.getElementById("adminControlsBar");
 
       if (!isChatAdmin) {
-        const pass = prompt("أدخل رمز الأدمن:");
+        const pass = prompt("Code administrateur :");
         if (pass === null) return;
         if (pass !== ADMIN_PASSCODE) {
-          alert("رمز الأدمن غير صحيح.");
+          alert("Code administrateur incorrect.");
           return;
         }
         isChatAdmin = true;
@@ -824,8 +875,8 @@
 
       if (btn) {
         btn.innerHTML = isChatAdmin
-          ? '<i class="fas fa-user-shield"></i> خروج من الأدمن'
-          : '<i class="fas fa-shield-alt"></i> وضع الأدمن';
+          ? '<i class="fas fa-user-shield"></i> Quitter Admin'
+          : '<i class="fas fa-shield-alt"></i> Admin';
       }
       if (bar) bar.classList.toggle("hidden", !isChatAdmin);
 
@@ -849,7 +900,7 @@
 
     async function banDeviceById(deviceId, authorName) {
       if (!isChatAdmin || !deviceId) return;
-      if (!confirm(`واش متأكد بغيتي تحظر (${authorName || deviceId}) من الشات؟`)) return;
+      if (!confirm(`Bloquer (${authorName || deviceId}) dans le chat ?`)) return;
 
       if (hasFirebaseConfig()) {
         await fetch(`${getDbBaseUrl()}/bannedDevices/${encodeURIComponent(deviceId)}.json`, {
@@ -857,7 +908,7 @@
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             bannedAt: Date.now(),
-            author: authorName || "Google User"
+            author: authorName || "Membre"
           })
         });
       } else {
@@ -893,7 +944,7 @@
 
     async function deleteChatMessage(msgId) {
       if (!isChatAdmin || !msgId) return;
-      if (!confirm("واش بغيتي تحذف هاد الرسالة نهائياً؟")) return;
+      if (!confirm("Supprimer ce message définitivement ?")) return;
 
       if (hasFirebaseConfig()) {
         await fetch(`${getDbBaseUrl()}/groupChatMessages/${encodeURIComponent(msgId)}.json`, {
@@ -925,13 +976,13 @@
       lastRenderedMessagesHash = hash;
 
       if (!entries.length) {
-        box.innerHTML = `<div class="text-gray-400 text-center py-6">لا توجد رسائل بعد. كن أول من يبدأ النقاش!</div>`;
+        box.innerHTML = `<div class="text-gray-400 text-center py-6">Aucun message pour le moment. Lancez la discussion !</div>`;
         return;
       }
 
       box.innerHTML = entries.map(msg => {
         const safeId = escapeChatHtml(msg.id);
-        const safeAuthor = escapeChatHtml(msg.author || "Google");
+        const safeAuthor = escapeChatHtml(msg.author || "Membre");
         const safeText = escapeChatHtml(msg.text || "");
         const safeDeviceId = escapeChatHtml(msg.deviceId || "");
         const isUserBanned = bannedDeviceSet.has(msg.deviceId);
@@ -941,14 +992,14 @@
 
         const replyHtml = msg.replyTo && msg.replyTo.text
           ? `<div class="bg-black/40 border-r-2 border-cyan-400/70 px-2 py-1 rounded mb-1 text-[10px] text-cyan-200">
-               رد على <strong>${escapeChatHtml(msg.replyTo.author || "Google")}</strong>: ${escapeChatHtml(msg.replyTo.text)}
+               Réponse à <strong>${escapeChatHtml(msg.replyTo.author || "Membre")}</strong> : ${escapeChatHtml(msg.replyTo.text)}
              </div>`
           : "";
 
         const adminActionsHtml = isChatAdmin
           ? `<span class="inline-flex items-center gap-1.5 mr-2">
-               <button type="button" onclick="deleteChatMessage('${safeId}')" class="text-amber-400 hover:underline font-bold">حذف</button>
-               <button type="button" onclick="banDeviceById('${safeDeviceId}', '${safeAuthor}')" class="text-rose-400 hover:underline font-bold">${isUserBanned ? "محظور" : "حظر"}</button>
+               <button type="button" onclick="deleteChatMessage('${safeId}')" class="text-amber-400 hover:underline font-bold">Supprimer</button>
+               <button type="button" onclick="banDeviceById('${safeDeviceId}', '${safeAuthor}')" class="text-rose-400 hover:underline font-bold">${isUserBanned ? "Bloqué" : "Bloquer"}</button>
              </span>`
           : "";
 
@@ -957,11 +1008,11 @@
             <div class="flex items-center justify-between gap-2 text-[10px]">
               <div class="flex items-center gap-1.5 min-w-0">
                 <strong class="text-cyan-400 truncate">${safeAuthor}</strong>
-                ${isUserBanned ? `<span class="bg-rose-500/20 text-rose-300 px-1.5 py-0.2 rounded text-[9px]">محظور</span>` : ""}
+                ${isUserBanned ? `<span class="bg-rose-500/20 text-rose-300 px-1.5 py-0.2 rounded text-[9px]">Bloqué</span>` : ""}
               </div>
               <div class="flex items-center gap-2 flex-shrink-0 text-slate-400">
                 <span>${timeStr}</span>
-                <button type="button" onclick="setReplyTarget('${safeId}', '${safeAuthor}', '${safeText}')" class="text-cyan-300 hover:underline font-bold">رد</button>
+                <button type="button" onclick="setReplyTarget('${safeId}', '${safeAuthor}', '${safeText}')" class="text-cyan-300 hover:underline font-bold">Répondre</button>
                 ${adminActionsHtml}
               </div>
             </div>
@@ -988,13 +1039,12 @@
       const msgInput = document.getElementById("liveChatInput");
       if (!msgInput) return;
 
-      const sender = googleChatUser.name;
+      const sender = activeChatMember.fullName;
       const text = msgInput.value.trim();
       if (!text) return;
 
       const payload = {
         author: sender,
-        email: googleChatUser?.email || "",
         text,
         deviceId: MY_DEVICE_ID,
         replyTo: currentReplyTo,
@@ -1029,11 +1079,11 @@
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             embeds: [{
-              title: "💬 رسالة في الشات الجماعية",
+              title: "💬 Message dans le Chat Live",
               color: 0x00f0ff,
               fields: [
-                { name: "الاسم", value: sender, inline: true },
-                { name: "الرسالة", value: text, inline: false }
+                { name: "Membre", value: sender, inline: true },
+                { name: "Message", value: text, inline: false }
               ],
               timestamp: new Date().toISOString()
             }]
@@ -1066,28 +1116,28 @@
     const WEATHER_REFRESH_HOURS = 12;
 
     const MOROCCO_CITIES = [
-      { name: "آسفي", lat: 32.2994, lon: -9.2372 },
-      { name: "كازا", lat: 33.5731, lon: -7.5898 },
-      { name: "الجديدة", lat: 33.2316, lon: -8.5007 },
-      { name: "مراكش", lat: 31.6295, lon: -7.9811 },
-      { name: "الرباط", lat: 34.0209, lon: -6.8416 },
-      { name: "أكادير", lat: 30.4278, lon: -9.5981 },
-      { name: "طنجة", lat: 35.7595, lon: -5.8340 },
-      { name: "وجدة", lat: 34.6814, lon: -1.9086 },
-      { name: "الداخلة", lat: 23.6848, lon: -15.9570 }
+      { name: "Safi", lat: 32.2994, lon: -9.2372 },
+      { name: "Casablanca", lat: 33.5731, lon: -7.5898 },
+      { name: "El Jadida", lat: 33.2316, lon: -8.5007 },
+      { name: "Marrakech", lat: 31.6295, lon: -7.9811 },
+      { name: "Rabat", lat: 34.0209, lon: -6.8416 },
+      { name: "Agadir", lat: 30.4278, lon: -9.5981 },
+      { name: "Tanger", lat: 35.7595, lon: -5.8340 },
+      { name: "Oujda", lat: 34.6814, lon: -1.9086 },
+      { name: "Dakhla", lat: 23.6848, lon: -15.9570 }
     ];
 
     let isLoadingWeather = false;
 
     function getWeatherInfo(code) {
-      if (code === 0) return { label: "صافي", icon: "fa-sun text-amber-400" };
-      if (code <= 3) return { label: "غائم جزئياً", icon: "fa-cloud-sun text-cyan-300" };
-      if (code <= 48) return { label: "ضباب", icon: "fa-smog text-slate-300" };
-      if (code <= 67) return { label: "أمطار", icon: "fa-cloud-rain text-sky-400" };
-      if (code <= 77) return { label: "ثلوج", icon: "fa-snowflake text-cyan-200" };
-      if (code <= 82) return { label: "زخات", icon: "fa-cloud-showers-heavy text-blue-400" };
-      if (code >= 95) return { label: "عواصف", icon: "fa-bolt text-yellow-400" };
-      return { label: "متقلب", icon: "fa-cloud text-slate-300" };
+      if (code === 0) return { label: "Clair", icon: "fa-sun text-amber-400" };
+      if (code <= 3) return { label: "Partiellement nuageux", icon: "fa-cloud-sun text-cyan-300" };
+      if (code <= 48) return { label: "Brouillard", icon: "fa-smog text-slate-300" };
+      if (code <= 67) return { label: "Pluie", icon: "fa-cloud-rain text-sky-400" };
+      if (code <= 77) return { label: "Neige", icon: "fa-snowflake text-cyan-200" };
+      if (code <= 82) return { label: "Averses", icon: "fa-cloud-showers-heavy text-blue-400" };
+      if (code >= 95) return { label: "Orages", icon: "fa-bolt text-yellow-400" };
+      return { label: "Variable", icon: "fa-cloud text-slate-300" };
     }
 
     async function fetchCityWeather(city) {
@@ -1120,7 +1170,7 @@
       }
 
       if (showSpinner || !listEl.dataset.initialized) {
-        listEl.innerHTML = `<div class="text-gray-400 py-3 text-center"><i class="fas fa-spinner fa-spin"></i> جاري تحميل الطقس...</div>`;
+        listEl.innerHTML = `<div class="text-gray-400 py-3 text-center"><i class="fas fa-spinner fa-spin"></i> Chargement météo...</div>`;
       }
 
       try {
@@ -1315,7 +1365,7 @@
       setTimeout(() => {
         const botMsg = document.createElement('div');
         botMsg.className = 'bg-slate-900/90 border-l-2 border-rose-500 px-2 py-1 rounded text-[11px] self-start max-w-[85%] leading-tight';
-        botMsg.innerHTML = `<strong class="text-rose-400">أهلا وسهلا :</strong> تم إرسال رسالتك بنجاح!`;
+        botMsg.innerHTML = `<strong class="text-rose-400">Support :</strong> Votre message a bien été envoyé !`;
         chatBox.appendChild(botMsg);
         chatBox.scrollTop = chatBox.scrollHeight;
       }, 600);
@@ -1325,7 +1375,7 @@
     window.addEventListener('DOMContentLoaded', () => {
       renderPcSoftwareList();
       renderRadioGrid();
-      initGoogleSignInButton();
+      syncChatMemberUi();
       syncLiveChat();
       setInterval(syncLiveChat, 2000);
       loadMoroccoWeather(true);
