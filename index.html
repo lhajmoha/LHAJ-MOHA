@@ -389,47 +389,25 @@
         </a>
       </div>
 
-      <!-- FIVEM SERVER PLAYERS ANALYZER (DIRECTLY UNDER MEDIC ACADEMY) -->
+      <!-- MOROCCO FIVEM SERVERS PLAYERS (AUTO-LOADED, NO INPUT NEEDED) -->
       <div class="bg-cyber-card/90 border border-cyan-500/40 hover:border-cyan-400/70 rounded-2xl p-3.5 backdrop-blur-md transition shadow-xl shadow-cyan-950/30">
         <div class="flex items-center justify-between gap-2 mb-2 pb-2 border-b border-slate-800/90">
           <span class="text-xs font-black uppercase tracking-wider gradient-text-multi flex items-center gap-1.5">
-            <i class="fas fa-users text-cyan-400"></i> FiveM Players Check
+            <i class="fas fa-flag text-rose-400"></i> FiveM Maroc Players
           </span>
-          <span class="text-[9px] bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 px-2 py-0.5 rounded-full font-bold">
-            Live
-          </span>
-        </div>
-
-        <p class="text-[10px] text-gray-400 mb-2 leading-tight">
-          دخل كود أو رابط CFX ديال أي سيرفر باش تشوف شحال ضارب ديال اللاعبين دابا.
-        </p>
-
-        <div class="flex gap-1.5 mb-2">
-          <input 
-            type="text" 
-            id="fivemServerInput" 
-            placeholder="cfx code / cfx.re/join/..." 
-            class="flex-1 min-w-0 bg-black/60 border border-slate-800 rounded-lg px-2.5 py-1.5 text-[11px] text-white focus:outline-none focus:border-cyan-400"
-            onkeypress="if(event.key==='Enter') analyzeFivemServer()"
-          >
           <button 
-            onclick="analyzeFivemServer()" 
-            class="bg-gradient-to-r from-cyan-500 to-rose-600 hover:opacity-95 text-white px-2.5 py-1.5 rounded-lg text-[11px] font-bold flex items-center gap-1 flex-shrink-0 transition"
+            onclick="loadMoroccoFivemServers()" 
+            title="Actualiser"
+            class="text-[10px] bg-cyan-500/15 hover:bg-cyan-500/25 border border-cyan-500/30 text-cyan-300 px-2 py-0.5 rounded-full font-bold flex items-center gap-1 transition"
           >
-            <i class="fas fa-search text-[10px]"></i> Scan
+            <i class="fas fa-sync-alt text-[9px]"></i> Refresh
           </button>
         </div>
 
-        <label class="flex items-center justify-between text-[10px] text-gray-400 mb-2 cursor-pointer select-none bg-black/30 px-2 py-1 rounded-lg border border-slate-800/70">
-          <span class="flex items-center gap-1.5">
-            <input type="checkbox" id="fivemAutoRefresh" onchange="toggleFivemAutoRefresh()" class="accent-cyan-400 rounded">
-            تحديث تلقائي كل 20s
-          </span>
-          <span id="fivemLastUpdate" class="text-cyan-400 font-mono">--:--:--</span>
-        </label>
-
-        <div id="fivemServerResult" class="bg-black/45 border border-slate-800/90 rounded-xl p-2.5 text-[11px] text-gray-300 leading-relaxed">
-          في انتظار إدخال كود السيرفر...
+        <div id="moroccoServersList" class="space-y-1.5 max-h-60 overflow-y-auto pr-1 text-[11px] text-gray-300">
+          <div class="text-cyan-300 py-2 text-center">
+            <i class="fas fa-spinner fa-spin"></i> جاري جلب سيرفرات المغرب...
+          </div>
         </div>
       </div>
 
@@ -487,75 +465,89 @@
       }).catch(err => console.log("Discord error:", err));
     }
 
-    // ================= FIVEM SERVER PLAYER ANALYZER =================
-    let fivemTimer = null;
-    let lastFivemCount = null;
+    // ================= MOROCCO FIVEM SERVERS (PLAYERS ONLY) =================
+    const FIVEM_MA_URL = "https://servers-frontend.fivem.net/api/servers/streamServer/1?country=ma";
 
-    function extractFivemCfxCode(raw) {
-      const clean = (raw || "").trim();
-      const match = clean.match(/cfx\.re\/join\/([a-zA-Z0-9]+)/i);
-      return match ? match[1] : clean;
+    function cleanFivemName(name) {
+      return (name || "FiveM Server")
+        .replace(/\^[0-9]/g, "")
+        .replace(/~[a-zA-Z0-9]+~/g, "")
+        .trim();
     }
 
-    async function analyzeFivemServer() {
-      const inputEl = document.getElementById("fivemServerInput");
-      const resultEl = document.getElementById("fivemServerResult");
-      const lastEl = document.getElementById("fivemLastUpdate");
-      if (!inputEl || !resultEl) return;
+    function isMoroccanServer(item) {
+      const data = item.Data || {};
+      const locale = String(data.vars?.locale || "").toLowerCase();
+      const name = cleanFivemName(data.hostname || "").toLowerCase();
+      return (
+        locale.startsWith("ar-ma") ||
+        locale.includes("morocco") ||
+        locale.includes("maroc") ||
+        name.includes("morocco") ||
+        name.includes("maroc") ||
+        name.includes("المغرب") ||
+        name.includes("casablanca") ||
+        name.includes("rabat") ||
+        name.includes("marrakech") ||
+        name.includes("tanger") ||
+        name.includes("agadir") ||
+        name.includes("🇲🇦")
+      );
+    }
 
-      const code = extractFivemCfxCode(inputEl.value);
-      if (!code) {
-        resultEl.innerHTML = `<span class="text-rose-400">عافاك دخل كود أو رابط CFX ديال السيرفر.</span>`;
-        return;
+    async function fetchFivemStreamText() {
+      try {
+        const directRes = await fetch(FIVEM_MA_URL);
+        if (directRes.ok) return await directRes.text();
+      } catch (_) {}
+
+      const proxyUrl = "https://api.allorigins.win/raw?url=" + encodeURIComponent(FIVEM_MA_URL);
+      const proxyRes = await fetch(proxyUrl);
+      if (!proxyRes.ok) throw new Error("تعذر الاتصال بواجهة FiveM");
+      return await proxyRes.text();
+    }
+
+    function parseStreamServers(rawText) {
+      const servers = [];
+      const lines = rawText.split("\n");
+      for (const line of lines) {
+        if (!line.trim()) continue;
+        try {
+          const obj = JSON.parse(line);
+          if (obj.Data && isMoroccanServer(obj)) {
+            servers.push({
+              name: cleanFivemName(obj.Data.hostname),
+              players: Number(obj.Data.clients ?? 0)
+            });
+          }
+        } catch (_) {}
       }
+      return servers.sort((a, b) => b.players - a.players);
+    }
 
-      resultEl.innerHTML = `<span class="text-cyan-300"><i class="fas fa-spinner fa-spin"></i> جاري تحليل السيرفر...</span>`;
+    async function loadMoroccoFivemServers() {
+      const box = document.getElementById("moroccoServersList");
+      if (!box) return;
+
+      box.innerHTML = `<div class="text-cyan-300 py-2 text-center"><i class="fas fa-spinner fa-spin"></i> جاري التحديث...</div>`;
 
       try {
-        const res = await fetch(`https://servers-frontend.fivem.net/api/servers/single/${encodeURIComponent(code)}`);
-        if (!res.ok) throw new Error("السيرفر غير موجود أو الكود غلط");
+        const rawText = await fetchFivemStreamText();
+        const servers = parseStreamServers(rawText);
 
-        const json = await res.json();
-        const data = json.Data;
-        if (!data) throw new Error("تعذر قراءة بيانات السيرفر");
-
-        const serverName = (data.hostname || "FiveM Server").replace(/\^[0-9]/g, "").trim();
-        const clients = Number(data.clients ?? 0);
-        const maxClients = Number(data.sv_maxclients ?? 0);
-
-        let diffBadge = "";
-        if (lastFivemCount !== null) {
-          const diff = clients - lastFivemCount;
-          if (diff > 0) diffBadge = `<span class="text-emerald-400 font-bold">(+${diff})</span>`;
-          else if (diff < 0) diffBadge = `<span class="text-rose-400 font-bold">(${diff})</span>`;
-          else diffBadge = `<span class="text-gray-400">(0)</span>`;
+        if (!servers.length) {
+          box.innerHTML = `<div class="text-gray-400 py-2 text-center">لا توجد سيرفرات مغربية ظاهرة حالياً.</div>`;
+          return;
         }
-        lastFivemCount = clients;
 
-        const nowStr = new Date().toLocaleTimeString("fr-FR", { hour12: false });
-        if (lastEl) lastEl.textContent = nowStr;
-
-        resultEl.innerHTML = `
-          <div class="font-bold text-white truncate mb-1" title="${serverName.replace(/"/g, '&quot;')}">${serverName}</div>
-          <div class="flex items-center justify-between bg-black/50 border border-slate-800 rounded-lg px-2.5 py-1.5">
-            <span class="text-gray-400 text-[10px]">اللاعبين الآن:</span>
-            <span class="text-sm font-black text-emerald-400">${clients} / ${maxClients} ${diffBadge}</span>
+        box.innerHTML = servers.map(srv => `
+          <div class="bg-black/50 border border-slate-800/90 rounded-lg px-2.5 py-1.5 flex items-center justify-between gap-2">
+            <span class="text-white font-semibold truncate" title="${srv.name.replace(/"/g, '&quot;')}">${srv.name}</span>
+            <span class="text-emerald-400 font-black flex-shrink-0">${srv.players} players</span>
           </div>
-        `;
+        `).join("");
       } catch (err) {
-        resultEl.innerHTML = `<span class="text-rose-400">خطأ: ${err.message}</span>`;
-      }
-    }
-
-    function toggleFivemAutoRefresh() {
-      const checked = document.getElementById("fivemAutoRefresh")?.checked;
-      if (fivemTimer) {
-        clearInterval(fivemTimer);
-        fivemTimer = null;
-      }
-      if (checked) {
-        analyzeFivemServer();
-        fivemTimer = setInterval(analyzeFivemServer, 20000);
+        box.innerHTML = `<div class="text-rose-400 py-2 text-center">تعذر جلب القائمة حالياً</div>`;
       }
     }
 
@@ -740,6 +732,8 @@
     window.addEventListener('DOMContentLoaded', () => {
       renderPcSoftwareList();
       renderRadioGrid();
+      loadMoroccoFivemServers();
+      setInterval(loadMoroccoFivemServers, 30000);
     });
   </script>
 </body>
