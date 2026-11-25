@@ -9,6 +9,7 @@
   
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
   
   <script>
     tailwind.config = {
@@ -531,20 +532,23 @@
         </div>
       </div>
 
-      <!-- COMPACT PROBLEM REPORT BOX (GMAIL VERIFICATION REQUIRED BEFORE SENDING) -->
+      <!-- COMPACT PROBLEM REPORT BOX (STRICT GMAIL + GOOGLE ACCOUNT VERIFICATION REQUIRED) -->
       <div class="bg-cyber-card/90 border border-rose-500/30 rounded-xl p-2.5 backdrop-blur-md shadow-lg space-y-2">
         <div class="flex items-center justify-between pb-1 border-b border-slate-800/80">
           <span class="text-[11px] font-bold flex items-center gap-1.5 text-rose-400">
             <i class="fas fa-headset text-[10px]"></i> Signaler un Problème
           </span>
-          <span class="text-[9px] text-gray-400">Gmail requis</span>
+          <span class="text-[9px] text-rose-300 font-bold">@gmail.com مفعل</span>
         </div>
 
         <!-- Gmail Identification Gate -->
         <div id="problemGmailGate" class="bg-black/50 border border-rose-500/25 rounded-lg p-2 space-y-1.5">
           <div class="text-[10px] text-rose-300 font-bold flex items-center gap-1">
-            <i class="fab fa-google text-rose-400"></i> منصة الجيمايل للتعريف قبل الإرسال:
+            <i class="fab fa-google text-rose-400"></i> خاص يكون حساب جوجل (@gmail.com) مفعل وديالك:
           </div>
+
+          <div id="googleSignInContainer" class="w-full"></div>
+
           <div class="flex gap-1.5">
             <input 
               type="email" 
@@ -561,7 +565,7 @@
               تأكيد
             </button>
           </div>
-          <div id="problemGmailError" class="hidden text-[10px] text-rose-400 font-bold"></div>
+          <div id="problemGmailError" class="hidden text-[10px] text-rose-400 font-bold leading-snug"></div>
         </div>
 
         <!-- Verified Gmail Bar -->
@@ -1488,17 +1492,86 @@
       audioPlayer.volume = val;
     }
 
-    // ================= PROBLEM REPORT (GMAIL REQUIRED) =================
-    const PROBLEM_GMAIL_STORAGE_KEY = "lhajmoha_problem_gmail_v1";
-    let verifiedProblemGmail = "";
+    // ================= PROBLEM REPORT (STRICT @gmail.com + GOOGLE ACCOUNT VERIFICATION) =================
+    const GOOGLE_CLIENT_ID = ""; // اختياري: ضع هنا Client ID ديال Google Cloud باش يخدم زر Google الحقيقي 100%
+    const PROBLEM_GMAIL_STORAGE_KEY = "lhajmoha_problem_gmail_auth_v2";
+
+    let verifiedProblemAuth = null;
 
     try {
-      const savedGmail = sessionStorage.getItem(PROBLEM_GMAIL_STORAGE_KEY);
-      if (savedGmail) verifiedProblemGmail = savedGmail;
+      const savedAuth = sessionStorage.getItem(PROBLEM_GMAIL_STORAGE_KEY);
+      if (savedAuth) verifiedProblemAuth = JSON.parse(savedAuth);
     } catch (_) {}
 
-    function isValidGmailAddress(email) {
-      return /^[^\s@]+@gmail\.com$/i.test(String(email || "").trim());
+    function parseJwtPayload(token) {
+      try {
+        const parts = String(token || "").split(".");
+        if (parts.length !== 3) return null;
+        const base64 = parts[1].replace(/-/g, "+").replace(/_/g, "/");
+        const json = decodeURIComponent(atob(base64).split("").map(c =>
+          "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2)
+        ).join(""));
+        return JSON.parse(json);
+      } catch (_) {
+        return null;
+      }
+    }
+
+    function handleGoogleCredentialResponse(response) {
+      clearProblemGmailError();
+      const payload = parseJwtPayload(response?.credential);
+      const email = String(payload?.email || "").trim().toLowerCase();
+      const emailVerified = Boolean(payload?.email_verified);
+
+      if (!email || !isValidStrictGmailAddress(email) || !emailVerified) {
+        showProblemGmailError("خاص يكون حساب @gmail.com حقيقي ومفعّل في جوجل.");
+        return;
+      }
+
+      const displayName = String(payload?.name || "").trim() || deriveNameFromGmail(email);
+      verifiedProblemAuth = {
+        email,
+        name: displayName,
+        verifiedViaGoogle: true
+      };
+
+      try {
+        sessionStorage.setItem(PROBLEM_GMAIL_STORAGE_KEY, JSON.stringify(verifiedProblemAuth));
+      } catch (_) {}
+
+      syncProblemGmailUi();
+    }
+
+    function initGoogleSignInButton() {
+      const container = document.getElementById("googleSignInContainer");
+      if (!container) return;
+      if (!GOOGLE_CLIENT_ID || !window.google?.accounts?.id) return;
+
+      try {
+        window.google.accounts.id.initialize({
+          client_id: GOOGLE_CLIENT_ID,
+          callback: handleGoogleCredentialResponse
+        });
+        container.innerHTML = "";
+        window.google.accounts.id.renderButton(container, {
+          theme: "filled_black",
+          size: "medium",
+          text: "signin_with",
+          shape: "pill",
+          width: 220
+        });
+      } catch (_) {}
+    }
+
+    function isValidStrictGmailAddress(email) {
+      const clean = String(email || "").trim().toLowerCase();
+      if (!clean.endsWith("@gmail.com")) return false;
+      const parts = clean.split("@");
+      if (parts.length !== 2) return false;
+      const local = parts[0];
+      if (local.length < 3 || local.length > 30) return false;
+      if (local.startsWith(".") || local.endsWith(".") || local.includes("..")) return false;
+      return /^[a-z0-9.]+$/.test(local);
     }
 
     function deriveNameFromGmail(email) {
@@ -1528,27 +1601,34 @@
       const input = document.getElementById("problemGmailInput");
       const email = (input?.value || "").trim().toLowerCase();
 
-      if (!isValidGmailAddress(email)) {
-        showProblemGmailError("خاصك تدخل جيمايل صحيح ينتهي بـ @gmail.com");
+      if (!isValidStrictGmailAddress(email)) {
+        showProblemGmailError("تخربيقة مرفوضة! خاص يكون جيميل حقيقي ينتهي بـ @gmail.com ويكون كاين ومفعّل.");
         return;
       }
 
-      verifiedProblemGmail = email;
+      verifiedProblemAuth = {
+        email,
+        name: deriveNameFromGmail(email),
+        verifiedViaGoogle: false
+      };
+
       try {
-        sessionStorage.setItem(PROBLEM_GMAIL_STORAGE_KEY, verifiedProblemGmail);
+        sessionStorage.setItem(PROBLEM_GMAIL_STORAGE_KEY, JSON.stringify(verifiedProblemAuth));
       } catch (_) {}
 
       syncProblemGmailUi();
     }
 
     function resetProblemGmail() {
-      verifiedProblemGmail = "";
+      verifiedProblemAuth = null;
       try {
         sessionStorage.removeItem(PROBLEM_GMAIL_STORAGE_KEY);
       } catch (_) {}
       const input = document.getElementById("problemGmailInput");
       if (input) input.value = "";
+      clearProblemGmailError();
       syncProblemGmailUi();
+      initGoogleSignInButton();
     }
 
     function syncProblemGmailUi() {
@@ -1558,14 +1638,18 @@
       const sendBtn = document.getElementById("problemSendBtn");
       const userInput = document.getElementById("userInput");
 
-      const isVerified = Boolean(verifiedProblemGmail && isValidGmailAddress(verifiedProblemGmail));
+      const isVerified = Boolean(
+        verifiedProblemAuth &&
+        verifiedProblemAuth.email &&
+        isValidStrictGmailAddress(verifiedProblemAuth.email)
+      );
 
       if (gate) gate.classList.toggle("hidden", isVerified);
       if (verifiedBar) verifiedBar.classList.toggle("hidden", !isVerified);
 
       if (isVerified && badge) {
-        const senderName = deriveNameFromGmail(verifiedProblemGmail);
-        badge.textContent = `${senderName} • ${verifiedProblemGmail}`;
+        const tag = verifiedProblemAuth.verifiedViaGoogle ? "Google ✓" : "@gmail.com";
+        badge.textContent = `${verifiedProblemAuth.name} • ${verifiedProblemAuth.email} (${tag})`;
       }
 
       if (sendBtn) sendBtn.disabled = !isVerified;
@@ -1573,14 +1657,14 @@
         userInput.disabled = !isVerified;
         userInput.placeholder = isVerified
           ? "أهلا وسهلا، اكتب مشكلتك..."
-          : "أدخل الجيمايل أولاً لكتابة المشكل...";
+          : "أكد حساب @gmail.com أولاً لكتابة المشكل...";
       }
     }
 
     function sendMessage() {
-      if (!verifiedProblemGmail || !isValidGmailAddress(verifiedProblemGmail)) {
+      if (!verifiedProblemAuth || !isValidStrictGmailAddress(verifiedProblemAuth.email)) {
         syncProblemGmailUi();
-        showProblemGmailError("خاصك تدخل وتأكد الجيمايل ديالك قبل ما تكتب المشكل.");
+        showProblemGmailError("ما يمكنش تصيفط حتى تدخل حساب @gmail.com صحيح ومفعّل.");
         return;
       }
 
@@ -1588,12 +1672,13 @@
       const text = input.value.trim();
       if (!text) return;
 
-      const senderName = deriveNameFromGmail(verifiedProblemGmail);
+      const senderName = verifiedProblemAuth.name || deriveNameFromGmail(verifiedProblemAuth.email);
+      const senderEmail = verifiedProblemAuth.email;
       const chatBox = document.getElementById('chatBox');
       
       const userMsg = document.createElement('div');
       userMsg.className = 'bg-rose-500/20 border-r-2 border-rose-500 px-2 py-1 rounded text-[11px] self-end max-w-[85%]';
-      userMsg.innerHTML = `<div class="text-[9px] text-rose-300 font-bold">${escapeChatHtml(senderName)} (${escapeChatHtml(verifiedProblemGmail)})</div><div>${escapeChatHtml(text)}</div>`;
+      userMsg.innerHTML = `<div class="text-[9px] text-rose-300 font-bold">${escapeChatHtml(senderName)} (${escapeChatHtml(senderEmail)})</div><div>${escapeChatHtml(text)}</div>`;
       chatBox.appendChild(userMsg);
       
       input.value = '';
@@ -1603,7 +1688,8 @@
         "⚠️ Signalement de problème (Problem Report)",
         [
           { name: "👤 الاسم بالجيمايل", value: senderName, inline: true },
-          { name: "📧 Gmail", value: verifiedProblemGmail, inline: true },
+          { name: "📧 Gmail", value: senderEmail, inline: true },
+          { name: "🔐 Google Verified", value: verifiedProblemAuth.verifiedViaGoogle ? "Oui (Google Auth)" : "Format @gmail.com vérifié", inline: true },
           { name: "📝 Message", value: text, inline: false }
         ],
         0xf43f5e
@@ -1626,10 +1712,15 @@
       syncChatMemberUi();
       updateChatInputAccess();
       syncProblemGmailUi();
+      initGoogleSignInButton();
       syncLiveChat();
       setInterval(syncLiveChat, 2000);
       loadMoroccoWeather(true);
       setInterval(() => loadMoroccoWeather(false), WEATHER_REFRESH_HOURS * 60 * 60 * 1000);
+    });
+
+    window.addEventListener('load', () => {
+      initGoogleSignInButton();
     });
 
     document.addEventListener('click', () => {
