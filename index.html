@@ -506,24 +506,71 @@
         </div>
       </div>
 
-      <!-- COMPACT PROBLEM REPORT BOX (UNDER GTA VI / ELECTREC CITY) -->
-      <div class="bg-cyber-card/90 border border-rose-500/30 rounded-xl p-2.5 backdrop-blur-md shadow-lg">
-        <div class="flex items-center justify-between mb-1.5 pb-1 border-b border-slate-800/80">
+      <!-- COMPACT PROBLEM REPORT BOX (GMAIL VERIFICATION REQUIRED BEFORE SENDING) -->
+      <div class="bg-cyber-card/90 border border-rose-500/30 rounded-xl p-2.5 backdrop-blur-md shadow-lg space-y-2">
+        <div class="flex items-center justify-between pb-1 border-b border-slate-800/80">
           <span class="text-[11px] font-bold flex items-center gap-1.5 text-rose-400">
             <i class="fas fa-headset text-[10px]"></i> Signaler un Problème
           </span>
-          <span class="text-[9px] text-gray-400">Support</span>
+          <span class="text-[9px] text-gray-400">Gmail requis</span>
         </div>
 
-        <div id="chatBox" class="h-16 overflow-y-auto flex flex-col gap-1.5 mb-2 pr-1 bg-black/40 p-1.5 rounded-lg border border-slate-800/80 text-[11px]">
+        <!-- Gmail Identification Gate -->
+        <div id="problemGmailGate" class="bg-black/50 border border-rose-500/25 rounded-lg p-2 space-y-1.5">
+          <div class="text-[10px] text-rose-300 font-bold flex items-center gap-1">
+            <i class="fab fa-google text-rose-400"></i> منصة الجيمايل للتعريف قبل الإرسال:
+          </div>
+          <div class="flex gap-1.5">
+            <input 
+              type="email" 
+              id="problemGmailInput" 
+              placeholder="exemple@gmail.com" 
+              onkeypress="if(event.key==='Enter') verifyProblemGmail()"
+              class="flex-1 min-w-0 bg-slate-900/90 border border-slate-700 rounded px-2 py-1 text-[10px] text-white focus:outline-none focus:border-rose-400"
+            >
+            <button 
+              type="button" 
+              onclick="verifyProblemGmail()" 
+              class="bg-rose-500 hover:bg-rose-400 text-white px-2 py-1 rounded text-[10px] font-bold flex-shrink-0 transition"
+            >
+              تأكيد
+            </button>
+          </div>
+          <div id="problemGmailError" class="hidden text-[10px] text-rose-400 font-bold"></div>
+        </div>
+
+        <!-- Verified Gmail Bar -->
+        <div id="problemGmailVerifiedBar" class="hidden bg-emerald-950/40 border border-emerald-500/30 rounded-lg px-2 py-1 flex items-center justify-between gap-2 text-[10px]">
+          <span id="problemGmailBadge" class="text-emerald-300 font-bold truncate"></span>
+          <button 
+            type="button" 
+            onclick="resetProblemGmail()" 
+            class="text-rose-300 hover:underline font-bold flex-shrink-0"
+          >
+            تغيير
+          </button>
+        </div>
+
+        <div id="chatBox" class="h-16 overflow-y-auto flex flex-col gap-1.5 pr-1 bg-black/40 p-1.5 rounded-lg border border-slate-800/80 text-[11px]">
           <div class="bg-slate-900/90 border-l-2 border-rose-500 px-2 py-1 rounded text-gray-200 leading-tight">
-            <strong class="text-rose-400">Support :</strong> Bienvenue ! Indiquez votre problème ici, nous vous répondrons rapidement.
+            <strong class="text-rose-400">أهلا وسهلا :</strong> مرحباً بك! اكتب مشكلتك هنا وسنرد عليك في أقرب وقت.
           </div>
         </div>
 
         <div class="flex gap-1.5">
-          <input type="text" id="userInput" placeholder="Décrivez votre problème..." class="flex-1 min-w-0 bg-black/60 border border-slate-800 rounded-lg px-2.5 py-1 text-[11px] text-white focus:outline-none focus:border-rose-500" onkeypress="if(event.key==='Enter') sendMessage()">
-          <button type="button" onclick="sendMessage()" class="bg-gradient-to-r from-rose-500 to-pink-600 text-white px-2.5 py-1 rounded-lg font-bold text-[11px] hover:opacity-90 transition flex items-center gap-1 flex-shrink-0">
+          <input 
+            type="text" 
+            id="userInput" 
+            placeholder="أهلا وسهلا، اكتب مشكلتك..." 
+            class="flex-1 min-w-0 bg-black/60 border border-slate-800 rounded-lg px-2.5 py-1 text-[11px] text-white focus:outline-none focus:border-rose-500" 
+            onkeypress="if(event.key==='Enter') sendMessage()"
+          >
+          <button 
+            type="button" 
+            id="problemSendBtn"
+            onclick="sendMessage()" 
+            class="bg-gradient-to-r from-rose-500 to-pink-600 text-white px-2.5 py-1 rounded-lg font-bold text-[11px] hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed transition flex items-center gap-1 flex-shrink-0"
+          >
             <i class="fas fa-paper-plane text-[10px]"></i>
           </button>
         </div>
@@ -551,7 +598,7 @@
         </div>
 
         <p class="text-[11px] text-gray-300 leading-relaxed mb-3">
-          Académie médicale Lhaj Moha — Formation et encadrement des secours en immersion GTA V RP.
+          أكاديمية الحاج موحا للميديك — تكوين وتأطير عناصر الإسعاف في أجواء GTA V RP.
         </p>
 
         <a 
@@ -560,7 +607,7 @@
           rel="noopener noreferrer"
           class="w-full bg-[#5865F2] hover:bg-[#4752C4] text-white py-2 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition shadow-md shadow-[#5865F2]/30"
         >
-          <i class="fab fa-discord text-sm"></i> Discord de l'Académie
+          <i class="fab fa-discord text-sm"></i> Discord الأكاديمية
         </a>
       </div>
 
@@ -1337,17 +1384,112 @@
       audioPlayer.volume = val;
     }
 
-    // ================= PROBLEM REPORT =================
+    // ================= PROBLEM REPORT (GMAIL REQUIRED) =================
+    const PROBLEM_GMAIL_STORAGE_KEY = "lhajmoha_problem_gmail_v1";
+    let verifiedProblemGmail = "";
+
+    try {
+      const savedGmail = sessionStorage.getItem(PROBLEM_GMAIL_STORAGE_KEY);
+      if (savedGmail) verifiedProblemGmail = savedGmail;
+    } catch (_) {}
+
+    function isValidGmailAddress(email) {
+      return /^[^\s@]+@gmail\.com$/i.test(String(email || "").trim());
+    }
+
+    function deriveNameFromGmail(email) {
+      const prefix = String(email || "").split("@")[0] || "";
+      return prefix
+        .replace(/[._-]+/g, " ")
+        .trim()
+        .replace(/\b\w/g, ch => ch.toUpperCase()) || prefix;
+    }
+
+    function showProblemGmailError(msg) {
+      const errEl = document.getElementById("problemGmailError");
+      if (!errEl) return;
+      errEl.textContent = msg;
+      errEl.classList.remove("hidden");
+    }
+
+    function clearProblemGmailError() {
+      const errEl = document.getElementById("problemGmailError");
+      if (!errEl) return;
+      errEl.textContent = "";
+      errEl.classList.add("hidden");
+    }
+
+    function verifyProblemGmail() {
+      clearProblemGmailError();
+      const input = document.getElementById("problemGmailInput");
+      const email = (input?.value || "").trim().toLowerCase();
+
+      if (!isValidGmailAddress(email)) {
+        showProblemGmailError("خاصك تدخل جيمايل صحيح ينتهي بـ @gmail.com");
+        return;
+      }
+
+      verifiedProblemGmail = email;
+      try {
+        sessionStorage.setItem(PROBLEM_GMAIL_STORAGE_KEY, verifiedProblemGmail);
+      } catch (_) {}
+
+      syncProblemGmailUi();
+    }
+
+    function resetProblemGmail() {
+      verifiedProblemGmail = "";
+      try {
+        sessionStorage.removeItem(PROBLEM_GMAIL_STORAGE_KEY);
+      } catch (_) {}
+      const input = document.getElementById("problemGmailInput");
+      if (input) input.value = "";
+      syncProblemGmailUi();
+    }
+
+    function syncProblemGmailUi() {
+      const gate = document.getElementById("problemGmailGate");
+      const verifiedBar = document.getElementById("problemGmailVerifiedBar");
+      const badge = document.getElementById("problemGmailBadge");
+      const sendBtn = document.getElementById("problemSendBtn");
+      const userInput = document.getElementById("userInput");
+
+      const isVerified = Boolean(verifiedProblemGmail && isValidGmailAddress(verifiedProblemGmail));
+
+      if (gate) gate.classList.toggle("hidden", isVerified);
+      if (verifiedBar) verifiedBar.classList.toggle("hidden", !isVerified);
+
+      if (isVerified && badge) {
+        const senderName = deriveNameFromGmail(verifiedProblemGmail);
+        badge.textContent = `${senderName} • ${verifiedProblemGmail}`;
+      }
+
+      if (sendBtn) sendBtn.disabled = !isVerified;
+      if (userInput) {
+        userInput.disabled = !isVerified;
+        userInput.placeholder = isVerified
+          ? "أهلا وسهلا، اكتب مشكلتك..."
+          : "أدخل الجيمايل أولاً لكتابة المشكل...";
+      }
+    }
+
     function sendMessage() {
+      if (!verifiedProblemGmail || !isValidGmailAddress(verifiedProblemGmail)) {
+        syncProblemGmailUi();
+        showProblemGmailError("خاصك تدخل وتأكد الجيمايل ديالك قبل ما تكتب المشكل.");
+        return;
+      }
+
       const input = document.getElementById('userInput');
       const text = input.value.trim();
       if (!text) return;
 
+      const senderName = deriveNameFromGmail(verifiedProblemGmail);
       const chatBox = document.getElementById('chatBox');
       
       const userMsg = document.createElement('div');
       userMsg.className = 'bg-rose-500/20 border-r-2 border-rose-500 px-2 py-1 rounded text-[11px] self-end max-w-[85%]';
-      userMsg.innerText = text;
+      userMsg.innerHTML = `<div class="text-[9px] text-rose-300 font-bold">${escapeChatHtml(senderName)} (${escapeChatHtml(verifiedProblemGmail)})</div><div>${escapeChatHtml(text)}</div>`;
       chatBox.appendChild(userMsg);
       
       input.value = '';
@@ -1356,7 +1498,8 @@
       sendDiscordMonitoring(
         "⚠️ Signalement de problème (Problem Report)",
         [
-          { name: "👤 Expéditeur", value: "Visiteur du site", inline: true },
+          { name: "👤 الاسم بالجيمايل", value: senderName, inline: true },
+          { name: "📧 Gmail", value: verifiedProblemGmail, inline: true },
           { name: "📝 Message", value: text, inline: false }
         ],
         0xf43f5e
@@ -1365,7 +1508,7 @@
       setTimeout(() => {
         const botMsg = document.createElement('div');
         botMsg.className = 'bg-slate-900/90 border-l-2 border-rose-500 px-2 py-1 rounded text-[11px] self-start max-w-[85%] leading-tight';
-        botMsg.innerHTML = `<strong class="text-rose-400">Support :</strong> Votre message a bien été envoyé !`;
+        botMsg.innerHTML = `<strong class="text-rose-400">أهلا وسهلا :</strong> تم إرسال رسالتك بنجاح!`;
         chatBox.appendChild(botMsg);
         chatBox.scrollTop = chatBox.scrollHeight;
       }, 600);
@@ -1376,6 +1519,8 @@
       renderPcSoftwareList();
       renderRadioGrid();
       syncChatMemberUi();
+      updateChatInputAccess();
+      syncProblemGmailUi();
       syncLiveChat();
       setInterval(syncLiveChat, 2000);
       loadMoroccoWeather(true);
