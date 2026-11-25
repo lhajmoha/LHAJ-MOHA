@@ -66,6 +66,16 @@
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 10px 25px -10px rgba(255, 0, 85, 0.25);
     }
 
+    .fivem-row {
+      background: rgba(12, 15, 24, 0.92);
+      border: 1px solid rgba(148, 163, 184, 0.14);
+      transition: background 0.15s ease, border-color 0.15s ease;
+    }
+    .fivem-row:hover {
+      background: rgba(24, 29, 45, 0.98);
+      border-color: rgba(0, 240, 255, 0.35);
+    }
+
     .banner-wrapper {
       position: relative;
       width: 100%;
@@ -389,24 +399,25 @@
         </a>
       </div>
 
-      <!-- MOROCCO FIVEM SERVERS PLAYERS (AUTO-LOADED + CFX FALLBACK) -->
-      <div class="bg-cyber-card/90 border border-cyan-500/40 hover:border-cyan-400/70 rounded-2xl p-3.5 backdrop-blur-md transition shadow-xl shadow-cyan-950/30">
-        <div class="flex items-center justify-between gap-2 mb-2 pb-2 border-b border-slate-800/90">
-          <span class="text-xs font-black uppercase tracking-wider gradient-text-multi flex items-center gap-1.5">
-            <i class="fas fa-flag text-rose-400"></i> FiveM Maroc Players
+      <!-- FIVEM BROWSER STYLE SERVER PLAYERS (MOROCCO AUTO) -->
+      <div class="bg-[#0b0e17]/95 border border-slate-800 hover:border-cyan-500/40 rounded-2xl p-3 backdrop-blur-md transition shadow-xl">
+        <div class="flex items-center justify-between gap-2 mb-2.5 pb-2 border-b border-slate-800/90">
+          <span class="text-xs font-black uppercase tracking-wider text-white flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+            FiveM Maroc Players
           </span>
           <button 
             onclick="loadMoroccoFivemServers()" 
             title="Actualiser"
-            class="text-[10px] bg-cyan-500/15 hover:bg-cyan-500/25 border border-cyan-500/30 text-cyan-300 px-2 py-0.5 rounded-full font-bold flex items-center gap-1 transition"
+            class="text-[10px] bg-slate-800/90 hover:bg-slate-700 border border-slate-700 text-gray-200 px-2 py-0.5 rounded font-bold flex items-center gap-1 transition"
           >
             <i class="fas fa-sync-alt text-[9px]"></i> Refresh
           </button>
         </div>
 
-        <div id="moroccoServersList" class="space-y-1.5 max-h-60 overflow-y-auto pr-1 text-[11px] text-gray-300">
-          <div class="text-cyan-300 py-2 text-center">
-            <i class="fas fa-spinner fa-spin"></i> جاري جلب السيرفرات...
+        <div id="moroccoServersList" class="space-y-1.5 max-h-72 overflow-y-auto pr-0.5 text-[11px]">
+          <div class="text-gray-400 py-3 text-center">
+            <i class="fas fa-spinner fa-spin"></i> Chargement...
           </div>
         </div>
       </div>
@@ -465,123 +476,133 @@
       }).catch(err => console.log("Discord error:", err));
     }
 
-    // ================= MOROCCO FIVEM SERVERS (PLAYERS ONLY) =================
-    // تقدر تزيد هنا أكواد CFX ديال أي سيرفر مغربي بغيتيه يبان ديماً حتى إلى الـ stream تعطل
-    const MOROCCAN_CFX_SERVERS = [
-      // مثال: "abc123"
+    // ================= FIVEM BROWSER STYLE MOROCCO SERVERS =================
+    const MOROCCAN_CFX_CODES = [
+      { code: "kqmb4kd", label: "v-life", tag: "roleplay" },
+      { code: "rmm687p", label: "elysium", tag: "roleplay" },
+      { code: "bdxdzod", label: "strict", tag: "roleplay" },
+      { code: "a44gax9", label: "l3acheran", tag: "roleplay" },
+      { code: "6my84y7", label: "crimson", tag: "roleplay" },
+      { code: "5oomqj6", label: "realistic role play", tag: "roleplay" }
     ];
 
-    const MOROCCO_KEYWORDS = [
-      "morocco", "maroc", "maghreb", "المغرب", "مغربي",
-      "casablanca", "rabat", "marrakech", "tanger", "agadir",
-      "fes", "oujda", "kenitra", "meknes", "safia", "safi", "🇲🇦"
-    ];
-
-    function cleanFivemName(name) {
-      return (name || "FiveM Server")
+    function cleanFiveMText(str) {
+      return (str || "")
         .replace(/\^[0-9]/g, "")
         .replace(/~[a-zA-Z0-9]+~/g, "")
+        .replace(/\s+/g, " ")
         .trim();
     }
 
-    function matchesMorocco(data) {
-      const locale = String(data.vars?.locale || "").toLowerCase();
-      const name = cleanFivemName(data.hostname || "").toLowerCase();
-      if (locale.startsWith("ar-ma") || locale.includes("morocco") || locale.includes("maroc")) {
-        return true;
-      }
-      return MOROCCO_KEYWORDS.some(k => name.includes(k));
+    function extractTags(data, fallbackTag) {
+      const raw = String(data?.vars?.tags || "");
+      const parsed = raw
+        .split(",")
+        .map(t => cleanFiveMText(t).toLowerCase())
+        .filter(Boolean)
+        .slice(0, 3);
+      if (parsed.length > 0) return parsed;
+      return fallbackTag ? [fallbackTag] : [];
     }
 
-    async function fetchSingleCfxServer(code) {
-      const res = await fetch(`https://servers-frontend.fivem.net/api/servers/single/${encodeURIComponent(code)}`);
-      if (!res.ok) return null;
-      const json = await res.json();
-      const data = json.Data;
-      if (!data) return null;
-      return {
-        name: cleanFivemName(data.hostname),
-        players: Number(data.clients ?? 0)
-      };
+    function formatServerRow(srv) {
+      const safeName = cleanFiveMText(srv.name) || "FiveM Server";
+      const safeDesc = cleanFiveMText(srv.desc) || `cfx.re/join/${srv.code}`;
+      const tagsHtml = (srv.tags || [])
+        .map(t => `<span class="bg-[#1b2030] text-slate-300 border border-slate-700/70 px-1.5 py-0.5 rounded text-[9px] font-medium">${t}</span>`)
+        .join("");
+
+      const playersText = srv.players !== null && srv.players !== undefined
+        ? `${srv.players}<span class="text-slate-400 font-semibold">/${srv.maxPlayers ?? 0}</span>`
+        : `<span class="text-slate-400 font-semibold">Live</span>`;
+
+      return `
+        <div class="fivem-row rounded-lg px-2.5 py-2 flex items-center justify-between gap-2">
+          <div class="flex items-center gap-2 min-w-0">
+            <div class="w-7 h-7 rounded bg-[#181d2d] border border-slate-700/70 flex items-center justify-center text-cyan-400 font-black text-[11px] flex-shrink-0">
+              ${safeName.charAt(0).toUpperCase() || "M"}
+            </div>
+            <div class="min-w-0">
+              <div class="text-white font-bold text-[11px] leading-tight truncate" title="${safeName.replace(/"/g, "&quot;")}">${safeName}</div>
+              <div class="text-slate-400 text-[9px] truncate mt-0.5">${safeDesc}</div>
+              ${tagsHtml ? `<div class="flex flex-wrap gap-1 mt-1">${tagsHtml}</div>` : ""}
+            </div>
+          </div>
+
+          <div class="text-right flex-shrink-0 pl-1">
+            <div class="text-white font-black text-[11px] leading-none">
+              ${playersText}
+            </div>
+            <div class="text-[9px] text-slate-500 mt-0.5">players</div>
+          </div>
+        </div>
+      `;
     }
 
-    async function fetchStreamServersList() {
-      const endpoints = [
-        "https://servers-frontend.fivem.net/api/servers/streamServer/1?country=ma",
-        "https://servers-frontend.fivem.net/api/servers/streamServer/1"
+    async function fetchTextWithProxies(targetUrl) {
+      const candidates = [
+        targetUrl,
+        "https://corsproxy.io/?" + encodeURIComponent(targetUrl),
+        "https://api.allorigins.win/raw?url=" + encodeURIComponent(targetUrl)
       ];
 
-      for (const ep of endpoints) {
+      for (const url of candidates) {
         try {
-          const r = await fetch(ep);
-          if (!r.ok) continue;
-          const txt = await r.text();
-          const map = new Map();
-
-          for (const line of txt.split("\n")) {
-            if (!line.trim()) continue;
-            try {
-              const obj = JSON.parse(line);
-              const d = obj.Data;
-              if (d && matchesMorocco(d)) {
-                const name = cleanFivemName(d.hostname);
-                map.set(name, {
-                  name,
-                  players: Number(d.clients ?? 0)
-                });
-              }
-            } catch (_) {}
-          }
-
-          if (map.size > 0) {
-            return Array.from(map.values()).sort((a, b) => b.players - a.players);
+          const res = await fetch(url);
+          if (res.ok) {
+            const text = await res.text();
+            if (text && text.trim().length > 10) return text;
           }
         } catch (_) {}
       }
-      return [];
+      return null;
+    }
+
+    async function fetchSingleServerEntry(entry) {
+      const fallbackRow = {
+        code: entry.code,
+        name: entry.label,
+        desc: `cfx.re/join/${entry.code}`,
+        players: null,
+        maxPlayers: null,
+        tags: [entry.tag || "roleplay"]
+      };
+
+      const endpoint = `https://servers-frontend.fivem.net/api/servers/single/${encodeURIComponent(entry.code)}`;
+      const raw = await fetchTextWithProxies(endpoint);
+      if (!raw) return fallbackRow;
+
+      try {
+        const json = JSON.parse(raw);
+        const d = json.Data;
+        if (!d) return fallbackRow;
+
+        const apiName = cleanFiveMText(d.hostname);
+        return {
+          code: entry.code,
+          name: apiName || entry.label,
+          desc: cleanFiveMText(d.vars?.sv_projectDesc || "") || `cfx.re/join/${entry.code}`,
+          players: Number(d.clients ?? 0),
+          maxPlayers: Number(d.sv_maxclients ?? 0),
+          tags: extractTags(d, entry.tag)
+        };
+      } catch (_) {
+        return fallbackRow;
+      }
     }
 
     async function loadMoroccoFivemServers() {
-      const box = document.getElementById("moroccoServersList");
-      if (!box) return;
+      const listEl = document.getElementById("moroccoServersList");
+      if (!listEl) return;
 
-      box.innerHTML = `<div class="text-cyan-300 py-2 text-center"><i class="fas fa-spinner fa-spin"></i> جاري التحديث...</div>`;
+      listEl.innerHTML = `<div class="text-gray-400 py-3 text-center"><i class="fas fa-spinner fa-spin"></i> Chargement...</div>`;
 
-      const map = new Map();
+      const servers = await Promise.all(
+        MOROCCAN_CFX_CODES.map(entry => fetchSingleServerEntry(entry))
+      );
 
-      // 1. جلب السيرفرات من Stream API
-      const streamList = await fetchStreamServersList();
-      for (const s of streamList) {
-        map.set(s.name, s);
-      }
-
-      // 2. جلب السيرفرات المضافة يدوياً عبر كود CFX
-      if (MOROCCAN_CFX_SERVERS.length > 0) {
-        const extraResults = await Promise.all(
-          MOROCCAN_CFX_SERVERS.map(code => fetchSingleCfxServer(code).catch(() => null))
-        );
-        for (const item of extraResults) {
-          if (item) map.set(item.name, item);
-        }
-      }
-
-      const finalServers = Array.from(map.values()).sort((a, b) => b.players - a.players);
-
-      if (!finalServers.length) {
-        box.innerHTML = `
-          <div class="text-gray-400 py-2 text-center leading-relaxed">
-            لا توجد سيرفرات مغربية ظاهرة من الـ Stream حالياً. تقدر تزيد أكواد CFX داخل <code class="text-cyan-300">MOROCCAN_CFX_SERVERS</code>.
-          </div>
-        `;
-        return;
-      }
-
-      box.innerHTML = finalServers.map(srv => `
-        <div class="bg-black/50 border border-slate-800/90 rounded-lg px-2.5 py-1.5 flex items-center justify-between gap-2">
-          <span class="text-white font-semibold truncate" title="${srv.name.replace(/"/g, '&quot;')}">${srv.name}</span>
-          <span class="text-emerald-400 font-black flex-shrink-0">${srv.players} players</span>
-        </div>
-      `).join("");
+      servers.sort((a, b) => (b.players ?? -1) - (a.players ?? -1));
+      listEl.innerHTML = servers.map(formatServerRow).join("");
     }
 
     // ================= PC SOFTWARE LIST (OPEN FOR FUTURE ITEMS) =================
