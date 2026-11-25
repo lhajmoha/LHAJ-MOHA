@@ -121,7 +121,7 @@
   <!-- Main Grid Layout -->
   <div class="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
     
-    <!-- LEFT SIDEBAR: Spotify Playlist + PC Software List + Steam Latest Games -->
+    <!-- LEFT SIDEBAR: Spotify Playlist + PC Software List -->
     <div class="lg:col-span-3 order-2 lg:order-1 space-y-6 lg:sticky lg:top-6">
       
       <!-- Spotify Platform Box -->
@@ -179,28 +179,6 @@
             <i class="fas fa-plus-circle text-cyan-400"></i> Espace ouvert pour nouveaux ajouts
           </span>
           <span id="softwareCount" class="text-cyan-400 font-bold">0</span>
-        </div>
-      </div>
-
-      <!-- STEAM LATEST GAMES BOX -->
-      <div class="bg-cyber-card/90 border border-rose-500/30 rounded-2xl p-4 backdrop-blur-md shadow-xl shadow-rose-950/20">
-        <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-3">
-          <h2 class="text-base font-bold flex items-center gap-2 gradient-text-multi">
-            <i class="fab fa-steam text-rose-400"></i> آخر الألعاب • Steam
-          </h2>
-          <button 
-            onclick="loadLatestGames(true)" 
-            title="تحديث قائمة الألعاب"
-            class="text-[10px] bg-slate-800/90 hover:bg-slate-700 border border-slate-700 text-gray-200 px-2 py-0.5 rounded font-bold flex items-center gap-1 transition"
-          >
-            <i class="fas fa-sync-alt text-[9px]"></i> Refresh
-          </button>
-        </div>
-
-        <div id="latestGamesList" class="space-y-2.5 max-h-96 overflow-y-auto pr-1 text-[11px]">
-          <div class="text-gray-400 py-3 text-center">
-            <i class="fas fa-spinner fa-spin"></i> جاري تحميل الألعاب...
-          </div>
         </div>
       </div>
 
@@ -283,6 +261,30 @@
 
         <div class="bg-cyber-card/90 border border-slate-800 rounded-xl p-4 backdrop-blur-md">
           <div id="radioGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+        </div>
+      </div>
+
+      <!-- STEAM LATEST GAMES SECTION (UNDER HIT RADIO & RADIO MARS) -->
+      <div id="steamLatestGamesSection" class="space-y-3 pt-2">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+          <h2 class="text-xl font-bold flex items-center gap-2 gradient-text-multi">
+            <i class="fab fa-steam text-cyan-400"></i> آخر ألعاب Steam
+          </h2>
+          <button 
+            onclick="loadSteamLatestGames(true)" 
+            title="تحديث آخر ألعاب Steam"
+            class="text-xs bg-slate-800/90 hover:bg-slate-700 border border-slate-700 text-gray-200 px-2.5 py-1 rounded-lg font-bold flex items-center gap-1.5 transition"
+          >
+            <i class="fas fa-sync-alt text-[10px]"></i> Refresh
+          </button>
+        </div>
+
+        <div class="bg-cyber-card/90 border border-slate-800 rounded-xl p-4 backdrop-blur-md">
+          <div id="steamGamesGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+            <div class="col-span-full text-gray-400 py-4 text-center">
+              <i class="fas fa-spinner fa-spin"></i> جاري تحميل آخر ألعاب Steam...
+            </div>
+          </div>
         </div>
       </div>
 
@@ -498,31 +500,24 @@
       }).catch(err => console.log("Discord error:", err));
     }
 
-    // ================= STEAM LATEST GAMES (TITLE + ROLE + SPECS + RELEASE + FREE/PAID) =================
-    const GAMES_JSON_URL = "games.json";
+    // ================= STEAM LATEST GAMES (IMAGE + RELEASE DATE + PRICE + SPECS + ROLE) =================
+    const STEAM_GAMES_JSON_URL = "games.json";
 
-    const FALLBACK_STEAM_GAMES = [
+    const FALLBACK_RECENT_STEAM_GAMES = [
       {
-        title: "Counter-Strike 2",
-        role: "تصويب جماعي تنافسي (5 ضد 5) وتكتيكي على منصة Steam.",
-        releaseDate: "متوفر على Steam",
-        priceType: "مجانية",
-        requirements: "OS: Windows 10/11 | CPU: 4 threads | RAM: 8 GB | GPU: 1 GB VRAM",
-        link: "https://store.steampowered.com/app/730/"
-      },
-      {
-        title: "Grand Theft Auto V",
-        role: "عالم مفتوح وأكشن ومغامرات متعددة اللاعبين (GTA Online).",
-        releaseDate: "متوفر على Steam",
-        priceType: "بالثمن",
-        requirements: "OS: Windows 10 64-bit | CPU: i5-3470 / FX-8350 | RAM: 8 GB | GPU: GTX 660 2GB",
-        link: "https://store.steampowered.com/app/271590/"
+        title: "أحدث إصدارات Steam",
+        image: "https://store.cloudflare.steamstatic.com/store/home/default_header.jpg",
+        role: "أحدث الألعاب المتوفرة على منصة Steam بمختلف الأنماط والمغامرات.",
+        releaseDate: "إصدار حديث على Steam",
+        priceType: "مجانية / بالثمن",
+        requirements: "يتم التحديث تلقائياً من ملف games.json عبر سكريبت Steam",
+        link: "https://store.steampowered.com/explore/new/"
       }
     ];
 
-    let isLoadingGames = false;
+    let isLoadingSteamGames = false;
 
-    function escapeGameHtml(str) {
+    function escapeSteamHtml(str) {
       return String(str || "")
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
@@ -530,79 +525,101 @@
         .replace(/"/g, "&quot;");
     }
 
-    function formatGameCard(game) {
-      const title = escapeGameHtml(game.title || "لعبة Steam");
-      const role = escapeGameHtml(game.role || "غير محدد");
-      const releaseDate = escapeGameHtml(game.releaseDate || "غير محدد");
-      const priceType = escapeGameHtml(game.priceType || "غير محدد");
-      const requirements = escapeGameHtml(game.requirements || "غير محدد");
-      const link = game.link && /^https?:\/\//i.test(game.link) ? game.link : "";
+    function renderSteamGameCard(game) {
+      const title = escapeSteamHtml(game.title || "لعبة Steam");
+      const role = escapeSteamHtml(game.role || "غير محدد");
+      const releaseDate = escapeSteamHtml(game.releaseDate || "غير محدد");
+      const priceType = escapeSteamHtml(game.priceType || "غير محدد");
+      const requirements = escapeSteamHtml(game.requirements || "غير محدد");
+      const safeImage = game.image && /^https?:\/\//i.test(game.image)
+        ? escapeSteamHtml(game.image)
+        : "https://store.cloudflare.steamstatic.com/store/home/default_header.jpg";
+      const safeLink = game.link && /^https?:\/\//i.test(game.link)
+        ? escapeSteamHtml(game.link)
+        : "https://store.steampowered.com/";
 
       const isFree = /مجاني|free/i.test(priceType) && !/بالثمن|paid/i.test(priceType);
-      const badgeClass = isFree
+      const priceBadgeClass = isFree
         ? "bg-emerald-500/15 text-emerald-300 border-emerald-500/30"
         : "bg-amber-500/15 text-amber-300 border-amber-500/30";
 
       return `
-        <div class="bg-black/50 border border-slate-800 hover:border-cyan-400/50 rounded-xl p-3 space-y-1.5 transition">
-          <div class="flex items-start justify-between gap-2">
-            <div class="font-bold text-white text-xs leading-snug">${title}</div>
-            <span class="text-[9px] px-2 py-0.5 rounded-full border font-bold flex-shrink-0 ${badgeClass}">
-              ${priceType}
-            </span>
+        <div class="bg-black/50 border border-slate-800 hover:border-cyan-400/50 rounded-xl overflow-hidden flex flex-col justify-between transition group">
+          <div>
+            <div class="relative h-32 w-full overflow-hidden bg-slate-900 border-b border-slate-800/80">
+              <img 
+                src="${safeImage}" 
+                alt="${title}" 
+                loading="lazy"
+                onerror="this.onerror=null; this.src='https://store.cloudflare.steamstatic.com/store/home/default_header.jpg';"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              >
+              <span class="absolute top-2 right-2 text-[10px] px-2 py-0.5 rounded-full border font-bold backdrop-blur-sm ${priceBadgeClass}">
+                ${priceType}
+              </span>
+            </div>
+
+            <div class="p-3 space-y-1.5">
+              <div class="font-bold text-white text-sm leading-snug line-clamp-1" title="${title}">${title}</div>
+
+              <div class="text-[11px] text-cyan-300 font-semibold flex items-center gap-1.5">
+                <i class="far fa-calendar-alt text-cyan-400"></i>
+                <span>تاريخ الإصدار: ${releaseDate}</span>
+              </div>
+
+              <div class="text-gray-300 text-[11px] leading-relaxed">
+                <span class="text-cyan-400 font-bold">الدور:</span> ${role}
+              </div>
+
+              <div class="text-gray-300 text-[11px] leading-relaxed">
+                <span class="text-rose-400 font-bold">المتطلبات:</span> ${requirements}
+              </div>
+            </div>
           </div>
 
-          <div class="text-gray-300 text-[10px] leading-relaxed">
-            <span class="text-cyan-400 font-bold">الدور:</span> ${role}
-          </div>
-
-          <div class="text-gray-300 text-[10px] leading-relaxed">
-            <span class="text-rose-400 font-bold">المتطلبات:</span> ${requirements}
-          </div>
-
-          <div class="flex items-center justify-between gap-2 pt-1 border-t border-slate-800/80 text-[10px]">
-            <span class="text-slate-400">
-              <i class="far fa-calendar-alt text-cyan-400"></i> ${releaseDate}
-            </span>
-            ${link ? `<a href="${escapeGameHtml(link)}" target="_blank" rel="noopener noreferrer" class="text-cyan-400 hover:underline font-bold">Steam <i class="fas fa-external-link-alt text-[9px]"></i></a>` : ""}
+          <div class="px-3 py-2 border-t border-slate-800/80 bg-black/30 flex items-center justify-between text-[11px]">
+            <span class="text-slate-400"><i class="fab fa-steam text-cyan-400"></i> Steam</span>
+            <a href="${safeLink}" target="_blank" rel="noopener noreferrer" class="text-cyan-400 hover:underline font-bold">
+              صفحة اللعبة <i class="fas fa-external-link-alt text-[9px]"></i>
+            </a>
           </div>
         </div>
       `;
     }
 
-    async function loadGamesFromJson() {
+    async function fetchSteamGamesJson() {
       try {
-        const res = await fetch(`${GAMES_JSON_URL}?t=${Date.now()}`, { cache: "no-store" });
+        const res = await fetch(`${STEAM_GAMES_JSON_URL}?t=${Date.now()}`, { cache: "no-store" });
         if (!res.ok) return null;
-        const data = await res.json();
-        if (!Array.isArray(data) || !data.length) return null;
-        return data;
+        const list = await res.json();
+        if (!Array.isArray(list) || !list.length) return null;
+        return list;
       } catch (_) {
         return null;
       }
     }
 
-    async function loadLatestGames(showSpinner = false) {
-      if (isLoadingGames) return;
-      isLoadingGames = true;
+    async function loadSteamLatestGames(showSpinner = false) {
+      if (isLoadingSteamGames) return;
+      isLoadingSteamGames = true;
 
-      const listEl = document.getElementById("latestGamesList");
-      if (!listEl) {
-        isLoadingGames = false;
+      const gridEl = document.getElementById("steamGamesGrid");
+      if (!gridEl) {
+        isLoadingSteamGames = false;
         return;
       }
 
-      if (showSpinner || !listEl.dataset.initialized) {
-        listEl.innerHTML = `<div class="text-gray-400 py-3 text-center"><i class="fas fa-spinner fa-spin"></i> جاري تحميل الألعاب...</div>`;
+      if (showSpinner || !gridEl.dataset.initialized) {
+        gridEl.innerHTML = `<div class="col-span-full text-gray-400 py-4 text-center"><i class="fas fa-spinner fa-spin"></i> جاري تحميل آخر ألعاب Steam...</div>`;
       }
 
       try {
-        const jsonGames = await loadGamesFromJson();
-        const games = jsonGames && jsonGames.length ? jsonGames : FALLBACK_STEAM_GAMES;
-        listEl.innerHTML = games.map(formatGameCard).join("");
-        listEl.dataset.initialized = "1";
+        const gamesFromFile = await fetchSteamGamesJson();
+        const gamesToRender = gamesFromFile && gamesFromFile.length ? gamesFromFile : FALLBACK_RECENT_STEAM_GAMES;
+        gridEl.innerHTML = gamesToRender.map(renderSteamGameCard).join("");
+        gridEl.dataset.initialized = "1";
       } finally {
-        isLoadingGames = false;
+        isLoadingSteamGames = false;
       }
     }
 
@@ -869,7 +886,7 @@
     window.addEventListener('DOMContentLoaded', () => {
       renderPcSoftwareList();
       renderRadioGrid();
-      loadLatestGames(true);
+      loadSteamLatestGames(true);
       loadMoroccoWeather(true);
       setInterval(() => loadMoroccoWeather(false), WEATHER_REFRESH_HOURS * 60 * 60 * 1000);
     });
