@@ -1,8 +1,50 @@
-[
-  { "code": "kqmb4kd", "name": "v-life", "desc": "cfx.re/join/kqmb4kd", "players": 0, "maxPlayers": 128, "tags": ["roleplay"] },
-  { "code": "rmm687p", "name": "elysium", "desc": "cfx.re/join/rmm687p", "players": 0, "maxPlayers": 128, "tags": ["roleplay"] },
-  { "code": "bdxdzod", "name": "strict", "desc": "cfx.re/join/bdxdzod", "players": 0, "maxPlayers": 128, "tags": ["roleplay"] },
-  { "code": "a44gax9", "name": "l3acheran", "desc": "cfx.re/join/a44gax9", "players": 0, "maxPlayers": 128, "tags": ["roleplay"] },
-  { "code": "6my84y7", "name": "crimson", "desc": "cfx.re/join/6my84y7", "players": 0, "maxPlayers": 128, "tags": ["roleplay"] },
-  { "code": "5oomqj6", "name": "realistic role play", "desc": "cfx.re/join/5oomqj6", "players": 0, "maxPlayers": 128, "tags": ["roleplay"] }
-]
+$serversConfig = @(
+  @{ code = "kqmb4kd"; label = "v-life"; tag = "roleplay" },
+  @{ code = "rmm687p"; label = "elysium"; tag = "roleplay" },
+  @{ code = "bdxdzod"; label = "strict"; tag = "roleplay" },
+  @{ code = "a44gax9"; label = "l3acheran"; tag = "roleplay" },
+  @{ code = "6my84y7"; label = "crimson"; tag = "roleplay" },
+  @{ code = "5oomqj6"; label = "realistic role play"; tag = "roleplay" }
+)
+
+$outputList = @()
+
+foreach ($srv in $serversConfig) {
+  $url = "https://servers-frontend.fivem.net/api/servers/single/$($srv.code)"
+  try {
+    $res = Invoke-RestMethod -Uri $url -Headers @{ "User-Agent" = "Mozilla/5.0" } -TimeoutSec 10
+    $data = $res.Data
+
+    $cleanName = ($data.hostname -replace '\^[0-9]', '' -replace '~[a-zA-Z0-9]+~', '').Trim()
+    if ([string]::IsNullOrWhiteSpace($cleanName)) { $cleanName = $srv.label }
+
+    $players = if ($null -ne $data.clients) { [int]$data.clients } else { 0 }
+    $maxPlayers = if ($null -ne $data.sv_maxclients) { [int]$data.sv_maxclients } else { 0 }
+
+    $outputList += [PSCustomObject]@{
+      code       = $srv.code
+      name       = $cleanName
+      desc       = "cfx.re/join/$($srv.code)"
+      players    = $players
+      maxPlayers = $maxPlayers
+      tags       = @($srv.tag)
+    }
+
+    Write-Host "$cleanName -> $players / $maxPlayers" -ForegroundColor Green
+  }
+  catch {
+    $outputList += [PSCustomObject]@{
+      code       = $srv.code
+      name       = $srv.label
+      desc       = "cfx.re/join/$($srv.code)"
+      players    = 0
+      maxPlayers = 0
+      tags       = @($srv.tag)
+    }
+    Write-Host "$($srv.label) -> تعذر جلب البيانات" -ForegroundColor Yellow
+  }
+}
+
+$jsonContent = $outputList | ConvertTo-Json -Depth 4
+[System.IO.File]::WriteAllText("$PWD\servers.json", $jsonContent, [System.Text.Encoding]::UTF8)
+Write-Host "تم تحديث ملف servers.json بنجاح!" -ForegroundColor Cyan
