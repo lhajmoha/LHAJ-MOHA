@@ -239,6 +239,22 @@
         </div>
       </div>
 
+      <!-- COMPACT VIDEOS SECTION UNDER RADIO MARS (OPEN FOR MULTIPLE VIDEOS) -->
+      <div class="space-y-2.5 pt-1">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-1.5">
+          <h2 class="text-base font-bold flex items-center gap-2 gradient-text-multi">
+            <i class="fas fa-film text-cyan-400"></i> Vidéos du Site
+          </h2>
+          <span id="videosCount" class="text-[10px] bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 px-2 py-0.5 rounded-full font-semibold">
+            1 vidéo
+          </span>
+        </div>
+
+        <div class="bg-cyber-card/90 border border-slate-800 rounded-xl p-3 backdrop-blur-md">
+          <div id="videosGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+        </div>
+      </div>
+
     </div>
 
     <!-- RIGHT SIDEBAR -->
@@ -414,6 +430,59 @@
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
       }).catch(err => console.log("Discord error:", err));
+    }
+
+    // ================= SITE VIDEOS LIST (OPEN FOR MULTIPLE VIDEOS) =================
+    // كلما أردت إضافة فيديو جديد لاحقاً، أضف عنصراً جديداً بنفس الشكل داخل هذه المصفوفة:
+    // { id: 'vid2', title: 'عنوان الفيديو', src: 'اسم_الملف.mp4' }
+    const siteVideosList = [
+      {
+        id: 'vid1',
+        title: 'الصحافة داخل مدينة لوس سانتوس',
+        src: 'press.mp4'
+      }
+    ];
+
+    function toggleVideoFullscreen(videoId) {
+      const vid = document.getElementById(videoId);
+      if (!vid) return;
+      if (vid.requestFullscreen) {
+        vid.requestFullscreen();
+      } else if (vid.webkitRequestFullscreen) {
+        vid.webkitRequestFullscreen();
+      }
+    }
+
+    function renderSiteVideosList() {
+      const grid = document.getElementById('videosGrid');
+      const countEl = document.getElementById('videosCount');
+      if (!grid) return;
+
+      if (countEl) {
+        countEl.textContent = `${siteVideosList.length} ${siteVideosList.length > 1 ? 'vidéos' : 'vidéo'}`;
+      }
+
+      grid.innerHTML = siteVideosList.map((v, idx) => {
+        const playerId = `siteVideoPlayer_${v.id || idx}`;
+        return `
+          <div class="bg-black/50 border border-slate-800 hover:border-cyan-400/50 rounded-xl p-2.5 space-y-2 transition">
+            <div class="relative aspect-video w-full rounded-lg overflow-hidden bg-black border border-slate-800">
+              <video id="${playerId}" src="${v.src}" controls preload="metadata" class="w-full h-full object-contain bg-black"></video>
+            </div>
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-xs font-bold text-white truncate">${v.title}</span>
+              <button
+                type="button"
+                onclick="toggleVideoFullscreen('${playerId}')"
+                title="Plein écran"
+                class="bg-cyan-500/15 hover:bg-cyan-500 text-cyan-300 hover:text-black border border-cyan-500/30 px-2 py-1 rounded-md text-[10px] font-bold flex items-center gap-1 flex-shrink-0 transition"
+              >
+                <i class="fas fa-expand text-[10px]"></i> Plein écran
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
     }
 
     // ================= PC SOFTWARE LIST (OPEN FOR FUTURE ITEMS) =================
@@ -597,6 +666,7 @@
     window.addEventListener('DOMContentLoaded', () => {
       renderPcSoftwareList();
       renderRadioGrid();
+      renderSiteVideosList();
     });
   </script>
 </body>
