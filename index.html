@@ -389,7 +389,7 @@
         </a>
       </div>
 
-      <!-- MOROCCO FIVEM SERVERS PLAYERS (AUTO-LOADED, NO INPUT NEEDED) -->
+      <!-- MOROCCO FIVEM SERVERS PLAYERS (AUTO-LOADED + CFX FALLBACK) -->
       <div class="bg-cyber-card/90 border border-cyan-500/40 hover:border-cyan-400/70 rounded-2xl p-3.5 backdrop-blur-md transition shadow-xl shadow-cyan-950/30">
         <div class="flex items-center justify-between gap-2 mb-2 pb-2 border-b border-slate-800/90">
           <span class="text-xs font-black uppercase tracking-wider gradient-text-multi flex items-center gap-1.5">
@@ -406,7 +406,7 @@
 
         <div id="moroccoServersList" class="space-y-1.5 max-h-60 overflow-y-auto pr-1 text-[11px] text-gray-300">
           <div class="text-cyan-300 py-2 text-center">
-            <i class="fas fa-spinner fa-spin"></i> جاري جلب سيرفرات المغرب...
+            <i class="fas fa-spinner fa-spin"></i> جاري جلب السيرفرات...
           </div>
         </div>
       </div>
@@ -466,7 +466,16 @@
     }
 
     // ================= MOROCCO FIVEM SERVERS (PLAYERS ONLY) =================
-    const FIVEM_MA_URL = "https://servers-frontend.fivem.net/api/servers/streamServer/1?country=ma";
+    // تقدر تزيد هنا أكواد CFX ديال أي سيرفر مغربي بغيتيه يبان ديماً حتى إلى الـ stream تعطل
+    const MOROCCAN_CFX_SERVERS = [
+      // مثال: "abc123"
+    ];
+
+    const MOROCCO_KEYWORDS = [
+      "morocco", "maroc", "maghreb", "المغرب", "مغربي",
+      "casablanca", "rabat", "marrakech", "tanger", "agadir",
+      "fes", "oujda", "kenitra", "meknes", "safia", "safi", "🇲🇦"
+    ];
 
     function cleanFivemName(name) {
       return (name || "FiveM Server")
@@ -475,54 +484,61 @@
         .trim();
     }
 
-    function isMoroccanServer(item) {
-      const data = item.Data || {};
+    function matchesMorocco(data) {
       const locale = String(data.vars?.locale || "").toLowerCase();
       const name = cleanFivemName(data.hostname || "").toLowerCase();
-      return (
-        locale.startsWith("ar-ma") ||
-        locale.includes("morocco") ||
-        locale.includes("maroc") ||
-        name.includes("morocco") ||
-        name.includes("maroc") ||
-        name.includes("المغرب") ||
-        name.includes("casablanca") ||
-        name.includes("rabat") ||
-        name.includes("marrakech") ||
-        name.includes("tanger") ||
-        name.includes("agadir") ||
-        name.includes("🇲🇦")
-      );
+      if (locale.startsWith("ar-ma") || locale.includes("morocco") || locale.includes("maroc")) {
+        return true;
+      }
+      return MOROCCO_KEYWORDS.some(k => name.includes(k));
     }
 
-    async function fetchFivemStreamText() {
-      try {
-        const directRes = await fetch(FIVEM_MA_URL);
-        if (directRes.ok) return await directRes.text();
-      } catch (_) {}
-
-      const proxyUrl = "https://api.allorigins.win/raw?url=" + encodeURIComponent(FIVEM_MA_URL);
-      const proxyRes = await fetch(proxyUrl);
-      if (!proxyRes.ok) throw new Error("تعذر الاتصال بواجهة FiveM");
-      return await proxyRes.text();
+    async function fetchSingleCfxServer(code) {
+      const res = await fetch(`https://servers-frontend.fivem.net/api/servers/single/${encodeURIComponent(code)}`);
+      if (!res.ok) return null;
+      const json = await res.json();
+      const data = json.Data;
+      if (!data) return null;
+      return {
+        name: cleanFivemName(data.hostname),
+        players: Number(data.clients ?? 0)
+      };
     }
 
-    function parseStreamServers(rawText) {
-      const servers = [];
-      const lines = rawText.split("\n");
-      for (const line of lines) {
-        if (!line.trim()) continue;
+    async function fetchStreamServersList() {
+      const endpoints = [
+        "https://servers-frontend.fivem.net/api/servers/streamServer/1?country=ma",
+        "https://servers-frontend.fivem.net/api/servers/streamServer/1"
+      ];
+
+      for (const ep of endpoints) {
         try {
-          const obj = JSON.parse(line);
-          if (obj.Data && isMoroccanServer(obj)) {
-            servers.push({
-              name: cleanFivemName(obj.Data.hostname),
-              players: Number(obj.Data.clients ?? 0)
-            });
+          const r = await fetch(ep);
+          if (!r.ok) continue;
+          const txt = await r.text();
+          const map = new Map();
+
+          for (const line of txt.split("\n")) {
+            if (!line.trim()) continue;
+            try {
+              const obj = JSON.parse(line);
+              const d = obj.Data;
+              if (d && matchesMorocco(d)) {
+                const name = cleanFivemName(d.hostname);
+                map.set(name, {
+                  name,
+                  players: Number(d.clients ?? 0)
+                });
+              }
+            } catch (_) {}
+          }
+
+          if (map.size > 0) {
+            return Array.from(map.values()).sort((a, b) => b.players - a.players);
           }
         } catch (_) {}
       }
-      return servers.sort((a, b) => b.players - a.players);
+      return [];
     }
 
     async function loadMoroccoFivemServers() {
@@ -531,24 +547,41 @@
 
       box.innerHTML = `<div class="text-cyan-300 py-2 text-center"><i class="fas fa-spinner fa-spin"></i> جاري التحديث...</div>`;
 
-      try {
-        const rawText = await fetchFivemStreamText();
-        const servers = parseStreamServers(rawText);
+      const map = new Map();
 
-        if (!servers.length) {
-          box.innerHTML = `<div class="text-gray-400 py-2 text-center">لا توجد سيرفرات مغربية ظاهرة حالياً.</div>`;
-          return;
-        }
-
-        box.innerHTML = servers.map(srv => `
-          <div class="bg-black/50 border border-slate-800/90 rounded-lg px-2.5 py-1.5 flex items-center justify-between gap-2">
-            <span class="text-white font-semibold truncate" title="${srv.name.replace(/"/g, '&quot;')}">${srv.name}</span>
-            <span class="text-emerald-400 font-black flex-shrink-0">${srv.players} players</span>
-          </div>
-        `).join("");
-      } catch (err) {
-        box.innerHTML = `<div class="text-rose-400 py-2 text-center">تعذر جلب القائمة حالياً</div>`;
+      // 1. جلب السيرفرات من Stream API
+      const streamList = await fetchStreamServersList();
+      for (const s of streamList) {
+        map.set(s.name, s);
       }
+
+      // 2. جلب السيرفرات المضافة يدوياً عبر كود CFX
+      if (MOROCCAN_CFX_SERVERS.length > 0) {
+        const extraResults = await Promise.all(
+          MOROCCAN_CFX_SERVERS.map(code => fetchSingleCfxServer(code).catch(() => null))
+        );
+        for (const item of extraResults) {
+          if (item) map.set(item.name, item);
+        }
+      }
+
+      const finalServers = Array.from(map.values()).sort((a, b) => b.players - a.players);
+
+      if (!finalServers.length) {
+        box.innerHTML = `
+          <div class="text-gray-400 py-2 text-center leading-relaxed">
+            لا توجد سيرفرات مغربية ظاهرة من الـ Stream حالياً. تقدر تزيد أكواد CFX داخل <code class="text-cyan-300">MOROCCAN_CFX_SERVERS</code>.
+          </div>
+        `;
+        return;
+      }
+
+      box.innerHTML = finalServers.map(srv => `
+        <div class="bg-black/50 border border-slate-800/90 rounded-lg px-2.5 py-1.5 flex items-center justify-between gap-2">
+          <span class="text-white font-semibold truncate" title="${srv.name.replace(/"/g, '&quot;')}">${srv.name}</span>
+          <span class="text-emerald-400 font-black flex-shrink-0">${srv.players} players</span>
+        </div>
+      `).join("");
     }
 
     // ================= PC SOFTWARE LIST (OPEN FOR FUTURE ITEMS) =================
