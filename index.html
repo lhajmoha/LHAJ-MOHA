@@ -66,12 +66,12 @@
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 10px 25px -10px rgba(255, 0, 85, 0.25);
     }
 
-    .fivem-row {
+    .weather-row {
       background: rgba(12, 15, 24, 0.92);
       border: 1px solid rgba(148, 163, 184, 0.14);
       transition: background 0.15s ease, border-color 0.15s ease;
     }
-    .fivem-row:hover {
+    .weather-row:hover {
       background: rgba(24, 29, 45, 0.98);
       border-color: rgba(0, 240, 255, 0.35);
     }
@@ -399,25 +399,25 @@
         </a>
       </div>
 
-      <!-- FIVEM BROWSER STYLE SERVER PLAYERS (REFRESH EVERY 15 MIN) -->
+      <!-- COMPACT MOROCCO WEATHER WIDGET (AUTO REFRESH EVERY 12 HOURS) -->
       <div class="bg-[#0b0e17]/95 border border-slate-800 hover:border-cyan-500/40 rounded-2xl p-3 backdrop-blur-md transition shadow-xl">
-        <div class="flex items-center justify-between gap-2 mb-2.5 pb-2 border-b border-slate-800/90">
+        <div class="flex items-center justify-between gap-2 mb-2 pb-2 border-b border-slate-800/90">
           <span class="text-xs font-black uppercase tracking-wider text-white flex items-center gap-1.5">
-            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
-            FiveM Maroc Players
+            <i class="fas fa-cloud-sun text-cyan-400"></i>
+            أحوال الطقس • 12h
           </span>
           <button 
-            onclick="loadMoroccoFivemServers(true)" 
-            title="Actualiser"
+            onclick="loadMoroccoWeather(true)" 
+            title="تحديث الطقس"
             class="text-[10px] bg-slate-800/90 hover:bg-slate-700 border border-slate-700 text-gray-200 px-2 py-0.5 rounded font-bold flex items-center gap-1 transition"
           >
             <i class="fas fa-sync-alt text-[9px]"></i> Refresh
           </button>
         </div>
 
-        <div id="moroccoServersList" class="space-y-1.5 max-h-72 overflow-y-auto pr-0.5 text-[11px]">
+        <div id="moroccoWeatherList" class="space-y-1 max-h-60 overflow-y-auto pr-0.5 text-[11px]">
           <div class="text-gray-400 py-3 text-center">
-            <i class="fas fa-spinner fa-spin"></i> Chargement...
+            <i class="fas fa-spinner fa-spin"></i> جاري تحميل الطقس...
           </div>
         </div>
       </div>
@@ -456,7 +456,7 @@
   <audio id="globalAudioPlayer" class="hidden"></audio>
 
   <script>
-    // DISCORD WEBHOOK URL SYSTEM
+    // ================= SUPPORT DISCORD WEBHOOK =================
     const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1563218138231873586/rb1dVovzKQdNr6j6vRqfzoPHGlEl6weSJhA1jxd_NVhRSfNafrw3DoMiS4U7fDeySrVN";
 
     function sendDiscordMonitoring(title, fields, color = 0x00f0ff) {
@@ -476,175 +476,85 @@
       }).catch(err => console.log("Discord error:", err));
     }
 
-    // ================= FIVEM BROWSER STYLE MOROCCO SERVERS =================
-    const AUTO_REFRESH_MINUTES = 15; // ربع ساعة (15 دقيقة)
-    const SERVERS_JSON_URL = "servers.json"; // ملف اختياري بجانب index.html يحدّث أعداد اللاعبين
+    // ================= MOROCCO WEATHER (REFRESH EVERY 12 HOURS) =================
+    const WEATHER_REFRESH_HOURS = 12;
 
-    const MOROCCAN_CFX_CODES = [
-      { code: "kqmb4kd", label: "v-life", tag: "roleplay" },
-      { code: "rmm687p", label: "elysium", tag: "roleplay" },
-      { code: "bdxdzod", label: "strict", tag: "roleplay" },
-      { code: "a44gax9", label: "l3acheran", tag: "roleplay" },
-      { code: "6my84y7", label: "crimson", tag: "roleplay" },
-      { code: "5oomqj6", label: "realistic role play", tag: "roleplay" }
+    const MOROCCO_CITIES = [
+      { name: "آسفي", lat: 32.2994, lon: -9.2372 },
+      { name: "كازا", lat: 33.5731, lon: -7.5898 },
+      { name: "الجديدة", lat: 33.2316, lon: -8.5007 },
+      { name: "مراكش", lat: 31.6295, lon: -7.9811 },
+      { name: "الرباط", lat: 34.0209, lon: -6.8416 },
+      { name: "أكادير", lat: 30.4278, lon: -9.5981 },
+      { name: "طنجة", lat: 35.7595, lon: -5.8340 },
+      { name: "وجدة", lat: 34.6814, lon: -1.9086 },
+      { name: "الداخلة", lat: 23.6848, lon: -15.9570 }
     ];
 
-    let isLoadingFivem = false;
+    let isLoadingWeather = false;
 
-    function cleanFiveMText(str) {
-      return (str || "")
-        .replace(/\^[0-9]/g, "")
-        .replace(/~[a-zA-Z0-9]+~/g, "")
-        .replace(/\s+/g, " ")
-        .trim();
+    function getWeatherInfo(code) {
+      if (code === 0) return { label: "صافي", icon: "fa-sun text-amber-400" };
+      if (code <= 3) return { label: "غائم جزئياً", icon: "fa-cloud-sun text-cyan-300" };
+      if (code <= 48) return { label: "ضباب", icon: "fa-smog text-slate-300" };
+      if (code <= 67) return { label: "أمطار", icon: "fa-cloud-rain text-sky-400" };
+      if (code <= 77) return { label: "ثلوج", icon: "fa-snowflake text-cyan-200" };
+      if (code <= 82) return { label: "زخات", icon: "fa-cloud-showers-heavy text-blue-400" };
+      if (code >= 95) return { label: "عواصف", icon: "fa-bolt text-yellow-400" };
+      return { label: "متقلب", icon: "fa-cloud text-slate-300" };
     }
 
-    function extractTags(data, fallbackTag) {
-      const raw = String(data?.vars?.tags || "");
-      const parsed = raw
-        .split(",")
-        .map(t => cleanFiveMText(t).toLowerCase())
-        .filter(Boolean)
-        .slice(0, 3);
-      if (parsed.length > 0) return parsed;
-      return fallbackTag ? [fallbackTag] : [];
-    }
-
-    function formatServerRow(srv) {
-      const safeName = cleanFiveMText(srv.name) || "FiveM Server";
-      const safeDesc = cleanFiveMText(srv.desc) || `cfx.re/join/${srv.code}`;
-      const tagsHtml = (srv.tags || [])
-        .map(t => `<span class="bg-[#1b2030] text-slate-300 border border-slate-700/70 px-1.5 py-0.5 rounded text-[9px] font-medium">${t}</span>`)
-        .join("");
-
-      const hasExactCount = typeof srv.players === "number" && !Number.isNaN(srv.players);
-      const countDisplay = hasExactCount
-        ? `<div class="text-white font-black text-[11px] leading-none">${srv.players}<span class="text-slate-400 font-semibold">/${srv.maxPlayers ?? 0}</span></div><div class="text-[9px] text-slate-500 mt-0.5">players</div>`
-        : `<div class="text-slate-400 font-bold text-[10px] leading-none">--</div><div class="text-[9px] text-slate-500 mt-0.5">N/A</div>`;
-
-      return `
-        <div class="fivem-row rounded-lg px-2.5 py-2 flex items-center justify-between gap-2">
-          <div class="flex items-center gap-2 min-w-0">
-            <div class="w-7 h-7 rounded bg-[#181d2d] border border-slate-700/70 flex items-center justify-center text-cyan-400 font-black text-[11px] flex-shrink-0">
-              ${safeName.charAt(0).toUpperCase() || "M"}
-            </div>
-            <div class="min-w-0">
-              <div class="text-white font-bold text-[11px] leading-tight truncate" title="${safeName.replace(/"/g, "&quot;")}">${safeName}</div>
-              <div class="text-slate-400 text-[9px] truncate mt-0.5">${safeDesc}</div>
-              ${tagsHtml ? `<div class="flex flex-wrap gap-1 mt-1">${tagsHtml}</div>` : ""}
-            </div>
-          </div>
-
-          <div class="text-right flex-shrink-0 pl-1">
-            ${countDisplay}
-          </div>
-        </div>
-      `;
-    }
-
-    async function loadServersFromJsonFile() {
+    async function fetchCityWeather(city) {
+      const url = `https://api.open-meteo.com/v1/forecast?latitude=${city.lat}&longitude=${city.lon}&current=temperature_2m,weather_code&timezone=auto`;
       try {
-        const res = await fetch(`${SERVERS_JSON_URL}?t=${Date.now()}`, { cache: "no-store" });
-        if (!res.ok) return null;
-        const list = await res.json();
-        if (!Array.isArray(list) || !list.length) return null;
-        return list.map(item => ({
-          code: item.code || "",
-          name: cleanFiveMText(item.name || item.label || item.code || "FiveM Server"),
-          desc: cleanFiveMText(item.desc || (item.code ? `cfx.re/join/${item.code}` : "")),
-          players: typeof item.players === "number" ? item.players : null,
-          maxPlayers: typeof item.maxPlayers === "number" ? item.maxPlayers : 0,
-          tags: Array.isArray(item.tags) && item.tags.length ? item.tags.slice(0, 3) : ["roleplay"]
-        }));
+        const res = await fetch(url, { cache: "no-store" });
+        if (!res.ok) throw new Error("Weather fetch failed");
+        const data = await res.json();
+        const temp = typeof data?.current?.temperature_2m === "number"
+          ? Math.round(data.current.temperature_2m)
+          : null;
+        const code = typeof data?.current?.weather_code === "number"
+          ? data.current.weather_code
+          : 0;
+        const info = getWeatherInfo(code);
+        return { name: city.name, temp, condition: info.label, icon: info.icon };
       } catch (_) {
-        return null;
+        return { name: city.name, temp: null, condition: "--", icon: "fa-cloud text-slate-400" };
       }
     }
 
-    async function fetchTextWithProxies(targetUrl) {
-      const candidates = [
-        targetUrl,
-        "https://corsproxy.io/?" + encodeURIComponent(targetUrl),
-        "https://api.allorigins.win/raw?url=" + encodeURIComponent(targetUrl)
-      ];
+    async function loadMoroccoWeather(showSpinner = false) {
+      if (isLoadingWeather) return;
+      isLoadingWeather = true;
 
-      for (const url of candidates) {
-        try {
-          const res = await fetch(url);
-          if (res.ok) {
-            const text = await res.text();
-            if (text && text.trim().length > 10) return text;
-          }
-        } catch (_) {}
-      }
-      return null;
-    }
-
-    async function fetchSingleServerEntry(entry) {
-      const fallbackRow = {
-        code: entry.code,
-        name: entry.label,
-        desc: `cfx.re/join/${entry.code}`,
-        players: null,
-        maxPlayers: null,
-        tags: [entry.tag || "roleplay"]
-      };
-
-      const endpoint = `https://servers-frontend.fivem.net/api/servers/single/${encodeURIComponent(entry.code)}`;
-      const raw = await fetchTextWithProxies(endpoint);
-      if (!raw) return fallbackRow;
-
-      try {
-        const json = JSON.parse(raw);
-        const d = json.Data;
-        if (!d) return fallbackRow;
-
-        const apiName = cleanFiveMText(d.hostname);
-        return {
-          code: entry.code,
-          name: apiName || entry.label,
-          desc: cleanFiveMText(d.vars?.sv_projectDesc || "") || `cfx.re/join/${entry.code}`,
-          players: Number(d.clients ?? 0),
-          maxPlayers: Number(d.sv_maxclients ?? 0),
-          tags: extractTags(d, entry.tag)
-        };
-      } catch (_) {
-        return fallbackRow;
-      }
-    }
-
-    async function loadMoroccoFivemServers(showSpinner = false) {
-      if (isLoadingFivem) return;
-      isLoadingFivem = true;
-
-      const listEl = document.getElementById("moroccoServersList");
+      const listEl = document.getElementById("moroccoWeatherList");
       if (!listEl) {
-        isLoadingFivem = false;
+        isLoadingWeather = false;
         return;
       }
 
       if (showSpinner || !listEl.dataset.initialized) {
-        listEl.innerHTML = `<div class="text-gray-400 py-3 text-center"><i class="fas fa-spinner fa-spin"></i> Chargement...</div>`;
+        listEl.innerHTML = `<div class="text-gray-400 py-3 text-center"><i class="fas fa-spinner fa-spin"></i> جاري تحميل الطقس...</div>`;
       }
 
       try {
-        const jsonServers = await loadServersFromJsonFile();
-        if (jsonServers) {
-          jsonServers.sort((a, b) => (b.players ?? -1) - (a.players ?? -1));
-          listEl.innerHTML = jsonServers.map(formatServerRow).join("");
-          listEl.dataset.initialized = "1";
-          return;
-        }
-
-        const servers = await Promise.all(
-          MOROCCAN_CFX_CODES.map(entry => fetchSingleServerEntry(entry))
-        );
-
-        servers.sort((a, b) => (b.players ?? -1) - (a.players ?? -1));
-        listEl.innerHTML = servers.map(formatServerRow).join("");
+        const results = await Promise.all(MOROCCO_CITIES.map(fetchCityWeather));
+        listEl.innerHTML = results.map(item => {
+          const tempText = item.temp !== null ? `${item.temp}°C` : "--°C";
+          return `
+            <div class="weather-row rounded-lg px-2 py-1.5 flex items-center justify-between gap-2">
+              <div class="flex items-center gap-2 min-w-0">
+                <i class="fas ${item.icon} text-xs w-4 text-center flex-shrink-0"></i>
+                <span class="text-white font-bold text-[11px] truncate">${item.name}</span>
+                <span class="text-slate-400 text-[9px] truncate">${item.condition}</span>
+              </div>
+              <span class="text-cyan-300 font-black text-[11px] flex-shrink-0">${tempText}</span>
+            </div>
+          `;
+        }).join("");
         listEl.dataset.initialized = "1";
       } finally {
-        isLoadingFivem = false;
+        isLoadingWeather = false;
       }
     }
 
@@ -829,8 +739,8 @@
     window.addEventListener('DOMContentLoaded', () => {
       renderPcSoftwareList();
       renderRadioGrid();
-      loadMoroccoFivemServers(true);
-      setInterval(() => loadMoroccoFivemServers(false), AUTO_REFRESH_MINUTES * 60 * 1000);
+      loadMoroccoWeather(true);
+      setInterval(() => loadMoroccoWeather(false), WEATHER_REFRESH_HOURS * 60 * 60 * 1000);
     });
   </script>
 </body>
