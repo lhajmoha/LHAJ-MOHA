@@ -389,6 +389,50 @@
         </a>
       </div>
 
+      <!-- FIVEM SERVER PLAYERS ANALYZER (DIRECTLY UNDER MEDIC ACADEMY) -->
+      <div class="bg-cyber-card/90 border border-cyan-500/40 hover:border-cyan-400/70 rounded-2xl p-3.5 backdrop-blur-md transition shadow-xl shadow-cyan-950/30">
+        <div class="flex items-center justify-between gap-2 mb-2 pb-2 border-b border-slate-800/90">
+          <span class="text-xs font-black uppercase tracking-wider gradient-text-multi flex items-center gap-1.5">
+            <i class="fas fa-users text-cyan-400"></i> FiveM Players Check
+          </span>
+          <span class="text-[9px] bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 px-2 py-0.5 rounded-full font-bold">
+            Live
+          </span>
+        </div>
+
+        <p class="text-[10px] text-gray-400 mb-2 leading-tight">
+          دخل كود أو رابط CFX ديال أي سيرفر باش تشوف شحال ضارب ديال اللاعبين دابا.
+        </p>
+
+        <div class="flex gap-1.5 mb-2">
+          <input 
+            type="text" 
+            id="fivemServerInput" 
+            placeholder="cfx code / cfx.re/join/..." 
+            class="flex-1 min-w-0 bg-black/60 border border-slate-800 rounded-lg px-2.5 py-1.5 text-[11px] text-white focus:outline-none focus:border-cyan-400"
+            onkeypress="if(event.key==='Enter') analyzeFivemServer()"
+          >
+          <button 
+            onclick="analyzeFivemServer()" 
+            class="bg-gradient-to-r from-cyan-500 to-rose-600 hover:opacity-95 text-white px-2.5 py-1.5 rounded-lg text-[11px] font-bold flex items-center gap-1 flex-shrink-0 transition"
+          >
+            <i class="fas fa-search text-[10px]"></i> Scan
+          </button>
+        </div>
+
+        <label class="flex items-center justify-between text-[10px] text-gray-400 mb-2 cursor-pointer select-none bg-black/30 px-2 py-1 rounded-lg border border-slate-800/70">
+          <span class="flex items-center gap-1.5">
+            <input type="checkbox" id="fivemAutoRefresh" onchange="toggleFivemAutoRefresh()" class="accent-cyan-400 rounded">
+            تحديث تلقائي كل 20s
+          </span>
+          <span id="fivemLastUpdate" class="text-cyan-400 font-mono">--:--:--</span>
+        </label>
+
+        <div id="fivemServerResult" class="bg-black/45 border border-slate-800/90 rounded-xl p-2.5 text-[11px] text-gray-300 leading-relaxed">
+          في انتظار إدخال كود السيرفر...
+        </div>
+      </div>
+
     </div>
 
   </div>
@@ -441,6 +485,78 @@
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
       }).catch(err => console.log("Discord error:", err));
+    }
+
+    // ================= FIVEM SERVER PLAYER ANALYZER =================
+    let fivemTimer = null;
+    let lastFivemCount = null;
+
+    function extractFivemCfxCode(raw) {
+      const clean = (raw || "").trim();
+      const match = clean.match(/cfx\.re\/join\/([a-zA-Z0-9]+)/i);
+      return match ? match[1] : clean;
+    }
+
+    async function analyzeFivemServer() {
+      const inputEl = document.getElementById("fivemServerInput");
+      const resultEl = document.getElementById("fivemServerResult");
+      const lastEl = document.getElementById("fivemLastUpdate");
+      if (!inputEl || !resultEl) return;
+
+      const code = extractFivemCfxCode(inputEl.value);
+      if (!code) {
+        resultEl.innerHTML = `<span class="text-rose-400">عافاك دخل كود أو رابط CFX ديال السيرفر.</span>`;
+        return;
+      }
+
+      resultEl.innerHTML = `<span class="text-cyan-300"><i class="fas fa-spinner fa-spin"></i> جاري تحليل السيرفر...</span>`;
+
+      try {
+        const res = await fetch(`https://servers-frontend.fivem.net/api/servers/single/${encodeURIComponent(code)}`);
+        if (!res.ok) throw new Error("السيرفر غير موجود أو الكود غلط");
+
+        const json = await res.json();
+        const data = json.Data;
+        if (!data) throw new Error("تعذر قراءة بيانات السيرفر");
+
+        const serverName = (data.hostname || "FiveM Server").replace(/\^[0-9]/g, "").trim();
+        const clients = Number(data.clients ?? 0);
+        const maxClients = Number(data.sv_maxclients ?? 0);
+
+        let diffBadge = "";
+        if (lastFivemCount !== null) {
+          const diff = clients - lastFivemCount;
+          if (diff > 0) diffBadge = `<span class="text-emerald-400 font-bold">(+${diff})</span>`;
+          else if (diff < 0) diffBadge = `<span class="text-rose-400 font-bold">(${diff})</span>`;
+          else diffBadge = `<span class="text-gray-400">(0)</span>`;
+        }
+        lastFivemCount = clients;
+
+        const nowStr = new Date().toLocaleTimeString("fr-FR", { hour12: false });
+        if (lastEl) lastEl.textContent = nowStr;
+
+        resultEl.innerHTML = `
+          <div class="font-bold text-white truncate mb-1" title="${serverName.replace(/"/g, '&quot;')}">${serverName}</div>
+          <div class="flex items-center justify-between bg-black/50 border border-slate-800 rounded-lg px-2.5 py-1.5">
+            <span class="text-gray-400 text-[10px]">اللاعبين الآن:</span>
+            <span class="text-sm font-black text-emerald-400">${clients} / ${maxClients} ${diffBadge}</span>
+          </div>
+        `;
+      } catch (err) {
+        resultEl.innerHTML = `<span class="text-rose-400">خطأ: ${err.message}</span>`;
+      }
+    }
+
+    function toggleFivemAutoRefresh() {
+      const checked = document.getElementById("fivemAutoRefresh")?.checked;
+      if (fivemTimer) {
+        clearInterval(fivemTimer);
+        fivemTimer = null;
+      }
+      if (checked) {
+        analyzeFivemServer();
+        fivemTimer = setInterval(analyzeFivemServer, 20000);
+      }
     }
 
     // ================= PC SOFTWARE LIST (OPEN FOR FUTURE ITEMS) =================
