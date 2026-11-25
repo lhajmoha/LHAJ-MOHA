@@ -380,17 +380,17 @@
           </div>
 
           <div id="chatBanNotice" class="hidden bg-rose-950/70 border border-rose-500/50 text-rose-200 rounded-xl p-2.5 text-xs font-bold">
-            <i class="fas fa-ban text-rose-400"></i> Vous êtes bloqué pour l'envoi de messages dans ce chat.
+            <i class="fas fa-ban text-rose-400"></i> تم حظر هذا الـ IP من الدخول أو إرسال الرسائل في الشات.
           </div>
 
           <div id="adminControlsBar" class="hidden bg-black/50 border border-cyan-500/30 rounded-xl p-2.5 flex flex-wrap items-center justify-between gap-2 text-[11px]">
-            <span class="text-cyan-300 font-bold"><i class="fas fa-user-shield"></i> Mode Admin actif : suppression et blocage</span>
+            <span class="text-cyan-300 font-bold"><i class="fas fa-user-shield"></i> Mode Admin actif : suppression et blocage (IP + appareil)</span>
             <button 
               type="button"
               onclick="unbanCurrentDeviceTest()" 
               class="bg-slate-800 hover:bg-slate-700 text-gray-200 px-2 py-1 rounded text-[10px] font-bold transition"
             >
-              Débloquer cet appareil
+              Débloquer cet appareil / IP
             </button>
           </div>
 
@@ -532,7 +532,7 @@
         </div>
       </div>
 
-      <!-- COMPACT PROBLEM REPORT BOX (STRICT GMAIL + ANTI-SPAM + DISCORD REMOTE BLOCK SYNC) -->
+      <!-- COMPACT PROBLEM REPORT BOX (STRICT GMAIL + 24H 2-MSG IP LIMIT + DISCORD REMOTE BLOCK SYNC) -->
       <div class="bg-cyber-card/90 border border-rose-500/30 rounded-xl p-2.5 backdrop-blur-md shadow-lg space-y-2">
         <div class="flex items-center justify-between pb-1 border-b border-slate-800/80">
           <span class="text-[11px] font-bold flex items-center gap-1.5 text-rose-400">
@@ -570,6 +570,11 @@
         <!-- Blocked Gmail Notice -->
         <div id="problemBlockedNotice" class="hidden bg-rose-950/80 border border-rose-500/50 text-rose-200 rounded-lg px-2 py-1 text-[10px] font-bold">
           <i class="fas fa-ban text-rose-400"></i> تم حظر هذا البريد الإلكتروني من إرسال البلاغات.
+        </div>
+
+        <!-- 24h Limit / Pending Response Notice -->
+        <div id="problem24hLimitNotice" class="hidden bg-amber-950/70 border border-amber-500/50 text-amber-200 rounded-lg px-2 py-1 text-[10px] font-bold leading-snug">
+          <i class="fas fa-clock text-amber-400"></i> تم إرسال رسالتك، يرجى انتظار 24 ساعة حتى يتم الاستجابة لها.
         </div>
 
         <!-- Gmail Identification Gate -->
@@ -749,7 +754,7 @@
       }).catch(err => console.log("Discord error:", err));
     }
 
-    // ================= LIVE GROUP CHAT =================
+    // ================= LIVE GROUP CHAT (STRICT IP + DEVICE BAN ON ADMIN BLOCK) =================
     const FIREBASE_DATABASE_URL = ""; // مثال: "https://your-project-default-rtdb.firebaseio.com"
     const ADMIN_PASSCODE = "8080@";
     const CHAT_DISCORD_WEBHOOK_URL = ""; // اختياري
@@ -770,11 +775,13 @@
     const DEVICE_STORAGE_KEY = "lhajmoha_chat_device_id";
     const LOCAL_MSG_STORAGE_KEY = "lhajmoha_demo_chat_messages_v1";
     const LOCAL_BAN_STORAGE_KEY = "lhajmoha_demo_chat_banned_v1";
+    const LOCAL_IP_BAN_STORAGE_KEY = "lhajmoha_demo_chat_banned_ips_v1";
     const CHAT_MEMBER_SESSION_KEY = "lhajmoha_chat_member_session_v1";
 
     let isChatAdmin = false;
     let currentReplyTo = null;
     let bannedDeviceSet = new Set();
+    let bannedIpSet = new Set();
     let lastRenderedMessagesHash = "";
     let activeChatMember = null;
 
@@ -792,6 +799,30 @@
         lastRenderedMessagesHash = "";
         syncLiveChat();
       };
+    }
+
+    function normalizeIpKey(ip) {
+      return String(ip || "").trim().replace(/\./g, "_dot_").replace(/:/g, "_col_");
+    }
+
+    function denormalizeIpKey(key) {
+      return String(key || "").trim().replace(/_dot_/g, ".").replace(/_col_/g, ":");
+    }
+
+    function isChatTargetBlocked(deviceId, ip) {
+      const cleanIp = String(ip || "").trim();
+      return Boolean(
+        (deviceId && bannedDeviceSet.has(deviceId)) ||
+        (cleanIp && bannedIpSet.has(cleanIp))
+      );
+    }
+
+    function isCurrentChatUserBanned() {
+      if (isChatAdmin) return false;
+      return Boolean(
+        bannedDeviceSet.has(MY_DEVICE_ID) ||
+        (currentClientIp && bannedIpSet.has(currentClientIp))
+      );
     }
 
     function getAuthorColorStyle(name) {
@@ -867,8 +898,19 @@
       errEl.classList.add("hidden");
     }
 
-    function submitChatAccessForm() {
+    async function submitChatAccessForm() {
       clearChatAccessError();
+      if (!currentClientIp) {
+        await fetchClientPublicIp();
+      }
+      await fetchBannedDevices();
+
+      if (isCurrentChatUserBanned()) {
+        showChatAccessError("تم حظر هذا الـ IP من التسجيل أو الدخول في الشات.");
+        updateChatInputAccess();
+        return;
+      }
+
       const firstName = (document.getElementById("chatFirstName")?.value || "").trim();
       const lastName = (document.getElementById("chatLastName")?.value || "").trim();
       const password = document.getElementById("chatPassword")?.value || "";
@@ -918,8 +960,9 @@
       const accessCard = document.getElementById("chatAccessCard");
       const memberBar = document.getElementById("chatActiveMemberBar");
       const memberNameEl = document.getElementById("chatActiveMemberName");
+      const isBanned = isCurrentChatUserBanned();
 
-      if (activeChatMember && activeChatMember.fullName) {
+      if (activeChatMember && activeChatMember.fullName && !isBanned) {
         if (accessCard) accessCard.classList.add("hidden");
         if (memberBar) memberBar.classList.remove("hidden");
         if (memberNameEl) {
@@ -938,24 +981,48 @@
     }
 
     function updateChatInputAccess() {
-      const isBanned = bannedDeviceSet.has(MY_DEVICE_ID) && !isChatAdmin;
-      const isAllowed = canSendChatMessage();
+      const isBanned = isCurrentChatUserBanned();
+      if (isBanned && activeChatMember) {
+        activeChatMember = null;
+        try {
+          sessionStorage.removeItem(CHAT_MEMBER_SESSION_KEY);
+        } catch (_) {}
+      }
+      syncChatMemberUi();
+
+      const isAllowed = canSendChatMessage() && !isBanned;
       const banNotice = document.getElementById("chatBanNotice");
+      const accessCard = document.getElementById("chatAccessCard");
+      const accessBtn = accessCard?.querySelector("button");
+      const accessInputs = accessCard ? Array.from(accessCard.querySelectorAll("input")) : [];
       const sendBtn = document.getElementById("liveChatSendBtn");
       const emojiBtn = document.getElementById("chatEmojiToggleBtn");
       const inputEl = document.getElementById("liveChatInput");
 
-      if (banNotice) banNotice.classList.toggle("hidden", !isBanned);
+      if (banNotice) {
+        banNotice.innerHTML = `<i class="fas fa-ban text-rose-400"></i> تم حظر هذا الـ IP من الدخول أو إرسال الرسائل في الشات.`;
+        banNotice.classList.toggle("hidden", !isBanned);
+      }
 
-      const allowWrite = !isBanned && isAllowed;
-      if (sendBtn) sendBtn.disabled = !allowWrite;
-      if (emojiBtn) emojiBtn.disabled = !allowWrite;
-      if (!allowWrite) closeChatEmojiMenu();
+      if (accessCard) {
+        accessCard.classList.toggle("opacity-60", isBanned);
+      }
+      if (accessBtn) accessBtn.disabled = isBanned;
+      accessInputs.forEach(inp => {
+        inp.disabled = isBanned;
+      });
+      if (isBanned) {
+        showChatAccessError("تم حظر هذا الـ IP من التسجيل أو الدخول في الشات.");
+      }
+
+      if (sendBtn) sendBtn.disabled = !isAllowed;
+      if (emojiBtn) emojiBtn.disabled = !isAllowed;
+      if (!isAllowed) closeChatEmojiMenu();
       if (inputEl) {
-        inputEl.disabled = !allowWrite;
+        inputEl.disabled = !isAllowed;
         if (isBanned) {
-          inputEl.placeholder = "Envoi désactivé pour ce compte/appareil...";
-        } else if (!isAllowed) {
+          inputEl.placeholder = "هذا الـ IP محظور في هذا الشات...";
+        } else if (!canSendChatMessage()) {
           inputEl.placeholder = "Remplissez Prénom, Nom et Mot de passe pour chatter...";
         } else {
           inputEl.placeholder = "Écrivez votre message...";
@@ -1003,6 +1070,22 @@
     function writeLocalBannedIds(idsArray) {
       try {
         localStorage.setItem(LOCAL_BAN_STORAGE_KEY, JSON.stringify(Array.from(new Set(idsArray || []))));
+      } catch (_) {}
+    }
+
+    function readLocalBannedIps() {
+      try {
+        const raw = localStorage.getItem(LOCAL_IP_BAN_STORAGE_KEY);
+        const arr = raw ? JSON.parse(raw) : [];
+        return Array.isArray(arr) ? arr : [];
+      } catch (_) {
+        return [];
+      }
+    }
+
+    function writeLocalBannedIps(ipsArray) {
+      try {
+        localStorage.setItem(LOCAL_IP_BAN_STORAGE_KEY, JSON.stringify(Array.from(new Set(ipsArray || []))));
       } catch (_) {}
     }
 
@@ -1071,36 +1154,83 @@
     async function fetchBannedDevices() {
       if (!hasFirebaseConfig()) {
         bannedDeviceSet = new Set(readLocalBannedIds());
+        bannedIpSet = new Set(readLocalBannedIps());
         return;
       }
       try {
-        const res = await fetch(`${getDbBaseUrl()}/bannedDevices.json?t=${Date.now()}`, { cache: "no-store" });
-        if (!res.ok) return;
-        const data = await res.json();
-        bannedDeviceSet = new Set(data && typeof data === "object" ? Object.keys(data) : []);
+        const [devRes, ipRes] = await Promise.all([
+          fetch(`${getDbBaseUrl()}/bannedDevices.json?t=${Date.now()}`, { cache: "no-store" }),
+          fetch(`${getDbBaseUrl()}/bannedChatIps.json?t=${Date.now()}`, { cache: "no-store" })
+        ]);
+
+        if (devRes.ok) {
+          const devData = await devRes.json();
+          bannedDeviceSet = new Set(devData && typeof devData === "object" ? Object.keys(devData) : []);
+        }
+
+        if (ipRes.ok) {
+          const ipData = await ipRes.json();
+          const nextIps = new Set();
+          if (ipData && typeof ipData === "object") {
+            Object.entries(ipData).forEach(([k, v]) => {
+              const valIp = v && typeof v === "object" && v.ip ? String(v.ip).trim() : denormalizeIpKey(k);
+              if (valIp) nextIps.add(valIp);
+            });
+          }
+          bannedIpSet = nextIps;
+        }
       } catch (_) {}
     }
 
-    async function banDeviceById(deviceId, authorName) {
-      if (!isChatAdmin || !deviceId) return;
-      if (!confirm(`Bloquer (${authorName || deviceId}) dans le chat ?`)) return;
+    async function banDeviceById(deviceId, authorName, ipAddress = "") {
+      if (!isChatAdmin) return;
+      const cleanIp = String(ipAddress || "").trim();
+      if (!deviceId && !cleanIp) return;
+
+      const label = cleanIp ? `${authorName || "Membre"} (IP: ${cleanIp})` : `${authorName || deviceId}`;
+      if (!confirm(`Bloquer ${label} (IP + appareil) dans le chat ?`)) return;
 
       if (hasFirebaseConfig()) {
-        await fetch(`${getDbBaseUrl()}/bannedDevices/${encodeURIComponent(deviceId)}.json`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            bannedAt: Date.now(),
-            author: authorName || "Membre"
-          })
-        });
+        const requests = [];
+        if (deviceId) {
+          requests.push(fetch(`${getDbBaseUrl()}/bannedDevices/${encodeURIComponent(deviceId)}.json`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              bannedAt: Date.now(),
+              author: authorName || "Membre",
+              ip: cleanIp || ""
+            })
+          }));
+        }
+        if (cleanIp) {
+          requests.push(fetch(`${getDbBaseUrl()}/bannedChatIps/${encodeURIComponent(normalizeIpKey(cleanIp))}.json`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              bannedAt: Date.now(),
+              author: authorName || "Membre",
+              ip: cleanIp
+            })
+          }));
+        }
+        await Promise.all(requests);
       } else {
-        const current = readLocalBannedIds();
-        current.push(deviceId);
-        writeLocalBannedIds(current);
+        if (deviceId) {
+          const currentDevs = readLocalBannedIds();
+          currentDevs.push(deviceId);
+          writeLocalBannedIds(currentDevs);
+        }
+        if (cleanIp) {
+          const currentIps = readLocalBannedIps();
+          currentIps.push(cleanIp);
+          writeLocalBannedIps(currentIps);
+        }
       }
 
-      bannedDeviceSet.add(deviceId);
+      if (deviceId) bannedDeviceSet.add(deviceId);
+      if (cleanIp) bannedIpSet.add(cleanIp);
+
       if (chatBroadcast) chatBroadcast.postMessage({ type: "sync" });
       updateChatInputAccess();
       lastRenderedMessagesHash = "";
@@ -1109,16 +1239,27 @@
 
     async function unbanCurrentDeviceTest() {
       if (!isChatAdmin) return;
+
       if (hasFirebaseConfig()) {
-        await fetch(`${getDbBaseUrl()}/bannedDevices/${encodeURIComponent(MY_DEVICE_ID)}.json`, {
-          method: "DELETE"
-        });
+        const requests = [
+          fetch(`${getDbBaseUrl()}/bannedDevices/${encodeURIComponent(MY_DEVICE_ID)}.json`, { method: "DELETE" })
+        ];
+        if (currentClientIp) {
+          requests.push(fetch(`${getDbBaseUrl()}/bannedChatIps/${encodeURIComponent(normalizeIpKey(currentClientIp))}.json`, { method: "DELETE" }));
+        }
+        await Promise.all(requests);
       } else {
-        const filtered = readLocalBannedIds().filter(id => id !== MY_DEVICE_ID);
-        writeLocalBannedIds(filtered);
+        const filteredDevs = readLocalBannedIds().filter(id => id !== MY_DEVICE_ID);
+        writeLocalBannedIds(filteredDevs);
+        if (currentClientIp) {
+          const filteredIps = readLocalBannedIps().filter(ip => ip !== currentClientIp);
+          writeLocalBannedIps(filteredIps);
+        }
       }
 
       bannedDeviceSet.delete(MY_DEVICE_ID);
+      if (currentClientIp) bannedIpSet.delete(currentClientIp);
+
       if (chatBroadcast) chatBroadcast.postMessage({ type: "sync" });
       updateChatInputAccess();
       lastRenderedMessagesHash = "";
@@ -1150,11 +1291,11 @@
 
       const entries = Object.entries(messagesObj || {})
         .map(([id, val]) => ({ id, ...(val || {}) }))
-        .filter(item => item.text && (!bannedDeviceSet.has(item.deviceId) || isChatAdmin))
+        .filter(item => item.text && (!isChatTargetBlocked(item.deviceId, item.ip) || isChatAdmin))
         .sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0))
         .slice(-100);
 
-      const hash = JSON.stringify(entries.map(e => [e.id, e.text, e.author, e.deviceId])) + "|admin:" + isChatAdmin + "|banned:" + Array.from(bannedDeviceSet).join(",");
+      const hash = JSON.stringify(entries.map(e => [e.id, e.text, e.author, e.deviceId, e.ip])) + "|admin:" + isChatAdmin + "|bannedDev:" + Array.from(bannedDeviceSet).join(",") + "|bannedIp:" + Array.from(bannedIpSet).join(",");
       if (hash === lastRenderedMessagesHash) return;
       lastRenderedMessagesHash = hash;
 
@@ -1169,7 +1310,8 @@
         const safeAuthor = escapeChatHtml(rawAuthor);
         const safeText = escapeChatHtml(msg.text || "");
         const safeDeviceId = escapeChatHtml(msg.deviceId || "");
-        const isUserBanned = bannedDeviceSet.has(msg.deviceId);
+        const safeIp = escapeChatHtml(msg.ip || "");
+        const isUserBanned = isChatTargetBlocked(msg.deviceId, msg.ip);
         const colorStyle = getAuthorColorStyle(rawAuthor);
         const timeStr = msg.createdAt
           ? new Date(msg.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
@@ -1184,7 +1326,7 @@
         const adminActionsHtml = isChatAdmin
           ? `<span class="inline-flex items-center gap-1.5 mr-2">
                <button type="button" onclick="deleteChatMessage('${safeId}')" class="text-amber-400 hover:underline font-bold">Supprimer</button>
-               <button type="button" onclick="banDeviceById('${safeDeviceId}', '${safeAuthor}')" class="text-rose-400 hover:underline font-bold">${isUserBanned ? "Bloqué" : "Bloquer"}</button>
+               <button type="button" onclick="banDeviceById('${safeDeviceId}', '${safeAuthor}', '${safeIp}')" class="text-rose-400 hover:underline font-bold">${isUserBanned ? "Bloqué" : "Bloquer"}</button>
              </span>`
           : "";
 
@@ -1193,6 +1335,7 @@
             <div class="flex items-center justify-between gap-2 text-[10px]">
               <div class="flex items-center gap-1.5 min-w-0">
                 <span class="px-2 py-0.5 rounded-full border font-extrabold truncate ${colorStyle.text} ${colorStyle.badge}">${safeAuthor}</span>
+                ${isChatAdmin && safeIp ? `<span class="text-[9px] text-slate-400 font-mono truncate">IP: ${safeIp}</span>` : ""}
                 ${isUserBanned ? `<span class="bg-rose-500/20 text-rose-300 px-1.5 py-0.2 rounded text-[9px]">Bloqué</span>` : ""}
               </div>
               <div class="flex items-center gap-2 flex-shrink-0 text-slate-400">
@@ -1211,7 +1354,11 @@
     }
 
     async function sendLiveChatMessage() {
-      if (bannedDeviceSet.has(MY_DEVICE_ID) && !isChatAdmin) {
+      if (!currentClientIp) {
+        await fetchClientPublicIp();
+      }
+
+      if (isCurrentChatUserBanned()) {
         updateChatInputAccess();
         return;
       }
@@ -1232,6 +1379,7 @@
         author: sender,
         text,
         deviceId: MY_DEVICE_ID,
+        ip: currentClientIp || "",
         replyTo: currentReplyTo,
         createdAt: Date.now()
       };
@@ -1269,6 +1417,7 @@
               color: 0x00f0ff,
               fields: [
                 { name: "Membre", value: sender, inline: true },
+                { name: "IP", value: currentClientIp || "N/A", inline: true },
                 { name: "Message", value: text, inline: false }
               ],
               timestamp: new Date().toISOString()
@@ -1523,15 +1672,20 @@
       audioPlayer.volume = val;
     }
 
-    // ================= PROBLEM REPORT (STRICT @gmail.com + ANTI-SPAM + DISCORD REMOTE BLOCK SYNC) =================
+    // ================= PROBLEM REPORT (STRICT @gmail.com + 24H 2-MSG IP LIMIT + DISCORD REMOTE BLOCK SYNC) =================
     const GOOGLE_CLIENT_ID = ""; // اختياري: ضع هنا Client ID الخاص بـ Google Cloud لتفعيل زر Google
     const PROBLEM_GMAIL_STORAGE_KEY = "lhajmoha_problem_gmail_auth_v2";
     const PROBLEM_SENDER_ID_KEY = "lhajmoha_problem_sender_id_v1";
     const PROBLEM_BANNED_KEY = "lhajmoha_problem_banned_senders_v1";
     const PROBLEM_SENDERS_LOG_KEY = "lhajmoha_problem_senders_log_v1";
+    const PROBLEM_24H_QUOTA_KEY = "lhajmoha_problem_24h_quota_v1";
+    const PROBLEM_IP_CACHE_KEY = "lhajmoha_problem_client_ip_v1";
 
-    const PROBLEM_COOLDOWN_MS = 20000;
+    const PROBLEM_COOLDOWN_MS = 15000;
     const PROBLEM_WINDOW_MS = 60000;
+    const PROBLEM_24H_MS = 24 * 60 * 60 * 1000;
+    const PROBLEM_MAX_MSGS_24H = 2;
+    const PENDING_24H_MESSAGE_AR = "تم إرسال رسالتك، يرجى انتظار 24 ساعة حتى يتم الاستجابة لها.";
 
     let verifiedProblemAuth = null;
     let isProblemModAuthenticated = false;
@@ -1539,10 +1693,12 @@
     let lastProblemText = "";
     let recentProblemTimestamps = [];
     let remoteBannedEmailSet = new Set();
+    let currentClientIp = "";
 
     try {
       const savedAuth = sessionStorage.getItem(PROBLEM_GMAIL_STORAGE_KEY);
       if (savedAuth) verifiedProblemAuth = JSON.parse(savedAuth);
+      currentClientIp = sessionStorage.getItem(PROBLEM_IP_CACHE_KEY) || "";
     } catch (_) {}
 
     function getOrCreateProblemSenderId() {
@@ -1555,6 +1711,105 @@
     }
 
     const MY_PROBLEM_SENDER_ID = getOrCreateProblemSenderId();
+
+    async function fetchClientPublicIp() {
+      if (currentClientIp) {
+        updateChatInputAccess();
+        return currentClientIp;
+      }
+      try {
+        const res = await fetch("https://api.ipify.org?format=json", { cache: "no-store" });
+        if (!res.ok) return "";
+        const data = await res.json();
+        if (data && typeof data.ip === "string" && data.ip.trim()) {
+          currentClientIp = data.ip.trim();
+          try {
+            sessionStorage.setItem(PROBLEM_IP_CACHE_KEY, currentClientIp);
+          } catch (_) {}
+          syncProblem24hQuotaUi();
+          updateChatInputAccess();
+          return currentClientIp;
+        }
+      } catch (_) {}
+      return "";
+    }
+
+    function read24hQuotaStore() {
+      try {
+        const raw = localStorage.getItem(PROBLEM_24H_QUOTA_KEY);
+        const parsed = raw ? JSON.parse(raw) : {};
+        return parsed && typeof parsed === "object" ? parsed : {};
+      } catch (_) {
+        return {};
+      }
+    }
+
+    function write24hQuotaStore(obj) {
+      try {
+        localStorage.setItem(PROBLEM_24H_QUOTA_KEY, JSON.stringify(obj || {}));
+      } catch (_) {}
+    }
+
+    function getActive24hTimestampsForKey(store, key, now) {
+      if (!key) return [];
+      const arr = Array.isArray(store[key]) ? store[key] : [];
+      return arr.filter(ts => typeof ts === "number" && (now - ts) < PROBLEM_24H_MS);
+    }
+
+    function get24hQuotaStatus(email, ipAddress) {
+      const now = Date.now();
+      const store = read24hQuotaStore();
+      const mailKey = String(email || "").trim().toLowerCase();
+      const devKey = `dev:${MY_DEVICE_ID}`;
+      const ipKey = ipAddress ? `ip:${ipAddress}` : "";
+
+      const mailActive = mailKey ? getActive24hTimestampsForKey(store, `mail:${mailKey}`, now) : [];
+      const devActive = getActive24hTimestampsForKey(store, devKey, now);
+      const ipActive = ipKey ? getActive24hTimestampsForKey(store, ipKey, now) : [];
+
+      const maxCount = Math.max(mailActive.length, devActive.length, ipActive.length);
+      const allActive = [...mailActive, ...devActive, ...ipActive];
+      const oldestActive = allActive.length ? Math.min(...allActive) : 0;
+      const remainingMs = oldestActive ? Math.max(0, PROBLEM_24H_MS - (now - oldestActive)) : 0;
+
+      return {
+        reached: maxCount >= PROBLEM_MAX_MSGS_24H,
+        count: maxCount,
+        remainingMs
+      };
+    }
+
+    function record24hQuotaUsage(email, ipAddress) {
+      const now = Date.now();
+      const store = read24hQuotaStore();
+      const mailKey = String(email || "").trim().toLowerCase();
+      const keys = [`dev:${MY_DEVICE_ID}`];
+      if (mailKey) keys.push(`mail:${mailKey}`);
+      if (ipAddress) keys.push(`ip:${ipAddress}`);
+
+      keys.forEach(k => {
+        const active = getActive24hTimestampsForKey(store, k, now);
+        active.push(now);
+        store[k] = active;
+      });
+
+      write24hQuotaStore(store);
+    }
+
+    function syncProblem24hQuotaUi() {
+      const email = verifiedProblemAuth?.email || "";
+      const status = get24hQuotaStatus(email, currentClientIp);
+      const noticeEl = document.getElementById("problem24hLimitNotice");
+      if (!noticeEl) return;
+
+      if (status.reached) {
+        noticeEl.innerHTML = `<i class="fas fa-clock text-amber-400"></i> ${PENDING_24H_MESSAGE_AR}`;
+        noticeEl.classList.remove("hidden");
+      } else {
+        noticeEl.classList.add("hidden");
+      }
+      return status.reached;
+    }
 
     function emailToFirebaseKey(email) {
       return String(email || "").trim().toLowerCase().replace(/\./g, "_dot_");
@@ -1894,6 +2149,8 @@
       const isBlocked = isProblemSenderBlocked(MY_PROBLEM_SENDER_ID, currentEmail);
       if (blockedNotice) blockedNotice.classList.toggle("hidden", !isBlocked);
 
+      const quotaReached = syncProblem24hQuotaUi();
+
       const isVerified = Boolean(
         verifiedProblemAuth &&
         currentEmail &&
@@ -1908,12 +2165,14 @@
         badge.textContent = `${verifiedProblemAuth.name} • ${currentEmail} (${tag})`;
       }
 
-      const canWrite = isVerified && !isBlocked;
+      const canWrite = isVerified && !isBlocked && !quotaReached;
       if (sendBtn) sendBtn.disabled = !canWrite;
       if (userInput) {
         userInput.disabled = !canWrite;
         if (isBlocked) {
           userInput.placeholder = "تم حظر الإرسال من هذا الحساب...";
+        } else if (quotaReached) {
+          userInput.placeholder = PENDING_24H_MESSAGE_AR;
         } else if (isVerified) {
           userInput.placeholder = "أهلا وسهلا، اكتب مشكلتك...";
         } else {
@@ -1922,7 +2181,7 @@
       }
     }
 
-    function sendMessage() {
+    async function sendMessage() {
       if (!verifiedProblemAuth || !isValidStrictGmailAddress(verifiedProblemAuth.email)) {
         syncProblemGmailUi();
         showProblemGmailError("لا يمكن الإرسال قبل تأكيد حساب @gmail.com صحيح.");
@@ -1931,6 +2190,25 @@
 
       if (isProblemSenderBlocked(MY_PROBLEM_SENDER_ID, verifiedProblemAuth.email)) {
         syncProblemGmailUi();
+        return;
+      }
+
+      if (!currentClientIp) {
+        await fetchClientPublicIp();
+      }
+
+      const quotaStatus = get24hQuotaStatus(verifiedProblemAuth.email, currentClientIp);
+      if (quotaStatus.reached) {
+        syncProblemGmailUi();
+        const chatBox = document.getElementById('chatBox');
+        if (chatBox && !chatBox.dataset.shown24hNotice) {
+          const waitMsg = document.createElement('div');
+          waitMsg.className = 'bg-amber-950/80 border-l-2 border-amber-400 px-2 py-1 rounded text-[11px] text-amber-200 leading-tight';
+          waitMsg.innerHTML = `<strong class="text-amber-300">تنبيه :</strong> ${PENDING_24H_MESSAGE_AR}`;
+          chatBox.appendChild(waitMsg);
+          chatBox.scrollTop = chatBox.scrollHeight;
+          chatBox.dataset.shown24hNotice = "1";
+        }
         return;
       }
 
@@ -1957,6 +2235,9 @@
       recentProblemTimestamps = recentProblemTimestamps.filter(t => now - t < PROBLEM_WINDOW_MS);
       recentProblemTimestamps.push(now);
 
+      record24hQuotaUsage(verifiedProblemAuth.email, currentClientIp);
+      syncProblemGmailUi();
+
       const senderName = verifiedProblemAuth.name || deriveNameFromGmail(verifiedProblemAuth.email);
       const senderEmail = verifiedProblemAuth.email;
       const perMinCount = recordProblemSenderActivity(MY_PROBLEM_SENDER_ID, senderEmail, senderName);
@@ -1977,6 +2258,7 @@
         [
           { name: "👤 الاسم بالجيمايل", value: senderName, inline: true },
           { name: "📧 Gmail", value: senderEmail, inline: true },
+          { name: "🌐 IP", value: currentClientIp || "غير متوفر", inline: true },
           { name: "🆔 Sender ID", value: MY_PROBLEM_SENDER_ID, inline: true },
           { name: "📊 Rate / Min", value: `${perMinCount} msg/min`, inline: true },
           { name: "🛡️ حظر من ديسكورد", value: `\`!block ${senderEmail}\``, inline: false },
@@ -1988,7 +2270,7 @@
       setTimeout(() => {
         const botMsg = document.createElement('div');
         botMsg.className = 'bg-slate-900/90 border-l-2 border-rose-500 px-2 py-1 rounded text-[11px] self-start max-w-[85%] leading-tight';
-        botMsg.innerHTML = `<strong class="text-rose-400">أهلا وسهلا :</strong> تم إرسال رسالتك بنجاح!`;
+        botMsg.innerHTML = `<strong class="text-rose-400">أهلا وسهلا :</strong> ${PENDING_24H_MESSAGE_AR}`;
         chatBox.appendChild(botMsg);
         chatBox.scrollTop = chatBox.scrollHeight;
       }, 600);
@@ -2001,11 +2283,13 @@
       renderChatEmojiGrid();
       syncChatMemberUi();
       updateChatInputAccess();
+      fetchClientPublicIp();
       syncProblemGmailUi();
       renderProblemSendersList();
       initGoogleSignInButton();
       syncRemoteProblemBannedList();
       setInterval(syncRemoteProblemBannedList, 4000);
+      setInterval(syncProblem24hQuotaUi, 30000);
       syncLiveChat();
       setInterval(syncLiveChat, 2000);
       loadMoroccoWeather(true);
