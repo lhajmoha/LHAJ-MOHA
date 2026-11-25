@@ -306,6 +306,10 @@
         </div>
 
         <div class="bg-cyber-card/90 border border-slate-800 rounded-xl p-4 backdrop-blur-md space-y-3">
+          <div id="chatModeBanner" class="bg-slate-900/80 border border-slate-800 rounded-lg px-3 py-1.5 text-[10px] text-gray-300 flex items-center justify-between gap-2">
+            <span id="chatModeText"><i class="fas fa-info-circle text-cyan-400"></i> جاري التحقق من وضع الشات...</span>
+          </div>
+
           <div id="chatBanNotice" class="hidden bg-rose-950/70 border border-rose-500/50 text-rose-200 rounded-xl p-2.5 text-xs font-bold">
             <i class="fas fa-ban text-rose-400"></i> تم حظرك من إرسال الرسائل في الشات الجماعية.
           </div>
@@ -700,16 +704,44 @@
       }
     }
 
-    // ================= LIVE GROUP CHAT (PERSISTENT IN FIREBASE + FAST SYNC FOR ALL) =================
-    const FIREBASE_DATABASE_URL = ""; // حط هنا رابط قاعدة البيانات ديالك: https://xxxx-default-rtdb.firebaseio.com
+    // ================= LIVE GROUP CHAT (FIREBASE + LOCAL DEMO FALLBACK + REPLY + DELETE + DEVICE BAN) =================
+    const FIREBASE_DATABASE_URL = ""; // مثال: "https://my-chat-default-rtdb.firebaseio.com"
     const ADMIN_PASSCODE = "8080@";
     const CHAT_DISCORD_WEBHOOK_URL = ""; // اختياري
 
     const DEVICE_STORAGE_KEY = "lhajmoha_chat_device_id";
+    const LOCAL_MSG_STORAGE_KEY = "lhajmoha_demo_chat_messages_v1";
+    const LOCAL_BAN_STORAGE_KEY = "lhajmoha_demo_chat_banned_v1";
+
     let isChatAdmin = false;
     let currentReplyTo = null;
     let bannedDeviceSet = new Set();
     let lastRenderedMessagesHash = "";
+
+    const chatBroadcast = ("BroadcastChannel" in window)
+      ? new BroadcastChannel("lhajmoha_live_chat_channel")
+      : null;
+
+    if (chatBroadcast) {
+      chatBroadcast.onmessage = () => {
+        lastRenderedMessagesHash = "";
+        syncLiveChat();
+      };
+    }
+
+    function hasFirebaseConfig() {
+      return typeof FIREBASE_DATABASE_URL === "string" && /^https:\/\/.+\.firebaseio\.com\/?$/i.test(FIREBASE_DATABASE_URL.trim());
+    }
+
+    function updateChatModeBanner() {
+      const el = document.getElementById("chatModeText");
+      if (!el) return;
+      if (hasFirebaseConfig()) {
+        el.innerHTML = `<i class="fas fa-globe text-emerald-400"></i> متصل بقاعدة البيانات: الشات مخزن ويظهر لجميع الزوار`;
+      } else {
+        el.innerHTML = `<i class="fas fa-flask text-amber-400"></i> وضع تجريبي محلي (أضف رابط <strong>FIREBASE_DATABASE_URL</strong> ليظهر الشات لجميع الزوار من كل الأجهزة)`;
+      }
+    }
 
     function getOrCreateDeviceId() {
       let id = localStorage.getItem(DEVICE_STORAGE_KEY);
@@ -722,6 +754,38 @@
 
     const MY_DEVICE_ID = getOrCreateDeviceId();
 
+    function readLocalMessages() {
+      try {
+        const raw = localStorage.getItem(LOCAL_MSG_STORAGE_KEY);
+        const parsed = raw ? JSON.parse(raw) : {};
+        return parsed && typeof parsed === "object" ? parsed : {};
+      } catch (_) {
+        return {};
+      }
+    }
+
+    function writeLocalMessages(obj) {
+      try {
+        localStorage.setItem(LOCAL_MSG_STORAGE_KEY, JSON.stringify(obj || {}));
+      } catch (_) {}
+    }
+
+    function readLocalBannedIds() {
+      try {
+        const raw = localStorage.getItem(LOCAL_BAN_STORAGE_KEY);
+        const arr = raw ? JSON.parse(raw) : [];
+        return Array.isArray(arr) ? arr : [];
+      } catch (_) {
+        return [];
+      }
+    }
+
+    function writeLocalBannedIds(idsArray) {
+      try {
+        localStorage.setItem(LOCAL_BAN_STORAGE_KEY, JSON.stringify(Array.from(new Set(idsArray || []))));
+      } catch (_) {}
+    }
+
     function escapeChatHtml(str) {
       return String(str || "")
         .replace(/&/g, "&amp;")
@@ -731,7 +795,7 @@
     }
 
     function getDbBaseUrl() {
-      return FIREBASE_DATABASE_URL.replace(/\/+$/, "");
+      return FIREBASE_DATABASE_URL.trim().replace(/\/+$/, "");
     }
 
     function setReplyTarget(msgId, author, text) {
@@ -776,7 +840,7 @@
 
       if (!isChatAdmin) {
         const pass = prompt("أدخل رمز الأدمن:");
-        if (!pass) return;
+        if (pass === null) return;
         if (pass !== ADMIN_PASSCODE) {
           alert("رمز الأدمن غير صحيح.");
           return;
@@ -799,7 +863,10 @@
     }
 
     async function fetchBannedDevices() {
-      if (!FIREBASE_DATABASE_URL) return;
+      if (!hasFirebaseConfig()) {
+        bannedDeviceSet = new Set(readLocalBannedIds());
+        return;
+      }
       try {
         const res = await fetch(`${getDbBaseUrl()}/bannedDevices.json?t=${Date.now()}`, { cache: "no-store" });
         if (!res.ok) return;
@@ -812,7 +879,7 @@
       if (!isChatAdmin || !deviceId) return;
       if (!confirm(`واش متأكد بغيتي تحظر (${authorName || deviceId}) من الشات؟`)) return;
 
-      if (FIREBASE_DATABASE_URL) {
+      if (hasFirebaseConfig()) {
         await fetch(`${getDbBaseUrl()}/bannedDevices/${encodeURIComponent(deviceId)}.json`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -821,8 +888,14 @@
             author: authorName || "مستخدم"
           })
         });
+      } else {
+        const current = readLocalBannedIds();
+        current.push(deviceId);
+        writeLocalBannedIds(current);
       }
+
       bannedDeviceSet.add(deviceId);
+      if (chatBroadcast) chatBroadcast.postMessage({ type: "sync" });
       updateBanUiState();
       lastRenderedMessagesHash = "";
       await syncLiveChat();
@@ -830,12 +903,17 @@
 
     async function unbanCurrentDeviceTest() {
       if (!isChatAdmin) return;
-      if (FIREBASE_DATABASE_URL) {
+      if (hasFirebaseConfig()) {
         await fetch(`${getDbBaseUrl()}/bannedDevices/${encodeURIComponent(MY_DEVICE_ID)}.json`, {
           method: "DELETE"
         });
+      } else {
+        const filtered = readLocalBannedIds().filter(id => id !== MY_DEVICE_ID);
+        writeLocalBannedIds(filtered);
       }
+
       bannedDeviceSet.delete(MY_DEVICE_ID);
+      if (chatBroadcast) chatBroadcast.postMessage({ type: "sync" });
       updateBanUiState();
       lastRenderedMessagesHash = "";
       await syncLiveChat();
@@ -845,11 +923,17 @@
       if (!isChatAdmin || !msgId) return;
       if (!confirm("واش بغيتي تحذف هاد الرسالة نهائياً؟")) return;
 
-      if (FIREBASE_DATABASE_URL) {
+      if (hasFirebaseConfig()) {
         await fetch(`${getDbBaseUrl()}/groupChatMessages/${encodeURIComponent(msgId)}.json`, {
           method: "DELETE"
         });
+      } else {
+        const msgs = readLocalMessages();
+        delete msgs[msgId];
+        writeLocalMessages(msgs);
       }
+
+      if (chatBroadcast) chatBroadcast.postMessage({ type: "sync" });
       lastRenderedMessagesHash = "";
       await syncLiveChat();
     }
@@ -924,11 +1008,6 @@
         return;
       }
 
-      if (!FIREBASE_DATABASE_URL || !FIREBASE_DATABASE_URL.startsWith("https://")) {
-        alert("خاصك تحط رابط FIREBASE_DATABASE_URL باش الرسالة تتخزن وتبان للجميع.");
-        return;
-      }
-
       const authorInput = document.getElementById("liveChatAuthor");
       const msgInput = document.getElementById("liveChatInput");
       if (!msgInput) return;
@@ -948,15 +1027,24 @@
       msgInput.value = "";
       clearReplyTarget();
 
-      try {
-        await fetch(`${getDbBaseUrl()}/groupChatMessages.json`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        });
+      if (hasFirebaseConfig()) {
+        try {
+          await fetch(`${getDbBaseUrl()}/groupChatMessages.json`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          });
+          lastRenderedMessagesHash = "";
+          await syncLiveChat();
+        } catch (_) {}
+      } else {
+        const msgs = readLocalMessages();
+        msgs["demo_" + Date.now() + "_" + Math.random().toString(36).slice(2, 6)] = payload;
+        writeLocalMessages(msgs);
+        if (chatBroadcast) chatBroadcast.postMessage({ type: "sync" });
         lastRenderedMessagesHash = "";
-        await syncLiveChat();
-      } catch (_) {}
+        renderChatMessagesList(msgs);
+      }
 
       if (CHAT_DISCORD_WEBHOOK_URL) {
         fetch(CHAT_DISCORD_WEBHOOK_URL, {
@@ -978,16 +1066,17 @@
     }
 
     async function syncLiveChat() {
+      updateChatModeBanner();
+      await fetchBannedDevices();
+      updateBanUiState();
+
       const box = document.getElementById("liveChatBox");
       if (!box) return;
 
-      if (!FIREBASE_DATABASE_URL || !FIREBASE_DATABASE_URL.startsWith("https://")) {
-        box.innerHTML = `<div class="text-amber-300 text-center py-5 text-[11px]">أضف رابط <strong>FIREBASE_DATABASE_URL</strong> ليتم تخزين الشات وعرضه للجميع باستمرار.</div>`;
+      if (!hasFirebaseConfig()) {
+        renderChatMessagesList(readLocalMessages());
         return;
       }
-
-      await fetchBannedDevices();
-      updateBanUiState();
 
       try {
         const res = await fetch(`${getDbBaseUrl()}/groupChatMessages.json?t=${Date.now()}`, { cache: "no-store" });
