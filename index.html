@@ -477,7 +477,9 @@
     }
 
     // ================= FIVEM BROWSER STYLE MOROCCO SERVERS =================
-    const AUTO_REFRESH_MINUTES = 15; // ربع ساعة (15 دقيقة) — تقدر دير 10 إلى بغيتي 10 دقائق
+    const AUTO_REFRESH_MINUTES = 15; // ربع ساعة (15 دقيقة)
+    const SERVERS_JSON_URL = "servers.json"; // ملف اختياري بجانب index.html يحدّث أعداد اللاعبين
+
     const MOROCCAN_CFX_CODES = [
       { code: "kqmb4kd", label: "v-life", tag: "roleplay" },
       { code: "rmm687p", label: "elysium", tag: "roleplay" },
@@ -538,6 +540,25 @@
           </div>
         </div>
       `;
+    }
+
+    async function loadServersFromJsonFile() {
+      try {
+        const res = await fetch(`${SERVERS_JSON_URL}?t=${Date.now()}`, { cache: "no-store" });
+        if (!res.ok) return null;
+        const list = await res.json();
+        if (!Array.isArray(list) || !list.length) return null;
+        return list.map(item => ({
+          code: item.code || "",
+          name: cleanFiveMText(item.name || item.label || item.code || "FiveM Server"),
+          desc: cleanFiveMText(item.desc || (item.code ? `cfx.re/join/${item.code}` : "")),
+          players: typeof item.players === "number" ? item.players : null,
+          maxPlayers: typeof item.maxPlayers === "number" ? item.maxPlayers : 0,
+          tags: Array.isArray(item.tags) && item.tags.length ? item.tags.slice(0, 3) : ["roleplay"]
+        }));
+      } catch (_) {
+        return null;
+      }
     }
 
     async function fetchTextWithProxies(targetUrl) {
@@ -607,6 +628,14 @@
       }
 
       try {
+        const jsonServers = await loadServersFromJsonFile();
+        if (jsonServers) {
+          jsonServers.sort((a, b) => (b.players ?? -1) - (a.players ?? -1));
+          listEl.innerHTML = jsonServers.map(formatServerRow).join("");
+          listEl.dataset.initialized = "1";
+          return;
+        }
+
         const servers = await Promise.all(
           MOROCCAN_CFX_CODES.map(entry => fetchSingleServerEntry(entry))
         );
