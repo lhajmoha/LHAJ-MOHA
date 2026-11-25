@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="fr" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lhaj Moha | Official Creator Hub & Portal</title>
+  
+  <link rel="icon" href="avatar.png" type="image/png">
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            cyber: { 
+              bg: '#080a12', 
+              card: '#101424', 
+              border: '#1e293b',
+              blue: '#00f0ff',
+              red: '#ff0055'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #080a12;
+      background-image: 
+        radial-gradient(circle at 10% 10%, rgba(0, 240, 255, 0.12), transparent 40%),
+        radial-gradient(circle at 90% 90%, rgba(255, 0, 85, 0.12), transparent 40%),
+        linear-gradient(to bottom, #080a12, #0d1120);
+      background-attachment: fixed;
+      color: #f0f4f8;
+    }
+    
+    .gradient-text-multi {
+      background: linear-gradient(135deg, #00f0ff 0%, #ff0055 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .gradient-text-electrec {
+      background: linear-gradient(90deg, #00f0ff 0%, #ff7eb3 50%, #ff0055 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .medic-gta-card {
+      position: relative;
+      background:
+        linear-gradient(135deg, rgba(0, 240, 255, 0.08), rgba(255, 0, 85, 0.08)),
+        repeating-linear-gradient(
+          -45deg,
+          rgba(255, 255, 255, 0.015) 0px,
+          rgba(255, 255, 255, 0.015) 6px,
+          transparent 6px,
+          transparent 12px
+        ),
+        #101424;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 10px 25px -10px rgba(255, 0, 85, 0.25);
+    }
+
+    .fivem-row {
+      background: rgba(12, 15, 24, 0.92);
+      border: 1px solid rgba(148, 163, 184, 0.14);
+      transition: background 0.15s ease, border-color 0.15s ease;
+    }
+    .fivem-row:hover {
+      background: rgba(24, 29, 45, 0.98);
+      border-color: rgba(0, 240, 255, 0.35);
+    }
+
+    .banner-wrapper {
+      position: relative;
+      width: 100%;
+      height: 220px;
+      overflow: hidden;
+      background-color: #080a12;
+    }
+
+    @media (min-width: 768px) {
+      .banner-wrapper {
+        height: 280px;
+      }
+    }
+
+    .banner-bg-blur {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: blur(15px) brightness(0.6);
+      transform: scale(1.1);
+    }
+
+    .banner-main-img {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .avatar-exact {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col items-center p-3 md:p-6 pb-24">
+
+  <!-- Main Grid Layout -->
+  <div class="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+    
+    <!-- LEFT SIDEBAR: Spotify Playlist + PC Software List -->
+    <div class="lg:col-span-3 order-2 lg:order-1 space-y-6 lg:sticky lg:top-6">
+      
+      <!-- Spotify Platform Box -->
+      <div class="bg-cyber-card/90 border border-emerald-500/30 rounded-2xl p-4 backdrop-blur-md shadow-xl shadow-emerald-950/20">
+        <h2 class="text-lg font-bold mb-3 flex items-center justify-between text-emerald-400 border-b border-slate-800 pb-2">
+          <span class="flex items-center gap-2">
+            <i class="fab fa-spotify text-2xl text-emerald-400"></i> Spotify Music
+          </span>
+          <span class="text-[10px] bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 px-2 py-0.5 rounded-full">Playlist</span>
+        </h2>
+        <p class="text-xs text-gray-400 mb-3">Écoutez les morceaux et playlists. Connectez-vous à Spotify pour une écoute complète.</p>
+        
+        <!-- Spotify Embedded Player -->
+        <div class="rounded-xl overflow-hidden border border-slate-800 bg-black/40">
+          <iframe 
+            style="border-radius:12px" 
+            src="https://open.spotify.com/embed/playlist/37i9dQZF1DXcBWIGoYBM5M?utm_source=generator&theme=0" 
+            width="100%" 
+            height="380" 
+            frameBorder="0" 
+            allowfullscreen="" 
+            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
+            loading="lazy">
+          </iframe>
+        </div>
+        
+        <div class="mt-3 text-center">
+          <a href="https://open.spotify.com" target="_blank" class="inline-flex items-center gap-2 text-xs text-emerald-400 hover:underline">
+            <i class="fas fa-external-link-alt"></i> Ouvrir sur Spotify
+          </a>
+        </div>
+      </div>
+
+      <!-- PC SOFTWARE LIST BOX (UNDER SPOTIFY) -->
+      <div class="bg-cyber-card/90 border border-cyan-500/30 rounded-2xl p-4 backdrop-blur-md shadow-xl shadow-cyan-950/20">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-3">
+          <h2 class="text-base font-bold flex items-center gap-2 gradient-text-multi">
+            <i class="fas fa-desktop text-cyan-400"></i> Logiciels PC
+          </h2>
+          <span class="text-[10px] bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 px-2 py-0.5 rounded-full font-semibold">
+            Pack Ouvert
+          </span>
+        </div>
+
+        <p class="text-xs text-gray-400 mb-3">
+          Sélection de programmes PC fiables et prêts à l'emploi. D'autres logiciels seront ajoutés prochainement.
+        </p>
+
+        <!-- Dynamic Software List Container -->
+        <div id="pcSoftwareList" class="space-y-2.5 max-h-72 overflow-y-auto pr-1"></div>
+
+        <!-- Placeholder / Future Addition Note -->
+        <div class="mt-3 pt-2.5 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-gray-400">
+          <span class="flex items-center gap-1.5">
+            <i class="fas fa-plus-circle text-cyan-400"></i> Espace ouvert pour nouveaux ajouts
+          </span>
+          <span id="softwareCount" class="text-cyan-400 font-bold">0</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- CENTER COLUMN -->
+    <div class="lg:col-span-6 order-1 lg:order-2 space-y-6">
+      
+      <!-- Header Banner & Avatar -->
+      <div class="relative bg-cyber-card/90 backdrop-blur-md border border-cyan-500/30 rounded-2xl overflow-hidden shadow-2xl shadow-cyan-950/50">
+        <div class="banner-wrapper border-b border-cyan-500/30">
+          <img src="banner.png" class="banner-bg-blur" alt="Background Blur">
+          <img src="banner.png" alt="Lhaj Moha Banner" class="banner-main-img">
+        </div>
+        
+        <div class="p-6 flex flex-col md:flex-row items-center gap-6 -mt-14 relative z-10">
+          <div class="w-24 h-24 md:w-28 md:h-28 p-[3px] rounded-full bg-gradient-to-tr from-cyan-400 to-rose-600 shadow-xl shadow-cyan-500/40 flex-shrink-0">
+            <img src="avatar.png" alt="Lhaj Moha Avatar" class="rounded-full avatar-exact bg-black">
+          </div>
+
+          <div class="text-center md:text-left mt-1 md:mt-10">
+            <h1 class="text-3xl font-black text-white flex items-center justify-center md:justify-start gap-2 tracking-wide">
+              Lhaj Moha <i class="fas fa-check-circle text-cyan-400 text-xl"></i>
+            </h1>
+            <p class="text-gray-400 text-sm mt-1">Gaming Creator | GTA V & FiveM Streamer | Official Portal</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Social Platforms Grid (Circular Compact Design) -->
+      <div class="bg-cyber-card/90 border border-slate-800 rounded-2xl p-4 backdrop-blur-md shadow-xl">
+        <h2 class="text-sm font-bold mb-3 flex items-center gap-2 border-b border-slate-800 pb-2 gradient-text-multi">
+          <i class="fas fa-link text-cyan-400"></i> Mes Plateformes Officielles
+        </h2>
+
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <!-- Discord -->
+          <a href="https://discord.gg/gEbaPddx2K" target="_blank" class="bg-black/50 border border-slate-800 p-3 rounded-xl flex flex-col items-center text-center hover:border-cyan-400 hover:shadow-md hover:shadow-cyan-500/20 transition group">
+            <div class="w-12 h-12 rounded-full bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 text-xl mb-2 group-hover:scale-110 group-hover:bg-cyan-500 group-hover:text-black transition shadow-inner">
+              <i class="fab fa-discord"></i>
+            </div>
+            <div class="font-bold text-white text-xs">Discord</div>
+            <div class="text-[10px] text-gray-400 mt-0.5">Communauté VIP</div>
+          </a>
+
+          <!-- YouTube -->
+          <a href="https://www.youtube.com/@LHAJMOHA-l8p" target="_blank" class="bg-black/50 border border-slate-800 p-3 rounded-xl flex flex-col items-center text-center hover:border-rose-500 hover:shadow-md hover:shadow-rose-500/20 transition group">
+            <div class="w-12 h-12 rounded-full bg-rose-500/10 border border-rose-500/30 flex items-center justify-center text-rose-500 text-xl mb-2 group-hover:scale-110 group-hover:bg-rose-500 group-hover:text-white transition shadow-inner">
+              <i class="fab fa-youtube"></i>
+            </div>
+            <div class="font-bold text-white text-xs">YouTube</div>
+            <div class="text-[10px] text-gray-400 mt-0.5">Vidéos & Live</div>
+          </a>
+
+          <!-- TikTok -->
+          <a href="https://www.tiktok.com/@lhaj.moha53" target="_blank" class="bg-black/50 border border-slate-800 p-3 rounded-xl flex flex-col items-center text-center hover:border-rose-400 hover:shadow-md hover:shadow-rose-500/20 transition group">
+            <div class="w-12 h-12 rounded-full bg-rose-400/10 border border-rose-400/30 flex items-center justify-center text-rose-400 text-xl mb-2 group-hover:scale-110 group-hover:bg-rose-400 group-hover:text-black transition shadow-inner">
+              <i class="fab fa-tiktok"></i>
+            </div>
+            <div class="font-bold text-white text-xs">TikTok</div>
+            <div class="text-[10px] text-gray-400 mt-0.5">Clips & Highlights</div>
+          </a>
+
+          <!-- Kick -->
+          <a href="https://kick.com/lhaj-mohaa" target="_blank" class="bg-black/50 border border-slate-800 p-3 rounded-xl flex flex-col items-center text-center hover:border-emerald-400 hover:shadow-md hover:shadow-emerald-500/20 transition group">
+            <div class="w-12 h-12 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 text-xl mb-2 group-hover:scale-110 group-hover:bg-emerald-500 group-hover:text-black transition shadow-inner">
+              <i class="fas fa-bolt"></i>
+            </div>
+            <div class="font-bold text-white text-xs">Kick</div>
+            <div class="text-[10px] text-gray-400 mt-0.5">Live Streaming</div>
+          </a>
+        </div>
+      </div>
+
+      <!-- Moroccan Radio Player Section -->
+      <div class="space-y-3 pt-2">
+        <h2 class="text-xl font-bold flex items-center gap-2 border-b border-slate-800 pb-2 gradient-text-multi">
+          <i class="fas fa-radio text-cyan-400"></i> Radios Marocaines en Direct
+        </h2>
+
+        <div class="bg-cyber-card/90 border border-slate-800 rounded-xl p-4 backdrop-blur-md">
+          <div id="radioGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT SIDEBAR -->
+    <div class="lg:col-span-3 order-3 space-y-4 lg:sticky lg:top-6">
+      <h2 class="text-lg font-bold flex items-center justify-between text-blue-400 border-b border-slate-800 pb-2">
+        <span class="flex items-center gap-2">
+          <i class="fas fa-share-alt text-cyan-400"></i> Suivez-moi
+        </span>
+      </h2>
+
+      <!-- Facebook Card -->
+      <div class="bg-cyber-card/90 border border-blue-500/30 rounded-2xl p-4 backdrop-blur-md hover:border-blue-400 transition shadow-lg shadow-blue-950/20">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="w-11 h-11 rounded-full bg-blue-600 flex items-center justify-center text-white text-xl font-bold shadow-md">
+            <i class="fab fa-facebook-f"></i>
+          </div>
+          <div>
+            <div class="font-bold text-white text-sm">Facebook</div>
+            <div class="text-xs text-blue-400 font-semibold">Lhaj Moha</div>
+          </div>
+        </div>
+        <p class="text-xs text-gray-300 mb-3">Suivez la page officielle sur Facebook pour découvrir les publications et prochains événements.</p>
+        <a href="https://www.facebook.com/share/1CYtXgeb9y/?mibextid=wwXIfr" target="_blank" class="w-full bg-blue-600 hover:bg-blue-500 text-white py-2 px-4 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition shadow-md shadow-blue-600/30">
+          <i class="fab fa-facebook"></i> Visiter la Page
+        </a>
+      </div>
+
+      <!-- Instagram Card -->
+      <div class="bg-cyber-card/90 border border-rose-500/30 rounded-2xl p-4 backdrop-blur-md hover:border-rose-400 transition shadow-lg shadow-rose-950/20">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="w-11 h-11 rounded-full bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 flex items-center justify-center text-white text-xl font-bold shadow-md">
+            <i class="fab fa-instagram"></i>
+          </div>
+          <div>
+            <div class="font-bold text-white text-sm">Instagram</div>
+            <div class="text-xs text-rose-400 font-semibold">@lhaj_moha4</div>
+          </div>
+        </div>
+        <p class="text-xs text-gray-300 mb-3">Regardez les stories, photos et coulisses exclusives sur Instagram.</p>
+        <a href="https://www.instagram.com/lhaj_moha4?exln=MWUzcG9qdTh0Z2QwNg%3D%3D&utm_source=qr" target="_blank" class="w-full bg-gradient-to-r from-purple-600 to-rose-500 hover:opacity-90 text-white py-2 px-4 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition shadow-md shadow-rose-500/30">
+          <i class="fab fa-instagram"></i> S'abonner / Follow
+        </a>
+      </div>
+
+      <!-- ELECTREC CITY (GTA VI) CARD -->
+      <div class="bg-cyber-card/90 border border-cyan-500/40 rounded-2xl overflow-hidden backdrop-blur-md hover:border-pink-500 transition-all duration-300 shadow-xl shadow-cyan-950/30 group">
+        <div class="relative h-44 w-full overflow-hidden">
+          <img 
+            src="https://media-rockstargames-com.akamaized.net/mfe6/prod/__common/img/71d4d17edcd49703a5ea446cc0e588e6.jpg" 
+            onerror="this.src='https://images.unsplash.com/photo-1605895370326-e96b9d52e3f5?q=80&w=800&auto=format&fit=crop'"
+            alt="Electrec City" 
+            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+          >
+          <div class="absolute inset-0 bg-gradient-to-t from-[#101424] via-transparent to-black/30"></div>
+          <span class="absolute top-3 right-3 bg-gradient-to-r from-cyan-500 to-pink-600 text-white text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow-lg">
+            Official Store
+          </span>
+        </div>
+        
+        <div class="p-4 text-center -mt-3 relative z-10">
+          <h3 class="text-xl font-black tracking-wider uppercase gradient-text-electrec drop-shadow-sm">
+            Electrec City
+          </h3>
+          <p class="text-sm font-extrabold text-white tracking-wide mt-1">
+            Let's go
+          </p>
+          <a 
+            href="https://www.rockstargames.com/VI" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            class="mt-3 w-full bg-gradient-to-r from-cyan-500 to-pink-600 hover:opacity-95 text-white py-2 px-4 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition shadow-md shadow-pink-500/30"
+          >
+            <i class="fas fa-shopping-cart"></i> Acheter sur le site officiel
+          </a>
+        </div>
+      </div>
+
+      <!-- COMPACT PROBLEM REPORT BOX (UNDER GTA VI / ELECTREC CITY) -->
+      <div class="bg-cyber-card/90 border border-rose-500/30 rounded-xl p-2.5 backdrop-blur-md shadow-lg">
+        <div class="flex items-center justify-between mb-1.5 pb-1 border-b border-slate-800/80">
+          <span class="text-[11px] font-bold flex items-center gap-1.5 text-rose-400">
+            <i class="fas fa-headset text-[10px]"></i> Signaler un Problème
+          </span>
+          <span class="text-[9px] text-gray-400">Support</span>
+        </div>
+
+        <div id="chatBox" class="h-16 overflow-y-auto flex flex-col gap-1.5 mb-2 pr-1 bg-black/40 p-1.5 rounded-lg border border-slate-800/80 text-[11px]">
+          <div class="bg-slate-900/90 border-l-2 border-rose-500 px-2 py-1 rounded text-gray-200 leading-tight">
+            <strong class="text-rose-400">أهلا وسهلا :</strong> مرحباً بك! اكتب مشكلتك هنا وسنرد عليك في أقرب وقت.
+          </div>
+        </div>
+
+        <div class="flex gap-1.5">
+          <input type="text" id="userInput" placeholder="أهلا وسهلا، اكتب مشكلتك..." class="flex-1 min-w-0 bg-black/60 border border-slate-800 rounded-lg px-2.5 py-1 text-[11px] text-white focus:outline-none focus:border-rose-500" onkeypress="if(event.key==='Enter') sendMessage()">
+          <button onclick="sendMessage()" class="bg-gradient-to-r from-rose-500 to-pink-600 text-white px-2.5 py-1 rounded-lg font-bold text-[11px] hover:opacity-90 transition flex items-center gap-1 flex-shrink-0">
+            <i class="fas fa-paper-plane text-[10px]"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- LHAJ MOHA MEDIC ACADEMY CARD (WITHOUT IMAGE, GTA STYLE + DISCORD BELOW) -->
+      <div class="medic-gta-card border border-rose-500/40 hover:border-cyan-400/70 rounded-2xl p-3.5 backdrop-blur-md transition">
+        <div class="flex items-center justify-between gap-2 mb-2 pb-2 border-b border-slate-800/90">
+          <div class="flex items-center gap-2 min-w-0">
+            <div class="w-8 h-8 rounded-lg bg-rose-500/15 border border-rose-500/40 flex items-center justify-center text-rose-400 flex-shrink-0">
+              <i class="fas fa-heartbeat text-sm"></i>
+            </div>
+            <div class="min-w-0">
+              <h3 class="text-xs font-black uppercase tracking-wider gradient-text-multi truncate">
+                Lhaj Moha Medic Academy
+              </h3>
+              <div class="text-[9px] text-cyan-300 font-bold tracking-widest uppercase">
+                EMS • GTA V RP
+              </div>
+            </div>
+          </div>
+          <span class="bg-gradient-to-r from-rose-600 to-cyan-500 text-white text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider flex-shrink-0">
+            Medic
+          </span>
+        </div>
+
+        <p class="text-[11px] text-gray-300 leading-relaxed mb-3">
+          أكاديمية الحاج موحا للميديك — تكوين وتأطير عناصر الإسعاف في أجواء GTA V RP.
+        </p>
+
+        <a 
+          href="https://discord.gg/V4WaDKYET" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          class="w-full bg-[#5865F2] hover:bg-[#4752C4] text-white py-2 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition shadow-md shadow-[#5865F2]/30"
+        >
+          <i class="fab fa-discord text-sm"></i> Discord الأكاديمية
+        </a>
+      </div>
+
+      <!-- FIVEM BROWSER STYLE SERVER PLAYERS (REFRESH EVERY 15 MIN) -->
+      <div class="bg-[#0b0e17]/95 border border-slate-800 hover:border-cyan-500/40 rounded-2xl p-3 backdrop-blur-md transition shadow-xl">
+        <div class="flex items-center justify-between gap-2 mb-2.5 pb-2 border-b border-slate-800/90">
+          <span class="text-xs font-black uppercase tracking-wider text-white flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+            FiveM Maroc Players
+          </span>
+          <button 
+            onclick="loadMoroccoFivemServers(true)" 
+            title="Actualiser"
+            class="text-[10px] bg-slate-800/90 hover:bg-slate-700 border border-slate-700 text-gray-200 px-2 py-0.5 rounded font-bold flex items-center gap-1 transition"
+          >
+            <i class="fas fa-sync-alt text-[9px]"></i> Refresh
+          </button>
+        </div>
+
+        <div id="moroccoServersList" class="space-y-1.5 max-h-72 overflow-y-auto pr-0.5 text-[11px]">
+          <div class="text-gray-400 py-3 text-center">
+            <i class="fas fa-spinner fa-spin"></i> Chargement...
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Sticky Audio Player Bar -->
+  <div id="stickyPlayer" class="fixed bottom-0 left-0 w-full bg-slate-950/95 border-t border-cyan-500/30 p-3 z-50 backdrop-blur-md hidden shadow-2xl">
+    <div class="max-w-4xl mx-auto flex items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div id="playerIcon" class="w-10 h-10 rounded-lg bg-cyan-500/20 border border-cyan-500/40 flex items-center justify-center text-cyan-400 font-bold text-sm">
+          <i class="fas fa-broadcast-tower"></i>
+        </div>
+        <div>
+          <div id="playerStation" class="font-bold text-white text-sm">Aucune station sélectionnée</div>
+          <div id="playerGenre" class="text-xs text-cyan-400 flex items-center gap-1">
+            <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span> En direct
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <button id="mainPlayBtn" onclick="togglePlay()" class="w-10 h-10 rounded-full bg-gradient-to-r from-cyan-500 to-rose-500 text-white flex items-center justify-center text-sm shadow-lg shadow-cyan-500/30 hover:scale-105 transition">
+          <i id="mainPlayIcon" class="fas fa-play"></i>
+        </button>
+        <div class="hidden md:flex items-center gap-2">
+          <i class="fas fa-volume-up text-xs text-gray-400"></i>
+          <input type="range" id="volumeSlider" min="0" max="1" step="0.05" value="0.8" oninput="setVolume(this.value)" class="w-20 accent-cyan-400 h-1 cursor-pointer">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <audio id="globalAudioPlayer" class="hidden"></audio>
+
+  <script>
+    // ================= FIVEM SERVERS DISCORD WEBHOOK (DEDICATED TO FIVEM SECTION ONLY) =================
+    const FIVEM_DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1563218138231873586/rb1dVovzKQdNr6j6vRqfzoPHGlEl6weSJhA1jxd_NVhRSfNafrw3DoMiS4U7fDeySrVN";
+
+    function sendFivemDiscordAlert(title, fields, color = 0x00f0ff) {
+      if (!FIVEM_DISCORD_WEBHOOK_URL) return;
+      const payload = {
+        embeds: [{
+          title: title,
+          color: color,
+          fields: fields,
+          timestamp: new Date().toISOString()
+        }]
+      };
+
+      fetch(FIVEM_DISCORD_WEBHOOK_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      }).catch(err => console.log("FiveM Discord webhook error:", err));
+    }
+
+    // ================= FIVEM BROWSER STYLE MOROCCO SERVERS =================
+    const AUTO_REFRESH_MINUTES = 15; // ربع ساعة (15 دقيقة)
+    const SERVERS_JSON_URL = "servers.json";
+    const SEND_FIVEM_WEBHOOK_ON_SYNC = false; // بدّلها لـ true إلى بغيتي يبعت ملخص السيرفرات لديسكورد
+
+    const MOROCCAN_CFX_CODES = [
+      { code: "kqmb4kd", label: "v-life", tag: "roleplay" },
+      { code: "rmm687p", label: "elysium", tag: "roleplay" },
+      { code: "bdxdzod", label: "strict", tag: "roleplay" },
+      { code: "a44gax9", label: "l3acheran", tag: "roleplay" },
+      { code: "6my84y7", label: "crimson", tag: "roleplay" },
+      { code: "5oomqj6", label: "realistic role play", tag: "roleplay" }
+    ];
+
+    let isLoadingFivem = false;
+
+    function cleanFiveMText(str) {
+      return (str || "")
+        .replace(/\^[0-9]/g, "")
+        .replace(/~[a-zA-Z0-9]+~/g, "")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+
+    function extractTags(data, fallbackTag) {
+      const raw = String(data?.vars?.tags || "");
+      const parsed = raw
+        .split(",")
+        .map(t => cleanFiveMText(t).toLowerCase())
+        .filter(Boolean)
+        .slice(0, 3);
+      if (parsed.length > 0) return parsed;
+      return fallbackTag ? [fallbackTag] : [];
+    }
+
+    function formatServerRow(srv) {
+      const safeName = cleanFiveMText(srv.name) || "FiveM Server";
+      const safeDesc = cleanFiveMText(srv.desc) || `cfx.re/join/${srv.code}`;
+      const tagsHtml = (srv.tags || [])
+        .map(t => `<span class="bg-[#1b2030] text-slate-300 border border-slate-700/70 px-1.5 py-0.5 rounded text-[9px] font-medium">${t}</span>`)
+        .join("");
+
+      const hasExactCount = typeof srv.players === "number" && !Number.isNaN(srv.players);
+      const countDisplay = hasExactCount
+        ? `<div class="text-white font-black text-[11px] leading-none">${srv.players}<span class="text-slate-400 font-semibold">/${srv.maxPlayers ?? 0}</span></div><div class="text-[9px] text-slate-500 mt-0.5">players</div>`
+        : `<div class="text-slate-400 font-bold text-[10px] leading-none">--</div><div class="text-[9px] text-slate-500 mt-0.5">N/A</div>`;
+
+      return `
+        <div class="fivem-row rounded-lg px-2.5 py-2 flex items-center justify-between gap-2">
+          <div class="flex items-center gap-2 min-w-0">
+            <div class="w-7 h-7 rounded bg-[#181d2d] border border-slate-700/70 flex items-center justify-center text-cyan-400 font-black text-[11px] flex-shrink-0">
+              ${safeName.charAt(0).toUpperCase() || "M"}
+            </div>
+            <div class="min-w-0">
+              <div class="text-white font-bold text-[11px] leading-tight truncate" title="${safeName.replace(/"/g, "&quot;")}">${safeName}</div>
+              <div class="text-slate-400 text-[9px] truncate mt-0.5">${safeDesc}</div>
+              ${tagsHtml ? `<div class="flex flex-wrap gap-1 mt-1">${tagsHtml}</div>` : ""}
+            </div>
+          </div>
+
+          <div class="text-right flex-shrink-0 pl-1">
+            ${countDisplay}
+          </div>
+        </div>
+      `;
+    }
+
+    async function loadServersFromJsonFile() {
+      try {
+        const res = await fetch(`${SERVERS_JSON_URL}?t=${Date.now()}`, { cache: "no-store" });
+        if (!res.ok) return null;
+        const list = await res.json();
+        if (!Array.isArray(list) || !list.length) return null;
+        return list.map(item => ({
+          code: item.code || "",
+          name: cleanFiveMText(item.name || item.label || item.code || "FiveM Server"),
+          desc: cleanFiveMText(item.desc || (item.code ? `cfx.re/join/${item.code}` : "")),
+          players: typeof item.players === "number" ? item.players : null,
+          maxPlayers: typeof item.maxPlayers === "number" ? item.maxPlayers : 0,
+          tags: Array.isArray(item.tags) && item.tags.length ? item.tags.slice(0, 3) : ["roleplay"]
+        }));
+      } catch (_) {
+        return null;
+      }
+    }
+
+    async function fetchTextWithProxies(targetUrl) {
+      const candidates = [
+        targetUrl,
+        "https://corsproxy.io/?" + encodeURIComponent(targetUrl),
+        "https://api.allorigins.win/raw?url=" + encodeURIComponent(targetUrl)
+      ];
+
+      for (const url of candidates) {
+        try {
+          const res = await fetch(url);
+          if (res.ok) {
+            const text = await res.text();
+            if (text && text.trim().length > 10) return text;
+          }
+        } catch (_) {}
+      }
+      return null;
+    }
+
+    async function fetchSingleServerEntry(entry) {
+      const fallbackRow = {
+        code: entry.code,
+        name: entry.label,
+        desc: `cfx.re/join/${entry.code}`,
+        players: null,
+        maxPlayers: null,
+        tags: [entry.tag || "roleplay"]
+      };
+
+      const endpoint = `https://servers-frontend.fivem.net/api/servers/single/${encodeURIComponent(entry.code)}`;
+      const raw = await fetchTextWithProxies(endpoint);
+      if (!raw) return fallbackRow;
+
+      try {
+        const json = JSON.parse(raw);
+        const d = json.Data;
+        if (!d) return fallbackRow;
+
+        const apiName = cleanFiveMText(d.hostname);
+        return {
+          code: entry.code,
+          name: apiName || entry.label,
+          desc: cleanFiveMText(d.vars?.sv_projectDesc || "") || `cfx.re/join/${entry.code}`,
+          players: Number(d.clients ?? 0),
+          maxPlayers: Number(d.sv_maxclients ?? 0),
+          tags: extractTags(d, entry.tag)
+        };
+      } catch (_) {
+        return fallbackRow;
+      }
+    }
+
+    async function loadMoroccoFivemServers(showSpinner = false) {
+      if (isLoadingFivem) return;
+      isLoadingFivem = true;
+
+      const listEl = document.getElementById("moroccoServersList");
+      if (!listEl) {
+        isLoadingFivem = false;
+        return;
+      }
+
+      if (showSpinner || !listEl.dataset.initialized) {
+        listEl.innerHTML = `<div class="text-gray-400 py-3 text-center"><i class="fas fa-spinner fa-spin"></i> Chargement...</div>`;
+      }
+
+      try {
+        let servers = await loadServersFromJsonFile();
+        if (!servers) {
+          servers = await Promise.all(
+            MOROCCAN_CFX_CODES.map(entry => fetchSingleServerEntry(entry))
+          );
+        }
+
+        servers.sort((a, b) => (b.players ?? -1)
