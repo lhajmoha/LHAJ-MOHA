@@ -45,8 +45,8 @@
       -webkit-text-fill-color: transparent;
     }
 
-    .gradient-text-gta {
-      background: linear-gradient(90deg, #ff7eb3 0%, #ff758c 50%, #00f0ff 100%);
+    .gradient-text-electrec {
+      background: linear-gradient(90deg, #00f0ff 0%, #ff7eb3 50%, #ff0055 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
@@ -107,7 +107,7 @@
           </span>
           <span class="text-[10px] bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 px-2 py-0.5 rounded-full">Playlist</span>
         </h2>
-        <p class="text-xs text-gray-400 mb-3">استمع للمقاطع والتشكيلات الصوتية. يمكنك تسجيل الدخول إلى Spotify للاستماع الكامل.</p>
+        <p class="text-xs text-gray-400 mb-3">Écoutez les morceaux et playlists. Connectez-vous à Spotify pour une écoute complète.</p>
         
         <!-- Spotify Embedded Player -->
         <div class="rounded-xl overflow-hidden border border-slate-800 bg-black/40">
@@ -125,7 +125,7 @@
         
         <div class="mt-3 text-center">
           <a href="https://open.spotify.com" target="_blank" class="inline-flex items-center gap-2 text-xs text-emerald-400 hover:underline">
-            <i class="fas fa-external-link-alt"></i> فتح في منصة Spotify
+            <i class="fas fa-external-link-alt"></i> Ouvrir sur Spotify
           </a>
         </div>
       </div>
@@ -204,7 +204,7 @@
       <!-- Moroccan Radio Player Section -->
       <div class="space-y-3 pt-2">
         <h2 class="text-xl font-bold flex items-center gap-2 border-b border-slate-800 pb-2 gradient-text-multi">
-          <i class="fas fa-radio text-cyan-400"></i> إذاعات الراديو المغربية المباشرة (Radio Maroc)
+          <i class="fas fa-radio text-cyan-400"></i> Radios Marocaines en Direct
         </h2>
 
         <div class="bg-cyber-card/90 border border-slate-800 rounded-xl p-4 backdrop-blur-md">
@@ -215,19 +215,19 @@
       <!-- PROBLEM REPORT / SUPPORT SYSTEM -->
       <div class="pt-2">
         <h2 class="text-lg font-bold mb-3 flex items-center gap-2 border-b border-slate-800 pb-2 gradient-text-multi">
-          <i class="fas fa-headset text-rose-500"></i> اكتب المشكل الذي تواجهه
+          <i class="fas fa-headset text-rose-500"></i> Signaler un Problème
         </h2>
 
         <div class="bg-cyber-card/90 border border-rose-500/30 rounded-xl p-3 backdrop-blur-md">
           <div id="chatBox" class="h-32 overflow-y-auto flex flex-col gap-2 mb-3 pr-2 bg-black/40 p-2.5 rounded-lg border border-slate-800">
             <div class="bg-slate-900/80 border-l-2 border-rose-500 p-2 rounded text-xs self-start max-w-[85%]">
-              <strong class="text-rose-400">الدعم الفني:</strong> مرحباً بك! يرجى كتابة أي مشكلة تواجهها هنا وسوف تصلنا رسالتك مباشرة.
+              <strong class="text-rose-400">Support Technique :</strong> Bienvenue ! Décrivez le problème rencontré ici, votre message sera envoyé directement à l'équipe.
             </div>
           </div>
           <div class="flex gap-2">
-            <input type="text" id="userInput" placeholder="صف المشكلة هنا..." class="flex-1 bg-black/60 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-rose-500" onkeypress="if(event.key==='Enter') sendMessage()">
+            <input type="text" id="userInput" placeholder="Décrivez votre problème ici..." class="flex-1 bg-black/60 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-rose-500" onkeypress="if(event.key==='Enter') sendMessage()">
             <button onclick="sendMessage()" class="bg-gradient-to-r from-rose-500 to-pink-600 text-white px-4 py-1.5 rounded-lg font-bold text-xs hover:opacity-90 transition flex items-center gap-1">
-              إرسال <i class="fas fa-paper-plane text-[10px]"></i>
+              Envoyer <i class="fas fa-paper-plane text-[10px]"></i>
             </button>
           </div>
         </div>
@@ -254,7 +254,7 @@
             <div class="text-xs text-blue-400 font-semibold">Lhaj Moha</div>
           </div>
         </div>
-        <p class="text-xs text-gray-300 mb-3">تابع الصفحة الرسمية على الفيسبوك لمشاهدة المنشورات والفعاليات القادمة.</p>
+        <p class="text-xs text-gray-300 mb-3">Suivez la page officielle sur Facebook pour découvrir les publications et prochains événements.</p>
         <a href="https://www.facebook.com/share/1CYtXgeb9y/?mibextid=wwXIfr" target="_blank" class="w-full bg-blue-600 hover:bg-blue-500 text-white py-2 px-4 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition shadow-md shadow-blue-600/30">
           <i class="fab fa-facebook"></i> Visiter la Page
         </a>
@@ -271,35 +271,42 @@
             <div class="text-xs text-rose-400 font-semibold">@lhaj_moha4</div>
           </div>
         </div>
-        <p class="text-xs text-gray-300 mb-3">شاهد الستوريات، الصور والكواليس الحصرية على حساب الإنستغرام.</p>
+        <p class="text-xs text-gray-300 mb-3">Regardez les stories, photos et coulisses exclusives sur Instagram.</p>
         <a href="https://www.instagram.com/lhaj_moha4?exln=MWUzcG9qdTh0Z2QwNg%3D%3D&utm_source=qr" target="_blank" class="w-full bg-gradient-to-r from-purple-600 to-rose-500 hover:opacity-90 text-white py-2 px-4 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition shadow-md shadow-rose-500/30">
           <i class="fab fa-instagram"></i> S'abonner / Follow
         </a>
       </div>
 
-      <!-- GTA 6 HYPE CARD -->
-      <div class="bg-cyber-card/90 border border-pink-500/40 rounded-2xl overflow-hidden backdrop-blur-md hover:border-cyan-400 transition-all duration-300 shadow-xl shadow-pink-950/30 group">
+      <!-- ELECTREC CITY CARD -->
+      <div class="bg-cyber-card/90 border border-cyan-500/40 rounded-2xl overflow-hidden backdrop-blur-md hover:border-pink-500 transition-all duration-300 shadow-xl shadow-cyan-950/30 group">
         <div class="relative h-44 w-full overflow-hidden">
           <img 
             src="https://media-rockstargames-com.akamaized.net/mfe6/prod/__common/img/71d4d17edcd49703a5ea446cc0e588e6.jpg" 
             onerror="this.src='https://images.unsplash.com/photo-1605895370326-e96b9d52e3f5?q=80&w=800&auto=format&fit=crop'"
-            alt="GTA VI Vice City" 
+            alt="Electrec City" 
             class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
           >
           <div class="absolute inset-0 bg-gradient-to-t from-[#101424] via-transparent to-black/30"></div>
-          <span class="absolute top-3 right-3 bg-gradient-to-r from-pink-500 to-purple-600 text-white text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow-lg">
-            GTA VI
+          <span class="absolute top-3 right-3 bg-gradient-to-r from-cyan-500 to-pink-600 text-white text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow-lg">
+            Official Store
           </span>
         </div>
         
         <div class="p-4 text-center -mt-3 relative z-10">
-          <h3 class="text-xl font-black tracking-wider uppercase gradient-text-gta drop-shadow-sm">
-            GTA 6
+          <h3 class="text-xl font-black tracking-wider uppercase gradient-text-electrec drop-shadow-sm">
+            Electrec City
           </h3>
-          <div class="mt-2 inline-flex items-center justify-center gap-2 bg-gradient-to-r from-pink-500/20 to-cyan-500/20 border border-pink-500/40 px-4 py-1.5 rounded-full group-hover:border-cyan-400 transition">
-            <span class="text-sm font-extrabold text-white tracking-wide">Let's go</span>
-            <i class="fas fa-fire text-amber-400 animate-bounce text-xs"></i>
-          </div>
+          <p class="text-sm font-extrabold text-white tracking-wide mt-1">
+            Let's go
+          </p>
+          <a 
+            href="https://www.rockstargames.com/VI" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            class="mt-3 w-full bg-gradient-to-r from-cyan-500 to-pink-600 hover:opacity-95 text-white py-2 px-4 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition shadow-md shadow-pink-500/30"
+          >
+            <i class="fas fa-shopping-cart"></i> Acheter sur le site officiel
+          </a>
         </div>
       </div>
 
@@ -315,9 +322,9 @@
           <i class="fas fa-broadcast-tower"></i>
         </div>
         <div>
-          <div id="playerStation" class="font-bold text-white text-sm">إذاعة لم يتم تحديدها</div>
+          <div id="playerStation" class="font-bold text-white text-sm">Aucune station sélectionnée</div>
           <div id="playerGenre" class="text-xs text-cyan-400 flex items-center gap-1">
-            <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span> بث مباشر
+            <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span> En direct
           </div>
         </div>
       </div>
@@ -385,7 +392,7 @@
             <div>
               <div class="font-bold text-sm text-white group-hover:text-cyan-400 transition">${s.name}</div>
               <div class="text-xs text-cyan-400 flex items-center gap-1 mt-1">
-                <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span> استماع مباشر
+                <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span> Écouter en direct
               </div>
             </div>
           </div>
@@ -441,10 +448,10 @@
       chatBox.scrollTop = chatBox.scrollHeight;
 
       sendDiscordMonitoring(
-        "⚠️ بلاغ عن مشكلة من زائر (Problem Report)",
+        "⚠️ Signalement de problème (Problem Report)",
         [
-          { name: "👤 صاحب الرسالة", value: "زائر الموقع", inline: true },
-          { name: "📝 المشكلة المكتوبة", value: text, inline: false }
+          { name: "👤 Expéditeur", value: "Visiteur du site", inline: true },
+          { name: "📝 Message", value: text, inline: false }
         ],
         0xf43f5e
       );
@@ -452,7 +459,7 @@
       setTimeout(() => {
         const botMsg = document.createElement('div');
         botMsg.className = 'bg-slate-900/80 border-l-2 border-rose-500 p-2 rounded text-xs self-start max-w-[85%]';
-        botMsg.innerHTML = `<strong class="text-rose-400">الدعم الفني:</strong> تم إرسال مشكلتك بنجاح إلى الإدارة وسيتم مراجعتها فوراً!`;
+        botMsg.innerHTML = `<strong class="text-rose-400">Support Technique :</strong> Votre message a bien été transmis à l'équipe, il sera traité rapidement !`;
         chatBox.appendChild(botMsg);
         chatBox.scrollTop = chatBox.scrollHeight;
       }, 600);
