@@ -121,7 +121,7 @@
   <!-- Main Grid Layout -->
   <div class="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
     
-    <!-- LEFT SIDEBAR: Spotify Playlist + PC Software List -->
+    <!-- LEFT SIDEBAR: Spotify Playlist + PC Software List + Steam Latest Games -->
     <div class="lg:col-span-3 order-2 lg:order-1 space-y-6 lg:sticky lg:top-6">
       
       <!-- Spotify Platform Box -->
@@ -179,6 +179,28 @@
             <i class="fas fa-plus-circle text-cyan-400"></i> Espace ouvert pour nouveaux ajouts
           </span>
           <span id="softwareCount" class="text-cyan-400 font-bold">0</span>
+        </div>
+      </div>
+
+      <!-- STEAM LATEST GAMES BOX -->
+      <div class="bg-cyber-card/90 border border-rose-500/30 rounded-2xl p-4 backdrop-blur-md shadow-xl shadow-rose-950/20">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-3">
+          <h2 class="text-base font-bold flex items-center gap-2 gradient-text-multi">
+            <i class="fab fa-steam text-rose-400"></i> آخر الألعاب • Steam
+          </h2>
+          <button 
+            onclick="loadLatestGames(true)" 
+            title="تحديث قائمة الألعاب"
+            class="text-[10px] bg-slate-800/90 hover:bg-slate-700 border border-slate-700 text-gray-200 px-2 py-0.5 rounded font-bold flex items-center gap-1 transition"
+          >
+            <i class="fas fa-sync-alt text-[9px]"></i> Refresh
+          </button>
+        </div>
+
+        <div id="latestGamesList" class="space-y-2.5 max-h-96 overflow-y-auto pr-1 text-[11px]">
+          <div class="text-gray-400 py-3 text-center">
+            <i class="fas fa-spinner fa-spin"></i> جاري تحميل الألعاب...
+          </div>
         </div>
       </div>
 
@@ -476,6 +498,114 @@
       }).catch(err => console.log("Discord error:", err));
     }
 
+    // ================= STEAM LATEST GAMES (TITLE + ROLE + SPECS + RELEASE + FREE/PAID) =================
+    const GAMES_JSON_URL = "games.json";
+
+    const FALLBACK_STEAM_GAMES = [
+      {
+        title: "Counter-Strike 2",
+        role: "تصويب جماعي تنافسي (5 ضد 5) وتكتيكي على منصة Steam.",
+        releaseDate: "متوفر على Steam",
+        priceType: "مجانية",
+        requirements: "OS: Windows 10/11 | CPU: 4 threads | RAM: 8 GB | GPU: 1 GB VRAM",
+        link: "https://store.steampowered.com/app/730/"
+      },
+      {
+        title: "Grand Theft Auto V",
+        role: "عالم مفتوح وأكشن ومغامرات متعددة اللاعبين (GTA Online).",
+        releaseDate: "متوفر على Steam",
+        priceType: "بالثمن",
+        requirements: "OS: Windows 10 64-bit | CPU: i5-3470 / FX-8350 | RAM: 8 GB | GPU: GTX 660 2GB",
+        link: "https://store.steampowered.com/app/271590/"
+      }
+    ];
+
+    let isLoadingGames = false;
+
+    function escapeGameHtml(str) {
+      return String(str || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    function formatGameCard(game) {
+      const title = escapeGameHtml(game.title || "لعبة Steam");
+      const role = escapeGameHtml(game.role || "غير محدد");
+      const releaseDate = escapeGameHtml(game.releaseDate || "غير محدد");
+      const priceType = escapeGameHtml(game.priceType || "غير محدد");
+      const requirements = escapeGameHtml(game.requirements || "غير محدد");
+      const link = game.link && /^https?:\/\//i.test(game.link) ? game.link : "";
+
+      const isFree = /مجاني|free/i.test(priceType) && !/بالثمن|paid/i.test(priceType);
+      const badgeClass = isFree
+        ? "bg-emerald-500/15 text-emerald-300 border-emerald-500/30"
+        : "bg-amber-500/15 text-amber-300 border-amber-500/30";
+
+      return `
+        <div class="bg-black/50 border border-slate-800 hover:border-cyan-400/50 rounded-xl p-3 space-y-1.5 transition">
+          <div class="flex items-start justify-between gap-2">
+            <div class="font-bold text-white text-xs leading-snug">${title}</div>
+            <span class="text-[9px] px-2 py-0.5 rounded-full border font-bold flex-shrink-0 ${badgeClass}">
+              ${priceType}
+            </span>
+          </div>
+
+          <div class="text-gray-300 text-[10px] leading-relaxed">
+            <span class="text-cyan-400 font-bold">الدور:</span> ${role}
+          </div>
+
+          <div class="text-gray-300 text-[10px] leading-relaxed">
+            <span class="text-rose-400 font-bold">المتطلبات:</span> ${requirements}
+          </div>
+
+          <div class="flex items-center justify-between gap-2 pt-1 border-t border-slate-800/80 text-[10px]">
+            <span class="text-slate-400">
+              <i class="far fa-calendar-alt text-cyan-400"></i> ${releaseDate}
+            </span>
+            ${link ? `<a href="${escapeGameHtml(link)}" target="_blank" rel="noopener noreferrer" class="text-cyan-400 hover:underline font-bold">Steam <i class="fas fa-external-link-alt text-[9px]"></i></a>` : ""}
+          </div>
+        </div>
+      `;
+    }
+
+    async function loadGamesFromJson() {
+      try {
+        const res = await fetch(`${GAMES_JSON_URL}?t=${Date.now()}`, { cache: "no-store" });
+        if (!res.ok) return null;
+        const data = await res.json();
+        if (!Array.isArray(data) || !data.length) return null;
+        return data;
+      } catch (_) {
+        return null;
+      }
+    }
+
+    async function loadLatestGames(showSpinner = false) {
+      if (isLoadingGames) return;
+      isLoadingGames = true;
+
+      const listEl = document.getElementById("latestGamesList");
+      if (!listEl) {
+        isLoadingGames = false;
+        return;
+      }
+
+      if (showSpinner || !listEl.dataset.initialized) {
+        listEl.innerHTML = `<div class="text-gray-400 py-3 text-center"><i class="fas fa-spinner fa-spin"></i> جاري تحميل الألعاب...</div>`;
+      }
+
+      try {
+        const jsonGames = await loadGamesFromJson();
+        const games = jsonGames && jsonGames.length ? jsonGames : FALLBACK_STEAM_GAMES;
+        listEl.innerHTML = games.map(formatGameCard).join("");
+        listEl.dataset.initialized = "1";
+      } finally {
+        isLoadingGames = false;
+      }
+    }
+
     // ================= MOROCCO WEATHER (REFRESH EVERY 12 HOURS) =================
     const WEATHER_REFRESH_HOURS = 12;
 
@@ -739,6 +869,7 @@
     window.addEventListener('DOMContentLoaded', () => {
       renderPcSoftwareList();
       renderRadioGrid();
+      loadLatestGames(true);
       loadMoroccoWeather(true);
       setInterval(() => loadMoroccoWeather(false), WEATHER_REFRESH_HOURS * 60 * 60 * 1000);
     });
