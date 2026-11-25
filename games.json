@@ -1,0 +1,87 @@
+$gamesCount = 8
+$searchUrl = "https://store.steampowered.com/search/?sort_by=Released_DESC&category1=998&ndl=1"
+
+$appIds = @()
+
+try {
+  $html = Invoke-RestMethod -Uri $searchUrl -Headers @{ "User-Agent" = "Mozilla/5.0" } -TimeoutSec 15
+  $matches = [regex]::Matches($html, 'data-ds-appid="([0-9]+)"')
+
+  foreach ($m in $matches) {
+    $id = [int]$m.Groups[1].Value
+    if ($id -gt 0 -and ($appIds -notcontains $id)) {
+      $appIds += $id
+      if ($appIds.Count -ge $gamesCount) { break }
+    }
+  }
+}
+catch {
+  Write-Host "تعذر قراءة قائمة أحدث ألعاب Steam حالياً" -ForegroundColor Yellow
+}
+
+$gamesOutput = @()
+
+foreach ($appId in $appIds) {
+  $url = "https://store.steampowered.com/api/appdetails?appids=$appId&l=arabic"
+  try {
+    $res = Invoke-RestMethod -Uri $url -Headers @{ "User-Agent" = "Mozilla/5.0" } -TimeoutSec 12
+    $entry = $res."$appId"
+
+    if ($entry -and $entry.success -and $entry.data) {
+      $d = $entry.data
+
+      $title = if ($d.name) { [string]$d.name } else { "App $appId" }
+      $role = if ($d.short_description) { [string]$d.short_description } else { "غير متوفر" }
+
+      $releaseDate = if ($d.release_date -and $d.release_date.date) {
+        [string]$d.release_date.date
+      } else {
+        "غير محدد"
+      }
+
+      if ($d.is_free -eq $true) {
+        $priceType = "مجانية"
+      } elseif ($d.price_overview -and $d.price_overview.final_formatted) {
+        $priceType = "بالثمن (" + [string]$d.price_overview.final_formatted + ")"
+      } else {
+        $priceType = "بالثمن / غير محدد"
+      }
+
+      $rawReq = ""
+      if ($d.pc_requirements -and $d.pc_requirements.minimum) {
+        $rawReq = [string]$d.pc_requirements.minimum
+      }
+      $cleanReq = ($rawReq -replace '<[^>]+>', ' ' -replace '&[^;]+;', ' ' -replace '\s+', ' ').Trim()
+      if ([string]::IsNullOrWhiteSpace($cleanReq)) {
+        $cleanReq = "حسب صفحة اللعبة على Steam"
+      } elseif ($cleanReq.Length -gt 180) {
+        $cleanReq = $cleanReq.Substring(0, 180) + "..."
+      }
+
+      $gamesOutput += [PSCustomObject]@{
+        title        = $title
+        role         = $role
+        releaseDate  = $releaseDate
+        priceType    = $priceType
+        requirements = $cleanReq
+        link         = "https://store.steampowered.com/app/$appId/"
+      }
+
+      Write-Host "تمت إضافة: $title | $priceType | $releaseDate" -ForegroundColor Green
+    }
+  }
+  catch {
+    Write-Host "تعذر جلب تفاصيل AppID $appId" -ForegroundColor DarkYellow
+  }
+
+  Start-Sleep -Milliseconds 300
+}
+
+if ($gamesOutput.Count -gt 0) {
+  $jsonText = $gamesOutput | ConvertTo-Json -Depth 5
+  [System.IO.File]::WriteAllText("$PWD\games.json", $jsonText, [System.Text.Encoding]::UTF8)
+  Write-Host "تم تحديث games.json بأحدث ألعاب Steam ($($gamesOutput.Count) ألعاب)." -ForegroundColor Cyan
+}
+else {
+  Write-Host "لم يتم العثور على ألعاب جديدة في هذه المحاولة." -ForegroundColor Yellow
+}
