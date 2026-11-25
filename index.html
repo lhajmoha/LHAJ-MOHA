@@ -5,7 +5,1276 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lhaj Moha | Official Creator Hub & Portal</title>
   
+  <link rel="icon" href="a<!DOCTYPE html>
+<html lang="fr" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lhaj Moha | Official Creator Hub & Portal</title>
+  
   <link rel="icon" href="avatar.png" type="image/png">
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            cyber: { 
+              bg: '#080a12', 
+              card: '#101424', 
+              border: '#1e293b',
+              blue: '#00f0ff',
+              red: '#ff0055'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #080a12;
+      background-image: 
+        radial-gradient(circle at 10% 10%, rgba(0, 240, 255, 0.12), transparent 40%),
+        radial-gradient(circle at 90% 90%, rgba(255, 0, 85, 0.12), transparent 40%),
+        linear-gradient(to bottom, #080a12, #0d1120);
+      background-attachment: fixed;
+      color: #f0f4f8;
+    }
+    
+    .gradient-text-multi {
+      background: linear-gradient(135deg, #00f0ff 0%, #ff0055 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .gradient-text-electrec {
+      background: linear-gradient(90deg, #00f0ff 0%, #ff7eb3 50%, #ff0055 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .medic-gta-card {
+      position: relative;
+      background:
+        linear-gradient(135deg, rgba(0, 240, 255, 0.08), rgba(255, 0, 85, 0.08)),
+        repeating-linear-gradient(
+          -45deg,
+          rgba(255, 255, 255, 0.015) 0px,
+          rgba(255, 255, 255, 0.015) 6px,
+          transparent 6px,
+          transparent 12px
+        ),
+        #101424;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 10px 25px -10px rgba(255, 0, 85, 0.25);
+    }
+
+    .weather-row {
+      background: rgba(12, 15, 24, 0.92);
+      border: 1px solid rgba(148, 163, 184, 0.14);
+      transition: background 0.15s ease, border-color 0.15s ease;
+    }
+    .weather-row:hover {
+      background: rgba(24, 29, 45, 0.98);
+      border-color: rgba(0, 240, 255, 0.35);
+    }
+
+    .banner-wrapper {
+      position: relative;
+      width: 100%;
+      height: 220px;
+      overflow: hidden;
+      background-color: #080a12;
+    }
+
+    @media (min-width: 768px) {
+      .banner-wrapper {
+        height: 280px;
+      }
+    }
+
+    .banner-bg-blur {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: blur(15px) brightness(0.6);
+      transform: scale(1.1);
+    }
+
+    .banner-main-img {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .avatar-exact {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col items-center p-3 md:p-6 pb-24">
+
+  <!-- Main Grid Layout -->
+  <div class="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+    
+    <!-- LEFT SIDEBAR: Spotify Playlist + PC Software List -->
+    <div class="lg:col-span-3 order-2 lg:order-1 space-y-6 lg:sticky lg:top-6">
+      
+      <!-- Spotify Platform Box -->
+      <div class="bg-cyber-card/90 border border-emerald-500/30 rounded-2xl p-4 backdrop-blur-md shadow-xl shadow-emerald-950/20">
+        <h2 class="text-lg font-bold mb-3 flex items-center justify-between text-emerald-400 border-b border-slate-800 pb-2">
+          <span class="flex items-center gap-2">
+            <i class="fab fa-spotify text-2xl text-emerald-400"></i> Spotify Music
+          </span>
+          <span class="text-[10px] bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 px-2 py-0.5 rounded-full">Playlist</span>
+        </h2>
+        <p class="text-xs text-gray-400 mb-3">Écoutez les morceaux et playlists. Connectez-vous à Spotify pour une écoute complète.</p>
+        
+        <!-- Spotify Embedded Player -->
+        <div class="rounded-xl overflow-hidden border border-slate-800 bg-black/40">
+          <iframe 
+            style="border-radius:12px" 
+            src="https://open.spotify.com/embed/playlist/37i9dQZF1DXcBWIGoYBM5M?utm_source=generator&theme=0" 
+            width="100%" 
+            height="380" 
+            frameBorder="0" 
+            allowfullscreen="" 
+            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
+            loading="lazy">
+          </iframe>
+        </div>
+        
+        <div class="mt-3 text-center">
+          <a href="https://open.spotify.com" target="_blank" class="inline-flex items-center gap-2 text-xs text-emerald-400 hover:underline">
+            <i class="fas fa-external-link-alt"></i> Ouvrir sur Spotify
+          </a>
+        </div>
+      </div>
+
+      <!-- PC SOFTWARE LIST BOX (UNDER SPOTIFY) -->
+      <div class="bg-cyber-card/90 border border-cyan-500/30 rounded-2xl p-4 backdrop-blur-md shadow-xl shadow-cyan-950/20">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-3">
+          <h2 class="text-base font-bold flex items-center gap-2 gradient-text-multi">
+            <i class="fas fa-desktop text-cyan-400"></i> Logiciels PC
+          </h2>
+          <span class="text-[10px] bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 px-2 py-0.5 rounded-full font-semibold">
+            Pack Ouvert
+          </span>
+        </div>
+
+        <p class="text-xs text-gray-400 mb-3">
+          Sélection de programmes PC fiables et prêts à l'emploi. D'autres logiciels seront ajoutés prochainement.
+        </p>
+
+        <!-- Dynamic Software List Container -->
+        <div id="pcSoftwareList" class="space-y-2.5 max-h-72 overflow-y-auto pr-1"></div>
+
+        <!-- Placeholder / Future Addition Note -->
+        <div class="mt-3 pt-2.5 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-gray-400">
+          <span class="flex items-center gap-1.5">
+            <i class="fas fa-plus-circle text-cyan-400"></i> Espace ouvert pour nouveaux ajouts
+          </span>
+          <span id="softwareCount" class="text-cyan-400 font-bold">0</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- CENTER COLUMN -->
+    <div class="lg:col-span-6 order-1 lg:order-2 space-y-6">
+      
+      <!-- Header Banner & Avatar -->
+      <div class="relative bg-cyber-card/90 backdrop-blur-md border border-cyan-500/30 rounded-2xl overflow-hidden shadow-2xl shadow-cyan-950/50">
+        <div class="banner-wrapper border-b border-cyan-500/30">
+          <img src="banner.png" class="banner-bg-blur" alt="Background Blur">
+          <img src="banner.png" alt="Lhaj Moha Banner" class="banner-main-img">
+        </div>
+        
+        <div class="p-6 flex flex-col md:flex-row items-center gap-6 -mt-14 relative z-10">
+          <div class="w-24 h-24 md:w-28 md:h-28 p-[3px] rounded-full bg-gradient-to-tr from-cyan-400 to-rose-600 shadow-xl shadow-cyan-500/40 flex-shrink-0">
+            <img src="avatar.png" alt="Lhaj Moha Avatar" class="rounded-full avatar-exact bg-black">
+          </div>
+
+          <div class="text-center md:text-left mt-1 md:mt-10">
+            <h1 class="text-3xl font-black text-white flex items-center justify-center md:justify-start gap-2 tracking-wide">
+              Lhaj Moha <i class="fas fa-check-circle text-cyan-400 text-xl"></i>
+            </h1>
+            <p class="text-gray-400 text-sm mt-1">Gaming Creator | GTA V & FiveM Streamer | Official Portal</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Social Platforms Grid (Circular Compact Design) -->
+      <div class="bg-cyber-card/90 border border-slate-800 rounded-2xl p-4 backdrop-blur-md shadow-xl">
+        <h2 class="text-sm font-bold mb-3 flex items-center gap-2 border-b border-slate-800 pb-2 gradient-text-multi">
+          <i class="fas fa-link text-cyan-400"></i> Mes Plateformes Officielles
+        </h2>
+
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <!-- Discord -->
+          <a href="https://discord.gg/gEbaPddx2K" target="_blank" class="bg-black/50 border border-slate-800 p-3 rounded-xl flex flex-col items-center text-center hover:border-cyan-400 hover:shadow-md hover:shadow-cyan-500/20 transition group">
+            <div class="w-12 h-12 rounded-full bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 text-xl mb-2 group-hover:scale-110 group-hover:bg-cyan-500 group-hover:text-black transition shadow-inner">
+              <i class="fab fa-discord"></i>
+            </div>
+            <div class="font-bold text-white text-xs">Discord</div>
+            <div class="text-[10px] text-gray-400 mt-0.5">Communauté VIP</div>
+          </a>
+
+          <!-- YouTube -->
+          <a href="https://www.youtube.com/@LHAJMOHA-l8p" target="_blank" class="bg-black/50 border border-slate-800 p-3 rounded-xl flex flex-col items-center text-center hover:border-rose-500 hover:shadow-md hover:shadow-rose-500/20 transition group">
+            <div class="w-12 h-12 rounded-full bg-rose-500/10 border border-rose-500/30 flex items-center justify-center text-rose-500 text-xl mb-2 group-hover:scale-110 group-hover:bg-rose-500 group-hover:text-white transition shadow-inner">
+              <i class="fab fa-youtube"></i>
+            </div>
+            <div class="font-bold text-white text-xs">YouTube</div>
+            <div class="text-[10px] text-gray-400 mt-0.5">Vidéos & Live</div>
+          </a>
+
+          <!-- TikTok -->
+          <a href="https://www.tiktok.com/@lhaj.moha53" target="_blank" class="bg-black/50 border border-slate-800 p-3 rounded-xl flex flex-col items-center text-center hover:border-rose-400 hover:shadow-md hover:shadow-rose-500/20 transition group">
+            <div class="w-12 h-12 rounded-full bg-rose-400/10 border border-rose-400/30 flex items-center justify-center text-rose-400 text-xl mb-2 group-hover:scale-110 group-hover:bg-rose-400 group-hover:text-black transition shadow-inner">
+              <i class="fab fa-tiktok"></i>
+            </div>
+            <div class="font-bold text-white text-xs">TikTok</div>
+            <div class="text-[10px] text-gray-400 mt-0.5">Clips & Highlights</div>
+          </a>
+
+          <!-- Kick -->
+          <a href="https://kick.com/lhaj-mohaa" target="_blank" class="bg-black/50 border border-slate-800 p-3 rounded-xl flex flex-col items-center text-center hover:border-emerald-400 hover:shadow-md hover:shadow-emerald-500/20 transition group">
+            <div class="w-12 h-12 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 text-xl mb-2 group-hover:scale-110 group-hover:bg-emerald-500 group-hover:text-black transition shadow-inner">
+              <i class="fas fa-bolt"></i>
+            </div>
+            <div class="font-bold text-white text-xs">Kick</div>
+            <div class="text-[10px] text-gray-400 mt-0.5">Live Streaming</div>
+          </a>
+        </div>
+      </div>
+
+      <!-- Moroccan Radio Player Section -->
+      <div class="space-y-3 pt-2">
+        <h2 class="text-xl font-bold flex items-center gap-2 border-b border-slate-800 pb-2 gradient-text-multi">
+          <i class="fas fa-radio text-cyan-400"></i> Radios Marocaines en Direct
+        </h2>
+
+        <div class="bg-cyber-card/90 border border-slate-800 rounded-xl p-4 backdrop-blur-md">
+          <div id="radioGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+        </div>
+      </div>
+
+      <!-- STEAM LATEST GAMES SECTION (UNDER HIT RADIO & RADIO MARS) -->
+      <div id="steamLatestGamesSection" class="space-y-3 pt-2">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+          <h2 class="text-xl font-bold flex items-center gap-2 gradient-text-multi">
+            <i class="fab fa-steam text-cyan-400"></i> آخر ألعاب Steam
+          </h2>
+          <button 
+            type="button"
+            onclick="loadSteamLatestGames(true)" 
+            title="تحديث آخر ألعاب Steam"
+            class="text-xs bg-slate-800/90 hover:bg-slate-700 border border-slate-700 text-gray-200 px-2.5 py-1 rounded-lg font-bold flex items-center gap-1.5 transition"
+          >
+            <i class="fas fa-sync-alt text-[10px]"></i> Refresh
+          </button>
+        </div>
+
+        <div class="bg-cyber-card/90 border border-slate-800 rounded-xl p-4 backdrop-blur-md">
+          <div id="steamGamesGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+            <div class="col-span-full text-gray-400 py-4 text-center">
+              <i class="fas fa-spinner fa-spin"></i> جاري تحميل آخر ألعاب Steam...
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- LIVE GROUP CHAT WITH REPLY, DELETE & DEVICE BAN -->
+      <div id="liveGroupChatSection" class="space-y-3 pt-2">
+        <div class="flex items-center justify-between gap-2 border-b border-slate-800 pb-2">
+          <h2 class="text-xl font-bold flex items-center gap-2 gradient-text-multi">
+            <i class="fas fa-comments text-cyan-400"></i> الشات الجماعية المباشرة
+          </h2>
+          <button 
+            type="button"
+            onclick="toggleAdminMode()" 
+            id="adminModeBtn"
+            class="text-[11px] bg-slate-800/90 hover:bg-slate-700 border border-slate-700 text-cyan-300 px-2.5 py-1 rounded-lg font-bold transition"
+          >
+            <i class="fas fa-shield-alt"></i> وضع الأدمن
+          </button>
+        </div>
+
+        <div class="bg-cyber-card/90 border border-slate-800 rounded-xl p-4 backdrop-blur-md space-y-3">
+          <div id="chatBanNotice" class="hidden bg-rose-950/70 border border-rose-500/50 text-rose-200 rounded-xl p-2.5 text-xs font-bold">
+            <i class="fas fa-ban text-rose-400"></i> تم حظرك من إرسال الرسائل في الشات الجماعية.
+          </div>
+
+          <div id="adminControlsBar" class="hidden bg-black/50 border border-cyan-500/30 rounded-xl p-2.5 flex flex-wrap items-center justify-between gap-2 text-[11px]">
+            <span class="text-cyan-300 font-bold"><i class="fas fa-user-shield"></i> وضع الأدمن مفعل: يمكنك حذف الرسائل وحظر المخالفين</span>
+            <button 
+              type="button"
+              onclick="unbanCurrentDeviceTest()" 
+              class="bg-slate-800 hover:bg-slate-700 text-gray-200 px-2 py-1 rounded text-[10px] font-bold transition"
+            >
+              فك حظر جهازي الحالي
+            </button>
+          </div>
+
+          <div id="liveChatBox" class="h-60 overflow-y-auto flex flex-col gap-2 bg-black/50 border border-slate-800/90 rounded-xl p-3 text-xs">
+            <div class="text-gray-400 text-center py-6">
+              <i class="fas fa-spinner fa-spin"></i> جاري تحميل الرسائل...
+            </div>
+          </div>
+
+          <div id="replyPreviewBar" class="hidden bg-cyan-950/40 border border-cyan-500/30 rounded-lg px-3 py-1.5 flex items-center justify-between gap-2 text-[11px]">
+            <span class="text-cyan-200 truncate">
+              <i class="fas fa-reply text-cyan-400"></i> الرد على <strong id="replyTargetName"></strong>: <span id="replyTargetText" class="text-gray-300"></span>
+            </span>
+            <button type="button" onclick="clearReplyTarget()" class="text-rose-400 hover:text-rose-300 font-bold text-xs">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-4 gap-2">
+            <input 
+              type="text" 
+              id="liveChatAuthor" 
+              placeholder="الاسم / اللقب..." 
+              maxlength="24"
+              class="sm:col-span-1 bg-black/60 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-400"
+            >
+            <input 
+              type="text" 
+              id="liveChatInput" 
+              placeholder="اكتب رسالتك هنا..." 
+              maxlength="350"
+              onkeypress="if(event.key==='Enter') sendLiveChatMessage()"
+              class="sm:col-span-2 bg-black/60 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-400"
+            >
+            <button 
+              type="button"
+              id="liveChatSendBtn"
+              onclick="sendLiveChatMessage()" 
+              class="sm:col-span-1 bg-gradient-to-r from-cyan-500 to-rose-500 hover:opacity-95 text-white py-2 px-3 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 transition"
+            >
+              <i class="fas fa-paper-plane"></i> إرسال
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT SIDEBAR -->
+    <div class="lg:col-span-3 order-3 space-y-4 lg:sticky lg:top-6">
+      <h2 class="text-lg font-bold flex items-center justify-between text-blue-400 border-b border-slate-800 pb-2">
+        <span class="flex items-center gap-2">
+          <i class="fas fa-share-alt text-cyan-400"></i> Suivez-moi
+        </span>
+      </h2>
+
+      <!-- Facebook Card -->
+      <div class="bg-cyber-card/90 border border-blue-500/30 rounded-2xl p-4 backdrop-blur-md hover:border-blue-400 transition shadow-lg shadow-blue-950/20">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="w-11 h-11 rounded-full bg-blue-600 flex items-center justify-center text-white text-xl font-bold shadow-md">
+            <i class="fab fa-facebook-f"></i>
+          </div>
+          <div>
+            <div class="font-bold text-white text-sm">Facebook</div>
+            <div class="text-xs text-blue-400 font-semibold">Lhaj Moha</div>
+          </div>
+        </div>
+        <p class="text-xs text-gray-300 mb-3">Suivez la page officielle sur Facebook pour découvrir les publications et prochains événements.</p>
+        <a href="https://www.facebook.com/share/1CYtXgeb9y/?mibextid=wwXIfr" target="_blank" class="w-full bg-blue-600 hover:bg-blue-500 text-white py-2 px-4 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition shadow-md shadow-blue-600/30">
+          <i class="fab fa-facebook"></i> Visiter la Page
+        </a>
+      </div>
+
+      <!-- Instagram Card -->
+      <div class="bg-cyber-card/90 border border-rose-500/30 rounded-2xl p-4 backdrop-blur-md hover:border-rose-400 transition shadow-lg shadow-rose-950/20">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="w-11 h-11 rounded-full bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 flex items-center justify-center text-white text-xl font-bold shadow-md">
+            <i class="fab fa-instagram"></i>
+          </div>
+          <div>
+            <div class="font-bold text-white text-sm">Instagram</div>
+            <div class="text-xs text-rose-400 font-semibold">@lhaj_moha4</div>
+          </div>
+        </div>
+        <p class="text-xs text-gray-300 mb-3">Regardez les stories, photos et coulisses exclusives sur Instagram.</p>
+        <a href="https://www.instagram.com/lhaj_moha4?exln=MWUzcG9qdTh0Z2QwNg%3D%3D&utm_source=qr" target="_blank" class="w-full bg-gradient-to-r from-purple-600 to-rose-500 hover:opacity-90 text-white py-2 px-4 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition shadow-md shadow-rose-500/30">
+          <i class="fab fa-instagram"></i> S'abonner / Follow
+        </a>
+      </div>
+
+      <!-- ELECTREC CITY (GTA VI) CARD -->
+      <div class="bg-cyber-card/90 border border-cyan-500/40 rounded-2xl overflow-hidden backdrop-blur-md hover:border-pink-500 transition-all duration-300 shadow-xl shadow-cyan-950/30 group">
+        <div class="relative h-44 w-full overflow-hidden">
+          <img 
+            src="https://media-rockstargames-com.akamaized.net/mfe6/prod/__common/img/71d4d17edcd49703a5ea446cc0e588e6.jpg" 
+            onerror="this.src='https://images.unsplash.com/photo-1605895370326-e96b9d52e3f5?q=80&w=800&auto=format&fit=crop'"
+            alt="Electrec City" 
+            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+          >
+          <div class="absolute inset-0 bg-gradient-to-t from-[#101424] via-transparent to-black/30"></div>
+          <span class="absolute top-3 right-3 bg-gradient-to-r from-cyan-500 to-pink-600 text-white text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow-lg">
+            Official Store
+          </span>
+        </div>
+        
+        <div class="p-4 text-center -mt-3 relative z-10">
+          <h3 class="text-xl font-black tracking-wider uppercase gradient-text-electrec drop-shadow-sm">
+            Electrec City
+          </h3>
+          <p class="text-sm font-extrabold text-white tracking-wide mt-1">
+            Let's go
+          </p>
+          <a 
+            href="https://www.rockstargames.com/VI" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            class="mt-3 w-full bg-gradient-to-r from-cyan-500 to-pink-600 hover:opacity-95 text-white py-2 px-4 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition shadow-md shadow-pink-500/30"
+          >
+            <i class="fas fa-shopping-cart"></i> Acheter sur le site officiel
+          </a>
+        </div>
+      </div>
+
+      <!-- COMPACT PROBLEM REPORT BOX (UNDER GTA VI / ELECTREC CITY) -->
+      <div class="bg-cyber-card/90 border border-rose-500/30 rounded-xl p-2.5 backdrop-blur-md shadow-lg">
+        <div class="flex items-center justify-between mb-1.5 pb-1 border-b border-slate-800/80">
+          <span class="text-[11px] font-bold flex items-center gap-1.5 text-rose-400">
+            <i class="fas fa-headset text-[10px]"></i> Signaler un Problème
+          </span>
+          <span class="text-[9px] text-gray-400">Support</span>
+        </div>
+
+        <div id="chatBox" class="h-16 overflow-y-auto flex flex-col gap-1.5 mb-2 pr-1 bg-black/40 p-1.5 rounded-lg border border-slate-800/80 text-[11px]">
+          <div class="bg-slate-900/90 border-l-2 border-rose-500 px-2 py-1 rounded text-gray-200 leading-tight">
+            <strong class="text-rose-400">أهلا وسهلا :</strong> مرحباً بك! اكتب مشكلتك هنا وسنرد عليك في أقرب وقت.
+          </div>
+        </div>
+
+        <div class="flex gap-1.5">
+          <input type="text" id="userInput" placeholder="أهلا وسهلا، اكتب مشكلتك..." class="flex-1 min-w-0 bg-black/60 border border-slate-800 rounded-lg px-2.5 py-1 text-[11px] text-white focus:outline-none focus:border-rose-500" onkeypress="if(event.key==='Enter') sendMessage()">
+          <button type="button" onclick="sendMessage()" class="bg-gradient-to-r from-rose-500 to-pink-600 text-white px-2.5 py-1 rounded-lg font-bold text-[11px] hover:opacity-90 transition flex items-center gap-1 flex-shrink-0">
+            <i class="fas fa-paper-plane text-[10px]"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- LHAJ MOHA MEDIC ACADEMY CARD (WITHOUT IMAGE, GTA STYLE + DISCORD BELOW) -->
+      <div class="medic-gta-card border border-rose-500/40 hover:border-cyan-400/70 rounded-2xl p-3.5 backdrop-blur-md transition">
+        <div class="flex items-center justify-between gap-2 mb-2 pb-2 border-b border-slate-800/90">
+          <div class="flex items-center gap-2 min-w-0">
+            <div class="w-8 h-8 rounded-lg bg-rose-500/15 border border-rose-500/40 flex items-center justify-center text-rose-400 flex-shrink-0">
+              <i class="fas fa-heartbeat text-sm"></i>
+            </div>
+            <div class="min-w-0">
+              <h3 class="text-xs font-black uppercase tracking-wider gradient-text-multi truncate">
+                Lhaj Moha Medic Academy
+              </h3>
+              <div class="text-[9px] text-cyan-300 font-bold tracking-widest uppercase">
+                EMS • GTA V RP
+              </div>
+            </div>
+          </div>
+          <span class="bg-gradient-to-r from-rose-600 to-cyan-500 text-white text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider flex-shrink-0">
+            Medic
+          </span>
+        </div>
+
+        <p class="text-[11px] text-gray-300 leading-relaxed mb-3">
+          أكاديمية الحاج موحا للميديك — تكوين وتأطير عناصر الإسعاف في أجواء GTA V RP.
+        </p>
+
+        <a 
+          href="https://discord.gg/V4WaDKYET" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          class="w-full bg-[#5865F2] hover:bg-[#4752C4] text-white py-2 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition shadow-md shadow-[#5865F2]/30"
+        >
+          <i class="fab fa-discord text-sm"></i> Discord الأكاديمية
+        </a>
+      </div>
+
+      <!-- COMPACT MOROCCO WEATHER WIDGET (AUTO REFRESH EVERY 12 HOURS) -->
+      <div class="bg-[#0b0e17]/95 border border-slate-800 hover:border-cyan-500/40 rounded-2xl p-3 backdrop-blur-md transition shadow-xl">
+        <div class="flex items-center justify-between gap-2 mb-2 pb-2 border-b border-slate-800/90">
+          <span class="text-xs font-black uppercase tracking-wider text-white flex items-center gap-1.5">
+            <i class="fas fa-cloud-sun text-cyan-400"></i>
+            أحوال الطقس • 12h
+          </span>
+          <button 
+            type="button"
+            onclick="loadMoroccoWeather(true)" 
+            title="تحديث الطقس"
+            class="text-[10px] bg-slate-800/90 hover:bg-slate-700 border border-slate-700 text-gray-200 px-2 py-0.5 rounded font-bold flex items-center gap-1 transition"
+          >
+            <i class="fas fa-sync-alt text-[9px]"></i> Refresh
+          </button>
+        </div>
+
+        <div id="moroccoWeatherList" class="space-y-1 max-h-60 overflow-y-auto pr-0.5 text-[11px]">
+          <div class="text-gray-400 py-3 text-center">
+            <i class="fas fa-spinner fa-spin"></i> جاري تحميل الطقس...
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Sticky Audio Player Bar -->
+  <div id="stickyPlayer" class="fixed bottom-0 left-0 w-full bg-slate-950/95 border-t border-cyan-500/30 p-3 z-50 backdrop-blur-md hidden shadow-2xl">
+    <div class="max-w-4xl mx-auto flex items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div id="playerIcon" class="w-10 h-10 rounded-lg bg-cyan-500/20 border border-cyan-500/40 flex items-center justify-center text-cyan-400 font-bold text-sm">
+          <i class="fas fa-broadcast-tower"></i>
+        </div>
+        <div>
+          <div id="playerStation" class="font-bold text-white text-sm">Aucune station sélectionnée</div>
+          <div id="playerGenre" class="text-xs text-cyan-400 flex items-center gap-1">
+            <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span> En direct
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <button type="button" id="mainPlayBtn" onclick="togglePlay()" class="w-10 h-10 rounded-full bg-gradient-to-r from-cyan-500 to-rose-500 text-white flex items-center justify-center text-sm shadow-lg shadow-cyan-500/30 hover:scale-105 transition">
+          <i id="mainPlayIcon" class="fas fa-play"></i>
+        </button>
+        <div class="hidden md:flex items-center gap-2">
+          <i class="fas fa-volume-up text-xs text-gray-400"></i>
+          <input type="range" id="volumeSlider" min="0" max="1" step="0.05" value="0.8" oninput="setVolume(this.value)" class="w-20 accent-cyan-400 h-1 cursor-pointer">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <audio id="globalAudioPlayer" class="hidden"></audio>
+
+  <script>
+    // ================= SUPPORT DISCORD WEBHOOK =================
+    const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1563218138231873586/rb1dVovzKQdNr6j6vRqfzoPHGlEl6weSJhA1jxd_NVhRSfNafrw3DoMiS4U7fDeySrVN";
+
+    function sendDiscordMonitoring(title, fields, color = 0x00f0ff) {
+      const payload = {
+        embeds: [{
+          title: title,
+          color: color,
+          fields: fields,
+          timestamp: new Date().toISOString()
+        }]
+      };
+
+      fetch(DISCORD_WEBHOOK_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      }).catch(err => console.log("Discord error:", err));
+    }
+
+    // ================= STEAM LATEST GAMES (IMAGE + RELEASE DATE + PRICE + SPECS + ROLE) =================
+    const STEAM_GAMES_JSON_URL = "games.json";
+
+    const FALLBACK_RECENT_STEAM_GAMES = [
+      {
+        title: "أحدث إصدارات Steam",
+        image: "https://store.cloudflare.steamstatic.com/store/home/default_header.jpg",
+        role: "أحدث الألعاب المتوفرة على منصة Steam بمختلف الأنماط والمغامرات.",
+        releaseDate: "إصدار حديث على Steam",
+        priceType: "مجانية / بالثمن",
+        requirements: "يتم التحديث تلقائياً من ملف games.json عبر سكريبت Steam",
+        link: "https://store.steampowered.com/explore/new/"
+      }
+    ];
+
+    let isLoadingSteamGames = false;
+
+    function escapeSteamHtml(str) {
+      return String(str || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    function renderSteamGameCard(game) {
+      const title = escapeSteamHtml(game.title || "لعبة Steam");
+      const role = escapeSteamHtml(game.role || "غير محدد");
+      const releaseDate = escapeSteamHtml(game.releaseDate || "غير محدد");
+      const priceType = escapeSteamHtml(game.priceType || "غير محدد");
+      const requirements = escapeSteamHtml(game.requirements || "غير محدد");
+      const safeImage = game.image && /^https?:\/\//i.test(game.image)
+        ? escapeSteamHtml(game.image)
+        : "https://store.cloudflare.steamstatic.com/store/home/default_header.jpg";
+      const safeLink = game.link && /^https?:\/\//i.test(game.link)
+        ? escapeSteamHtml(game.link)
+        : "https://store.steampowered.com/";
+
+      const isFree = /مجاني|free/i.test(priceType) && !/بالثمن|paid/i.test(priceType);
+      const priceBadgeClass = isFree
+        ? "bg-emerald-500/15 text-emerald-300 border-emerald-500/30"
+        : "bg-amber-500/15 text-amber-300 border-amber-500/30";
+
+      return `
+        <div class="bg-black/50 border border-slate-800 hover:border-cyan-400/50 rounded-xl overflow-hidden flex flex-col justify-between transition group">
+          <div>
+            <div class="relative h-32 w-full overflow-hidden bg-slate-900 border-b border-slate-800/80">
+              <img 
+                src="${safeImage}" 
+                alt="${title}" 
+                loading="lazy"
+                onerror="this.onerror=null; this.src='https://store.cloudflare.steamstatic.com/store/home/default_header.jpg';"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              >
+              <span class="absolute top-2 right-2 text-[10px] px-2 py-0.5 rounded-full border font-bold backdrop-blur-sm ${priceBadgeClass}">
+                ${priceType}
+              </span>
+            </div>
+
+            <div class="p-3 space-y-1.5">
+              <div class="font-bold text-white text-sm leading-snug line-clamp-1" title="${title}">${title}</div>
+
+              <div class="text-[11px] text-cyan-300 font-semibold flex items-center gap-1.5">
+                <i class="far fa-calendar-alt text-cyan-400"></i>
+                <span>تاريخ الإصدار: ${releaseDate}</span>
+              </div>
+
+              <div class="text-gray-300 text-[11px] leading-relaxed">
+                <span class="text-cyan-400 font-bold">الدور:</span> ${role}
+              </div>
+
+              <div class="text-gray-300 text-[11px] leading-relaxed">
+                <span class="text-rose-400 font-bold">المتطلبات:</span> ${requirements}
+              </div>
+            </div>
+          </div>
+
+          <div class="px-3 py-2 border-t border-slate-800/80 bg-black/30 flex items-center justify-between text-[11px]">
+            <span class="text-slate-400"><i class="fab fa-steam text-cyan-400"></i> Steam</span>
+            <a href="${safeLink}" target="_blank" rel="noopener noreferrer" class="text-cyan-400 hover:underline font-bold">
+              صفحة اللعبة <i class="fas fa-external-link-alt text-[9px]"></i>
+            </a>
+          </div>
+        </div>
+      `;
+    }
+
+    async function fetchSteamGamesJson() {
+      try {
+        const res = await fetch(`${STEAM_GAMES_JSON_URL}?t=${Date.now()}`, { cache: "no-store" });
+        if (!res.ok) return null;
+        const list = await res.json();
+        if (!Array.isArray(list) || !list.length) return null;
+        return list;
+      } catch (_) {
+        return null;
+      }
+    }
+
+    async function loadSteamLatestGames(showSpinner = false) {
+      if (isLoadingSteamGames) return;
+      isLoadingSteamGames = true;
+
+      const gridEl = document.getElementById("steamGamesGrid");
+      if (!gridEl) {
+        isLoadingSteamGames = false;
+        return;
+      }
+
+      if (showSpinner || !gridEl.dataset.initialized) {
+        gridEl.innerHTML = `<div class="col-span-full text-gray-400 py-4 text-center"><i class="fas fa-spinner fa-spin"></i> جاري تحميل آخر ألعاب Steam...</div>`;
+      }
+
+      try {
+        const gamesFromFile = await fetchSteamGamesJson();
+        const gamesToRender = gamesFromFile && gamesFromFile.length ? gamesFromFile : FALLBACK_RECENT_STEAM_GAMES;
+        gridEl.innerHTML = gamesToRender.map(renderSteamGameCard).join("");
+        gridEl.dataset.initialized = "1";
+      } finally {
+        isLoadingSteamGames = false;
+      }
+    }
+
+    // ================= LIVE GROUP CHAT (FIREBASE REST + REPLY + DELETE + DEVICE BAN) =================
+    const FIREBASE_DATABASE_URL = ""; // مثال: "https://my-chat-default-rtdb.firebaseio.com"
+    const ADMIN_PASSCODE = "8080@";
+    const CHAT_DISCORD_WEBHOOK_URL = ""; // اختياري: رابط Discord Webhook خاص بالشات
+
+    const DEVICE_STORAGE_KEY = "lhajmoha_chat_device_id";
+    let isChatAdmin = false;
+    let currentReplyTo = null;
+    let bannedDeviceSet = new Set();
+    let lastRenderedMessagesHash = "";
+
+    function getOrCreateDeviceId() {
+      let id = localStorage.getItem(DEVICE_STORAGE_KEY);
+      if (!id) {
+        id = "dev_" + Math.random().toString(36).slice(2, 12) + "_" + Date.now().toString(36);
+        localStorage.setItem(DEVICE_STORAGE_KEY, id);
+      }
+      return id;
+    }
+
+    const MY_DEVICE_ID = getOrCreateDeviceId();
+
+    function escapeChatHtml(str) {
+      return String(str || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    function getDbBaseUrl() {
+      return FIREBASE_DATABASE_URL.replace(/\/+$/, "");
+    }
+
+    function setReplyTarget(msgId, author, text) {
+      currentReplyTo = {
+        id: msgId,
+        author: author || "عضو",
+        text: (text || "").slice(0, 80)
+      };
+      const bar = document.getElementById("replyPreviewBar");
+      const nameEl = document.getElementById("replyTargetName");
+      const textEl = document.getElementById("replyTargetText");
+      if (bar && nameEl && textEl) {
+        nameEl.textContent = currentReplyTo.author;
+        textEl.textContent = currentReplyTo.text;
+        bar.classList.remove("hidden");
+      }
+      document.getElementById("liveChatInput")?.focus();
+    }
+
+    function clearReplyTarget() {
+      currentReplyTo = null;
+      document.getElementById("replyPreviewBar")?.classList.add("hidden");
+    }
+
+    function updateBanUiState() {
+      const isBanned = bannedDeviceSet.has(MY_DEVICE_ID) && !isChatAdmin;
+      const banNotice = document.getElementById("chatBanNotice");
+      const sendBtn = document.getElementById("liveChatSendBtn");
+      const inputEl = document.getElementById("liveChatInput");
+
+      if (banNotice) banNotice.classList.toggle("hidden", !isBanned);
+      if (sendBtn) sendBtn.disabled = isBanned;
+      if (inputEl) {
+        inputEl.disabled = isBanned;
+        inputEl.placeholder = isBanned ? "أنت محظور من الكتابة في الشات..." : "اكتب رسالتك هنا...";
+      }
+    }
+
+    function toggleAdminMode() {
+      const btn = document.getElementById("adminModeBtn");
+      const bar = document.getElementById("adminControlsBar");
+
+      if (!isChatAdmin) {
+        const pass = prompt("أدخل رمز الأدمن:");
+        if (!pass) return;
+        if (pass !== ADMIN_PASSCODE) {
+          alert("رمز الأدمن غير صحيح.");
+          return;
+        }
+        isChatAdmin = true;
+      } else {
+        isChatAdmin = false;
+      }
+
+      if (btn) {
+        btn.innerHTML = isChatAdmin
+          ? '<i class="fas fa-user-shield"></i> خروج من الأدمن'
+          : '<i class="fas fa-shield-alt"></i> وضع الأدمن';
+      }
+      if (bar) bar.classList.toggle("hidden", !isChatAdmin);
+
+      updateBanUiState();
+      syncLiveChat();
+    }
+
+    async function fetchBannedDevices() {
+      if (!FIREBASE_DATABASE_URL) return;
+      try {
+        const res = await fetch(`${getDbBaseUrl()}/bannedDevices.json?t=${Date.now()}`, { cache: "no-store" });
+        if (!res.ok) return;
+        const data = await res.json();
+        bannedDeviceSet = new Set(data && typeof data === "object" ? Object.keys(data) : []);
+      } catch (_) {}
+    }
+
+    async function banDeviceById(deviceId, authorName) {
+      if (!isChatAdmin || !deviceId) return;
+      if (!confirm(`واش متأكد بغيتي تحظر (${authorName || deviceId}) من الشات؟`)) return;
+
+      if (FIREBASE_DATABASE_URL) {
+        await fetch(`${getDbBaseUrl()}/bannedDevices/${encodeURIComponent(deviceId)}.json`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            bannedAt: Date.now(),
+            author: authorName || "مستخدم"
+          })
+        });
+      }
+      bannedDeviceSet.add(deviceId);
+      updateBanUiState();
+      await syncLiveChat();
+    }
+
+    async function unbanCurrentDeviceTest() {
+      if (!isChatAdmin) return;
+      if (FIREBASE_DATABASE_URL) {
+        await fetch(`${getDbBaseUrl()}/bannedDevices/${encodeURIComponent(MY_DEVICE_ID)}.json`, {
+          method: "DELETE"
+        });
+      }
+      bannedDeviceSet.delete(MY_DEVICE_ID);
+      updateBanUiState();
+      await syncLiveChat();
+    }
+
+    async function deleteChatMessage(msgId) {
+      if (!isChatAdmin || !msgId) return;
+      if (!confirm("واش بغيتي تحذف هاد الرسالة نهائياً؟")) return;
+
+      if (FIREBASE_DATABASE_URL) {
+        await fetch(`${getDbBaseUrl()}/groupChatMessages/${encodeURIComponent(msgId)}.json`, {
+          method: "DELETE"
+        });
+      }
+      lastRenderedMessagesHash = "";
+      await syncLiveChat();
+    }
+
+    function renderChatMessagesList(messagesObj) {
+      const box = document.getElementById("liveChatBox");
+      if (!box) return;
+
+      const entries = Object.entries(messagesObj || {})
+        .map(([id, val]) => ({ id, ...(val || {}) }))
+        .filter(item => item.text && (!bannedDeviceSet.has(item.deviceId) || isChatAdmin))
+        .sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0))
+        .slice(-60);
+
+      const hash = JSON.stringify(entries.map(e => [e.id, e.text, e.author, e.deviceId])) + "|admin:" + isChatAdmin;
+      if (hash === lastRenderedMessagesHash) return;
+      lastRenderedMessagesHash = hash;
+
+      if (!entries.length) {
+        box.innerHTML = `<div class="text-gray-400 text-center py-6">لا توجد رسائل بعد. كن أول من يبدأ النقاش!</div>`;
+        return;
+      }
+
+      box.innerHTML = entries.map(msg => {
+        const safeId = escapeChatHtml(msg.id);
+        const safeAuthor = escapeChatHtml(msg.author || "زائر");
+        const safeText = escapeChatHtml(msg.text || "");
+        const safeDeviceId = escapeChatHtml(msg.deviceId || "");
+        const isUserBanned = bannedDeviceSet.has(msg.deviceId);
+        const timeStr = msg.createdAt
+          ? new Date(msg.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+          : "";
+
+        const replyHtml = msg.replyTo && msg.replyTo.text
+          ? `<div class="bg-black/40 border-r-2 border-cyan-400/70 px-2 py-1 rounded mb-1 text-[10px] text-cyan-200">
+               رد على <strong>${escapeChatHtml(msg.replyTo.author || "عضو")}</strong>: ${escapeChatHtml(msg.replyTo.text)}
+             </div>`
+          : "";
+
+        const adminActionsHtml = isChatAdmin
+          ? `<span class="inline-flex items-center gap-1.5 mr-2">
+               <button type="button" onclick="deleteChatMessage('${safeId}')" class="text-amber-400 hover:underline font-bold">حذف</button>
+               <button type="button" onclick="banDeviceById('${safeDeviceId}', '${safeAuthor}')" class="text-rose-400 hover:underline font-bold">${isUserBanned ? "محظور" : "حظر"}</button>
+             </span>`
+          : "";
+
+        return `
+          <div class="bg-slate-900/90 border ${isUserBanned ? "border-rose-500/50 opacity-75" : "border-slate-800/90"} rounded-lg p-2.5 space-y-1">
+            <div class="flex items-center justify-between gap-2 text-[10px]">
+              <div class="flex items-center gap-1.5 min-w-0">
+                <strong class="text-cyan-400 truncate">${safeAuthor}</strong>
+                ${isUserBanned ? `<span class="bg-rose-500/20 text-rose-300 px-1.5 py-0.2 rounded text-[9px]">محظور</span>` : ""}
+              </div>
+              <div class="flex items-center gap-2 flex-shrink-0 text-slate-400">
+                <span>${timeStr}</span>
+                <button type="button" onclick="setReplyTarget('${safeId}', '${safeAuthor}', '${safeText}')" class="text-cyan-300 hover:underline font-bold">رد</button>
+                ${adminActionsHtml}
+              </div>
+            </div>
+            ${replyHtml}
+            <div class="text-xs text-white break-words leading-relaxed">${safeText}</div>
+          </div>
+        `;
+      }).join("");
+
+      box.scrollTop = box.scrollHeight;
+    }
+
+    async function sendLiveChatMessage() {
+      if (bannedDeviceSet.has(MY_DEVICE_ID) && !isChatAdmin) {
+        updateBanUiState();
+        return;
+      }
+
+      const authorInput = document.getElementById("liveChatAuthor");
+      const msgInput = document.getElementById("liveChatInput");
+      if (!msgInput) return;
+
+      const author = (authorInput?.value || "").trim() || "زائر";
+      const text = msgInput.value.trim();
+      if (!text) return;
+
+      const payload = {
+        author,
+        text,
+        deviceId: MY_DEVICE_ID,
+        replyTo: currentReplyTo,
+        createdAt: Date.now()
+      };
+
+      msgInput.value = "";
+      clearReplyTarget();
+
+      if (FIREBASE_DATABASE_URL) {
+        try {
+          await fetch(`${getDbBaseUrl()}/groupChatMessages.json`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          });
+          lastRenderedMessagesHash = "";
+          await syncLiveChat();
+        } catch (_) {}
+      } else {
+        renderChatMessagesList({ ["local_" + Date.now()]: payload });
+      }
+
+      if (CHAT_DISCORD_WEBHOOK_URL) {
+        fetch(CHAT_DISCORD_WEBHOOK_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            embeds: [{
+              title: "💬 رسالة في الشات الجماعية",
+              color: 0x00f0ff,
+              fields: [
+                { name: "الاسم", value: author, inline: true },
+                { name: "الرسالة", value: text, inline: false }
+              ],
+              timestamp: new Date().toISOString()
+            }]
+          })
+        }).catch(() => {});
+      }
+    }
+
+    async function syncLiveChat() {
+      await fetchBannedDevices();
+      updateBanUiState();
+
+      const box = document.getElementById("liveChatBox");
+      if (!box) return;
+
+      if (!FIREBASE_DATABASE_URL) {
+        if (!box.dataset.ready) {
+          box.dataset.ready = "1";
+          box.innerHTML = `<div class="text-amber-300 text-center py-5 text-[11px]">أضف رابط <strong>FIREBASE_DATABASE_URL</strong> ليظهر الشات مباشرة لجميع الزوار ويُحفظ الحظر مركزياً.</div>`;
+        }
+        return;
+      }
+
+      try {
+        const res = await fetch(`${getDbBaseUrl()}/groupChatMessages.json?t=${Date.now()}`, { cache: "no-store" });
+        if (!res.ok) return;
+        const data = await res.json();
+        renderChatMessagesList(data || {});
+      } catch (_) {}
+    }
+
+    // ================= MOROCCO WEATHER (REFRESH EVERY 12 HOURS) =================
+    const WEATHER_REFRESH_HOURS = 12;
+
+    const MOROCCO_CITIES = [
+      { name: "آسفي", lat: 32.2994, lon: -9.2372 },
+      { name: "كازا", lat: 33.5731, lon: -7.5898 },
+      { name: "الجديدة", lat: 33.2316, lon: -8.5007 },
+      { name: "مراكش", lat: 31.6295, lon: -7.9811 },
+      { name: "الرباط", lat: 34.0209, lon: -6.8416 },
+      { name: "أكادير", lat: 30.4278, lon: -9.5981 },
+      { name: "طنجة", lat: 35.7595, lon: -5.8340 },
+      { name: "وجدة", lat: 34.6814, lon: -1.9086 },
+      { name: "الداخلة", lat: 23.6848, lon: -15.9570 }
+    ];
+
+    let isLoadingWeather = false;
+
+    function getWeatherInfo(code) {
+      if (code === 0) return { label: "صافي", icon: "fa-sun text-amber-400" };
+      if (code <= 3) return { label: "غائم جزئياً", icon: "fa-cloud-sun text-cyan-300" };
+      if (code <= 48) return { label: "ضباب", icon: "fa-smog text-slate-300" };
+      if (code <= 67) return { label: "أمطار", icon: "fa-cloud-rain text-sky-400" };
+      if (code <= 77) return { label: "ثلوج", icon: "fa-snowflake text-cyan-200" };
+      if (code <= 82) return { label: "زخات", icon: "fa-cloud-showers-heavy text-blue-400" };
+      if (code >= 95) return { label: "عواصف", icon: "fa-bolt text-yellow-400" };
+      return { label: "متقلب", icon: "fa-cloud text-slate-300" };
+    }
+
+    async function fetchCityWeather(city) {
+      const url = `https://api.open-meteo.com/v1/forecast?latitude=${city.lat}&longitude=${city.lon}&current=temperature_2m,weather_code&timezone=auto`;
+      try {
+        const res = await fetch(url, { cache: "no-store" });
+        if (!res.ok) throw new Error("Weather fetch failed");
+        const data = await res.json();
+        const temp = typeof data?.current?.temperature_2m === "number"
+          ? Math.round(data.current.temperature_2m)
+          : null;
+        const code = typeof data?.current?.weather_code === "number"
+          ? data.current.weather_code
+          : 0;
+        const info = getWeatherInfo(code);
+        return { name: city.name, temp, condition: info.label, icon: info.icon };
+      } catch (_) {
+        return { name: city.name, temp: null, condition: "--", icon: "fa-cloud text-slate-400" };
+      }
+    }
+
+    async function loadMoroccoWeather(showSpinner = false) {
+      if (isLoadingWeather) return;
+      isLoadingWeather = true;
+
+      const listEl = document.getElementById("moroccoWeatherList");
+      if (!listEl) {
+        isLoadingWeather = false;
+        return;
+      }
+
+      if (showSpinner || !listEl.dataset.initialized) {
+        listEl.innerHTML = `<div class="text-gray-400 py-3 text-center"><i class="fas fa-spinner fa-spin"></i> جاري تحميل الطقس...</div>`;
+      }
+
+      try {
+        const results = await Promise.all(MOROCCO_CITIES.map(fetchCityWeather));
+        listEl.innerHTML = results.map(item => {
+          const tempText = item.temp !== null ? `${item.temp}°C` : "--°C";
+          return `
+            <div class="weather-row rounded-lg px-2 py-1.5 flex items-center justify-between gap-2">
+              <div class="flex items-center gap-2 min-w-0">
+                <i class="fas ${item.icon} text-xs w-4 text-center flex-shrink-0"></i>
+                <span class="text-white font-bold text-[11px] truncate">${item.name}</span>
+                <span class="text-slate-400 text-[9px] truncate">${item.condition}</span>
+              </div>
+              <span class="text-cyan-300 font-black text-[11px] flex-shrink-0">${tempText}</span>
+            </div>
+          `;
+        }).join("");
+        listEl.dataset.initialized = "1";
+      } finally {
+        isLoadingWeather = false;
+      }
+    }
+
+    // ================= PC SOFTWARE LIST (OPEN FOR FUTURE ITEMS) =================
+    const pcSoftwareList = [
+      {
+        name: '7-Zip',
+        version: 'Latest',
+        note: 'Compression & extraction fiable',
+        url: 'https://www.7-zip.org/',
+        badge: 'Fiable',
+        icon: 'fa-file-archive'
+      },
+      {
+        name: 'VLC Media Player',
+        version: 'Latest',
+        note: 'Lecture vidéo & audio complète',
+        url: 'https://www.videolan.org/vlc/',
+        badge: 'Fiable',
+        icon: 'fa-play-circle'
+      },
+      {
+        name: 'OBS Studio',
+        version: 'Latest',
+        note: 'Stream & enregistrement écran',
+        url: 'https://obsproject.com/',
+        badge: 'Streaming',
+        icon: 'fa-video'
+      }
+    ];
+
+    function renderPcSoftwareList() {
+      const container = document.getElementById('pcSoftwareList');
+      const countEl = document.getElementById('softwareCount');
+      if (!container) return;
+
+      if (countEl) {
+        countEl.textContent = `${pcSoftwareList.length} ${pcSoftwareList.length > 1 ? 'programmes' : 'programme'}`;
+      }
+
+      if (!pcSoftwareList.length) {
+        container.innerHTML = `
+          <div class="bg-black/40 border border-dashed border-slate-700 rounded-xl p-4 text-center text-xs text-gray-400">
+            Aucun programme ajouté pour le moment. La liste est prête pour vos prochains ajouts.
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = pcSoftwareList.map(app => `
+        <div class="bg-black/50 border border-slate-800 hover:border-cyan-400/50 rounded-xl p-3 flex items-center justify-between gap-2.5 transition group">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <div class="w-9 h-9 rounded-lg bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 text-sm flex-shrink-0 group-hover:scale-105 transition">
+              <i class="fas ${app.icon || 'fa-cube'}"></i>
+            </div>
+            <div class="min-w-0">
+              <div class="flex items-center gap-1.5">
+                <span class="font-bold text-xs text-white truncate">${app.name}</span>
+                <span class="text-[9px] bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 px-1.5 py-0.2 rounded-full flex-shrink-0">
+                  ${app.badge || 'Ready'}
+                </span>
+              </div>
+              <p class="text-[11px] text-gray-400 truncate">${app.note || ''}</p>
+            </div>
+          </div>
+
+          <a 
+            href="${app.url}" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            title="Télécharger / Ouvrir ${app.name}"
+            class="bg-cyan-500/15 hover:bg-cyan-500 text-cyan-300 hover:text-black border border-cyan-500/30 px-2.5 py-1.5 rounded-lg text-[11px] font-bold flex items-center gap-1 flex-shrink-0 transition"
+          >
+            <i class="fas fa-download text-[10px]"></i> Get
+          </a>
+        </div>
+      `).join('');
+    }
+
+    // DIRECT LOGO LINKS FOR RADIOS
+    const HIT_RADIO_LOGO = "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Hit_Radio_logo.svg/1200px-Hit_Radio_logo.svg.png";
+    const RADIO_MARS_LOGO = "https://upload.wikimedia.org/wikipedia/commons/f/f6/Radio_Mars.png";
+
+    // ================= RADIO STATIONS =================
+    const radioStations = [
+      { id: 'hitradio', name: 'Hit Radio', stream: 'https://hitradio-maroc.ice.infomaniak.ch/hitradio-maroc-128.mp3', logo: HIT_RADIO_LOGO, localFallback: 'hit radio.png' },
+      { id: 'radiomars', name: 'Radio Mars', stream: 'https://radiomars.ice.infomaniak.ch/radiomars-128.mp3', logo: RADIO_MARS_LOGO, localFallback: 'radio maras.jpg' }
+    ];
+
+    let currentStation = null;
+    let isPlaying = false;
+    const audioPlayer = document.getElementById('globalAudioPlayer');
+
+    function renderRadioGrid() {
+      const grid = document.getElementById('radioGrid');
+      if (!grid) return;
+      
+      let html = '';
+      radioStations.forEach(s => {
+        html += `
+          <div onclick="playRadio('${s.id}')" class="bg-black/40 border border-slate-800 hover:border-cyan-400/50 rounded-xl p-4 flex items-center gap-4 cursor-pointer transition transform hover:-translate-y-0.5 group">
+            <div class="w-14 h-14 rounded-full overflow-hidden border-2 border-cyan-500/40 shadow-md bg-white flex-shrink-0 flex items-center justify-center p-1">
+              <img src="${s.logo}" alt="${s.name}" class="w-full h-full object-contain group-hover:scale-110 transition" onerror="this.onerror=null; this.src='${s.localFallback}';">
+            </div>
+            <div>
+              <div class="font-bold text-sm text-white group-hover:text-cyan-400 transition">${s.name}</div>
+              <div class="text-xs text-cyan-400 flex items-center gap-1 mt-1">
+                <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span> Écouter en direct
+              </div>
+            </div>
+          </div>
+        `;
+      });
+      grid.innerHTML = html;
+    }
+
+    function playRadio(stationId) {
+      const station = radioStations.find(s => s.id === stationId);
+      if (!station) return;
+
+      currentStation = station;
+      audioPlayer.src = station.stream;
+      audioPlayer.play();
+      isPlaying = true;
+
+      document.getElementById('playerStation').innerText = station.name;
+      document.getElementById('stickyPlayer').classList.remove('hidden');
+      document.getElementById('mainPlayIcon').className = 'fas fa-pause';
+    }
+
+    function togglePlay() {
+      if (!currentStation) return;
+      if (isPlaying) {
+        audioPlayer.pause();
+        document.getElementById('mainPlayIcon').className = 'fas fa-play';
+      } else {
+        audioPlayer.play();
+        document.getElementById('mainPlayIcon').className = 'fas fa-pause';
+      }
+      isPlaying = !isPlaying;
+    }
+
+    function setVolume(val) {
+      audioPlayer.volume = val;
+    }
+
+    // ================= PROBLEM REPORT =================
+    function sendMessage() {
+      const input = document.getElementById('userInput');
+      const text = input.value.trim();
+      if (!text) return;
+
+      const chatBox = document.getElementById('chatBox');
+      
+      const userMsg = document.createElement('div');
+      userMsg.className = 'bg-rose-500/20 border-r-2 border-rose-500 px-2 py-1 rounded text-[11px] self-end max-w-[85%]';
+      userMsg.innerText = text;
+      chatBox.appendChild(userMsg);
+      
+      input.value = '';
+      chatBox.scrollTop = chatBox.scrollHeight;
+
+      sendDiscordMonitoring(
+        "⚠️ Signalement de problème (Problem Report)",
+        [
+          { name: "👤 Expéditeur", value: "Visiteur du site", inline: true },
+          { name: "📝 Message", value: text, inline: false }
+        ],
+        0xf43f5e
+      );
+
+      setTimeout(() => {
+        const botMsg = document.createElement('div');
+        botMsg.className = 'bg-slate-900/90 border-l-2 border-rose-500 px-2 py-1 rounded text-[11px] self-start max-w-[85%] leading-tight';
+        botMsg.innerHTML = `<strong class="text-rose-400">أهلا وسهلا :</strong> تم إرسال رسالتك بنجاح!`;
+        chatBox.appendChild(botMsg);
+        chatBox.scrollTop = chatBox.scrollHeight;
+      }, 600);
+    }
+
+    // RUN ON LOAD
+    window.addEventListener('DOMContentLoaded', () => {
+      renderPcSoftwareList();
+      renderRadioGrid();
+      loadSteamLatestGames(true);
+      syncLiveChat();
+      setInterval(syncLiveChat, 4000);
+      loadMoroccoWeather(true);
+      setInterval(() => loadMoroccoWeather(false), WEATHER_REFRESH_HOURS * 60 * 60 * 1000);
+    });
+  </script>
+</body>
+</html>vatar.png" type="image/png">
   
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
