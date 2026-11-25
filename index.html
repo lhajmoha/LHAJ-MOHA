@@ -276,7 +276,7 @@
         </div>
       </div>
 
-      <!-- LIVE GROUP CHAT WITH CYBER BANNER & SIMPLE REGISTRATION GATE -->
+      <!-- LIVE GROUP CHAT WITH CYBER BANNER, MEMBER COLORS, DROPDOWN EMOJIS & SIMPLE REGISTRATION GATE -->
       <div id="liveGroupChatSection" class="space-y-3 pt-2">
         <div class="chat-cyber-banner border border-cyan-500/40 rounded-2xl p-3.5 flex flex-wrap items-center justify-between gap-2 shadow-lg shadow-cyan-950/30">
           <div class="flex items-center gap-3">
@@ -365,9 +365,9 @@
 
           <!-- Active Member Bar (Shown once registered) -->
           <div id="chatActiveMemberBar" class="hidden bg-black/50 border border-emerald-500/30 rounded-xl px-3 py-2 flex items-center justify-between gap-2 text-[11px]">
-            <span class="text-emerald-300 font-bold flex items-center gap-1.5 truncate">
+            <span class="font-bold flex items-center gap-1.5 truncate">
               <i class="fas fa-user-check text-emerald-400"></i>
-              <span id="chatActiveMemberName" class="text-white truncate"></span>
+              <span id="chatActiveMemberName" class="truncate"></span>
             </span>
             <button 
               type="button" 
@@ -408,7 +408,8 @@
             </button>
           </div>
 
-          <div class="flex gap-2">
+          <!-- Input + Emoji Dropdown Beside Send Button -->
+          <div class="relative flex gap-2">
             <input 
               type="text" 
               id="liveChatInput" 
@@ -419,12 +420,36 @@
             >
             <button 
               type="button"
+              id="chatEmojiToggleBtn"
+              onclick="toggleChatEmojiMenu(event)"
+              title="Choisir un emoji"
+              class="bg-slate-900/95 hover:bg-slate-800 border border-slate-700 hover:border-cyan-400/50 text-sm px-2.5 py-2 rounded-lg flex items-center justify-center flex-shrink-0 transition"
+            >
+              😀
+            </button>
+            <button 
+              type="button"
               id="liveChatSendBtn"
               onclick="sendLiveChatMessage()" 
               class="bg-gradient-to-r from-cyan-500 to-rose-500 hover:opacity-95 disabled:opacity-40 disabled:cursor-not-allowed text-white py-2 px-4 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 flex-shrink-0 transition"
             >
               <i class="fas fa-paper-plane"></i> Envoyer
             </button>
+
+            <!-- Dropdown Emoji Menu Beside Envoyer -->
+            <div 
+              id="chatEmojiDropdown" 
+              onclick="event.stopPropagation()"
+              class="hidden absolute right-0 top-full mt-1.5 z-30 w-56 bg-[#0d1222]/98 border border-cyan-500/40 rounded-xl p-2 shadow-2xl"
+            >
+              <div class="text-[10px] font-bold text-cyan-300 mb-1.5 px-1 flex items-center justify-between">
+                <span>Choisir un emoji</span>
+                <button type="button" onclick="closeChatEmojiMenu()" class="text-slate-400 hover:text-white text-xs">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+              <div id="chatEmojiGrid" class="grid grid-cols-5 gap-1"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -689,10 +714,23 @@
       }).catch(err => console.log("Discord error:", err));
     }
 
-    // ================= LIVE GROUP CHAT (PRENOM + NOM + MOT DE PASSE + CONFIRMATION) =================
+    // ================= LIVE GROUP CHAT (COLORS PER MEMBER + DROPDOWN EMOJIS + SIMPLE REGISTRATION GATE) =================
     const FIREBASE_DATABASE_URL = ""; // Exemple : "https://votre-projet-default-rtdb.firebaseio.com"
     const ADMIN_PASSCODE = "8080@";
     const CHAT_DISCORD_WEBHOOK_URL = ""; // Optionnel
+
+    const CHAT_EMOJIS = ["😀", "😂", "🔥", "❤️", "👍", "😎", "🎉", "👏", "🤩", "🤔", "😍", "🙌", "💯", "🤣", "😢"];
+
+    const MEMBER_COLOR_PALETTE = [
+      { text: "text-cyan-400", badge: "bg-cyan-500/15 border-cyan-500/30" },
+      { text: "text-rose-400", badge: "bg-rose-500/15 border-rose-500/30" },
+      { text: "text-emerald-400", badge: "bg-emerald-500/15 border-emerald-500/30" },
+      { text: "text-amber-300", badge: "bg-amber-500/15 border-amber-500/30" },
+      { text: "text-violet-400", badge: "bg-violet-500/15 border-violet-500/30" },
+      { text: "text-sky-400", badge: "bg-sky-500/15 border-sky-500/30" },
+      { text: "text-fuchsia-400", badge: "bg-fuchsia-500/15 border-fuchsia-500/30" },
+      { text: "text-lime-300", badge: "bg-lime-500/15 border-lime-500/30" }
+    ];
 
     const DEVICE_STORAGE_KEY = "lhajmoha_chat_device_id";
     const LOCAL_MSG_STORAGE_KEY = "lhajmoha_demo_chat_messages_v1";
@@ -719,6 +757,61 @@
         lastRenderedMessagesHash = "";
         syncLiveChat();
       };
+    }
+
+    function getAuthorColorStyle(name) {
+      const key = String(name || "").trim().toLowerCase();
+      let hash = 0;
+      for (let i = 0; i < key.length; i++) {
+        hash = ((hash << 5) - hash) + key.charCodeAt(i);
+        hash |= 0;
+      }
+      const idx = Math.abs(hash) % MEMBER_COLOR_PALETTE.length;
+      return MEMBER_COLOR_PALETTE[idx];
+    }
+
+    function renderChatEmojiGrid() {
+      const grid = document.getElementById("chatEmojiGrid");
+      if (!grid) return;
+      grid.innerHTML = CHAT_EMOJIS.map(emoji => `
+        <button 
+          type="button" 
+          onclick="selectChatEmoji('${emoji}')" 
+          class="bg-slate-900/90 hover:bg-cyan-500/20 border border-slate-800 hover:border-cyan-400/50 rounded-lg py-1.5 text-base leading-none flex items-center justify-center transition"
+          title="Sélectionner ${emoji}"
+        >
+          ${emoji}
+        </button>
+      `).join("");
+    }
+
+    function toggleChatEmojiMenu(event) {
+      if (event) event.stopPropagation();
+      const input = document.getElementById("liveChatInput");
+      if (input && input.disabled) return;
+      const dropdown = document.getElementById("chatEmojiDropdown");
+      if (!dropdown) return;
+      dropdown.classList.toggle("hidden");
+    }
+
+    function closeChatEmojiMenu() {
+      const dropdown = document.getElementById("chatEmojiDropdown");
+      if (dropdown) dropdown.classList.add("hidden");
+    }
+
+    function selectChatEmoji(emoji) {
+      const input = document.getElementById("liveChatInput");
+      if (!input || input.disabled) return;
+      const start = typeof input.selectionStart === "number" ? input.selectionStart : input.value.length;
+      const end = typeof input.selectionEnd === "number" ? input.selectionEnd : input.value.length;
+      const nextVal = input.value.slice(0, start) + emoji + input.value.slice(end);
+      input.value = nextVal.slice(0, 350);
+      closeChatEmojiMenu();
+      input.focus();
+      const cursorPos = Math.min(start + emoji.length, input.value.length);
+      if (typeof input.setSelectionRange === "function") {
+        input.setSelectionRange(cursorPos, cursorPos);
+      }
     }
 
     function hasFirebaseConfig() {
@@ -781,6 +874,7 @@
       try {
         sessionStorage.removeItem(CHAT_MEMBER_SESSION_KEY);
       } catch (_) {}
+      closeChatEmojiMenu();
       syncChatMemberUi();
       updateChatInputAccess();
     }
@@ -793,7 +887,11 @@
       if (activeChatMember && activeChatMember.fullName) {
         if (accessCard) accessCard.classList.add("hidden");
         if (memberBar) memberBar.classList.remove("hidden");
-        if (memberNameEl) memberNameEl.textContent = activeChatMember.fullName;
+        if (memberNameEl) {
+          const style = getAuthorColorStyle(activeChatMember.fullName);
+          memberNameEl.className = `truncate font-bold ${style.text}`;
+          memberNameEl.textContent = activeChatMember.fullName;
+        }
       } else {
         if (accessCard) accessCard.classList.remove("hidden");
         if (memberBar) memberBar.classList.add("hidden");
@@ -809,12 +907,15 @@
       const isAllowed = canSendChatMessage();
       const banNotice = document.getElementById("chatBanNotice");
       const sendBtn = document.getElementById("liveChatSendBtn");
+      const emojiBtn = document.getElementById("chatEmojiToggleBtn");
       const inputEl = document.getElementById("liveChatInput");
 
       if (banNotice) banNotice.classList.toggle("hidden", !isBanned);
 
       const allowWrite = !isBanned && isAllowed;
       if (sendBtn) sendBtn.disabled = !allowWrite;
+      if (emojiBtn) emojiBtn.disabled = !allowWrite;
+      if (!allowWrite) closeChatEmojiMenu();
       if (inputEl) {
         inputEl.disabled = !allowWrite;
         if (isBanned) {
@@ -1028,11 +1129,13 @@
       }
 
       box.innerHTML = entries.map(msg => {
+        const rawAuthor = msg.author || "Membre";
         const safeId = escapeChatHtml(msg.id);
-        const safeAuthor = escapeChatHtml(msg.author || "Membre");
+        const safeAuthor = escapeChatHtml(rawAuthor);
         const safeText = escapeChatHtml(msg.text || "");
         const safeDeviceId = escapeChatHtml(msg.deviceId || "");
         const isUserBanned = bannedDeviceSet.has(msg.deviceId);
+        const colorStyle = getAuthorColorStyle(rawAuthor);
         const timeStr = msg.createdAt
           ? new Date(msg.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
           : "";
@@ -1054,7 +1157,7 @@
           <div class="bg-slate-900/90 border ${isUserBanned ? "border-rose-500/50 opacity-75" : "border-slate-800/90"} rounded-lg p-2.5 space-y-1">
             <div class="flex items-center justify-between gap-2 text-[10px]">
               <div class="flex items-center gap-1.5 min-w-0">
-                <strong class="text-cyan-400 truncate">${safeAuthor}</strong>
+                <span class="px-2 py-0.5 rounded-full border font-extrabold truncate ${colorStyle.text} ${colorStyle.badge}">${safeAuthor}</span>
                 ${isUserBanned ? `<span class="bg-rose-500/20 text-rose-300 px-1.5 py-0.2 rounded text-[9px]">Bloqué</span>` : ""}
               </div>
               <div class="flex items-center gap-2 flex-shrink-0 text-slate-400">
@@ -1099,6 +1202,7 @@
       };
 
       msgInput.value = "";
+      closeChatEmojiMenu();
       clearReplyTarget();
 
       if (hasFirebaseConfig()) {
@@ -1518,6 +1622,7 @@
     window.addEventListener('DOMContentLoaded', () => {
       renderPcSoftwareList();
       renderRadioGrid();
+      renderChatEmojiGrid();
       syncChatMemberUi();
       updateChatInputAccess();
       syncProblemGmailUi();
@@ -1525,6 +1630,10 @@
       setInterval(syncLiveChat, 2000);
       loadMoroccoWeather(true);
       setInterval(() => loadMoroccoWeather(false), WEATHER_REFRESH_HOURS * 60 * 60 * 1000);
+    });
+
+    document.addEventListener('click', () => {
+      closeChatEmojiMenu();
     });
   </script>
 </body>
