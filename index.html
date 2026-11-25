@@ -399,7 +399,7 @@
         </a>
       </div>
 
-      <!-- FIVEM BROWSER STYLE SERVER PLAYERS (MOROCCO AUTO) -->
+      <!-- FIVEM BROWSER STYLE SERVER PLAYERS (REFRESH EVERY 15 MIN) -->
       <div class="bg-[#0b0e17]/95 border border-slate-800 hover:border-cyan-500/40 rounded-2xl p-3 backdrop-blur-md transition shadow-xl">
         <div class="flex items-center justify-between gap-2 mb-2.5 pb-2 border-b border-slate-800/90">
           <span class="text-xs font-black uppercase tracking-wider text-white flex items-center gap-1.5">
@@ -407,7 +407,7 @@
             FiveM Maroc Players
           </span>
           <button 
-            onclick="loadMoroccoFivemServers()" 
+            onclick="loadMoroccoFivemServers(true)" 
             title="Actualiser"
             class="text-[10px] bg-slate-800/90 hover:bg-slate-700 border border-slate-700 text-gray-200 px-2 py-0.5 rounded font-bold flex items-center gap-1 transition"
           >
@@ -477,6 +477,7 @@
     }
 
     // ================= FIVEM BROWSER STYLE MOROCCO SERVERS =================
+    const AUTO_REFRESH_MINUTES = 15; // ربع ساعة (15 دقيقة) — تقدر دير 10 إلى بغيتي 10 دقائق
     const MOROCCAN_CFX_CODES = [
       { code: "kqmb4kd", label: "v-life", tag: "roleplay" },
       { code: "rmm687p", label: "elysium", tag: "roleplay" },
@@ -485,6 +486,8 @@
       { code: "6my84y7", label: "crimson", tag: "roleplay" },
       { code: "5oomqj6", label: "realistic role play", tag: "roleplay" }
     ];
+
+    let isLoadingFivem = false;
 
     function cleanFiveMText(str) {
       return (str || "")
@@ -512,9 +515,10 @@
         .map(t => `<span class="bg-[#1b2030] text-slate-300 border border-slate-700/70 px-1.5 py-0.5 rounded text-[9px] font-medium">${t}</span>`)
         .join("");
 
-      const playersText = srv.players !== null && srv.players !== undefined
-        ? `${srv.players}<span class="text-slate-400 font-semibold">/${srv.maxPlayers ?? 0}</span>`
-        : `<span class="text-slate-400 font-semibold">Live</span>`;
+      const hasExactCount = typeof srv.players === "number" && !Number.isNaN(srv.players);
+      const countDisplay = hasExactCount
+        ? `<div class="text-white font-black text-[11px] leading-none">${srv.players}<span class="text-slate-400 font-semibold">/${srv.maxPlayers ?? 0}</span></div><div class="text-[9px] text-slate-500 mt-0.5">players</div>`
+        : `<div class="text-slate-400 font-bold text-[10px] leading-none">--</div><div class="text-[9px] text-slate-500 mt-0.5">N/A</div>`;
 
       return `
         <div class="fivem-row rounded-lg px-2.5 py-2 flex items-center justify-between gap-2">
@@ -530,10 +534,7 @@
           </div>
 
           <div class="text-right flex-shrink-0 pl-1">
-            <div class="text-white font-black text-[11px] leading-none">
-              ${playersText}
-            </div>
-            <div class="text-[9px] text-slate-500 mt-0.5">players</div>
+            ${countDisplay}
           </div>
         </div>
       `;
@@ -591,18 +592,31 @@
       }
     }
 
-    async function loadMoroccoFivemServers() {
+    async function loadMoroccoFivemServers(showSpinner = false) {
+      if (isLoadingFivem) return;
+      isLoadingFivem = true;
+
       const listEl = document.getElementById("moroccoServersList");
-      if (!listEl) return;
+      if (!listEl) {
+        isLoadingFivem = false;
+        return;
+      }
 
-      listEl.innerHTML = `<div class="text-gray-400 py-3 text-center"><i class="fas fa-spinner fa-spin"></i> Chargement...</div>`;
+      if (showSpinner || !listEl.dataset.initialized) {
+        listEl.innerHTML = `<div class="text-gray-400 py-3 text-center"><i class="fas fa-spinner fa-spin"></i> Chargement...</div>`;
+      }
 
-      const servers = await Promise.all(
-        MOROCCAN_CFX_CODES.map(entry => fetchSingleServerEntry(entry))
-      );
+      try {
+        const servers = await Promise.all(
+          MOROCCAN_CFX_CODES.map(entry => fetchSingleServerEntry(entry))
+        );
 
-      servers.sort((a, b) => (b.players ?? -1) - (a.players ?? -1));
-      listEl.innerHTML = servers.map(formatServerRow).join("");
+        servers.sort((a, b) => (b.players ?? -1) - (a.players ?? -1));
+        listEl.innerHTML = servers.map(formatServerRow).join("");
+        listEl.dataset.initialized = "1";
+      } finally {
+        isLoadingFivem = false;
+      }
     }
 
     // ================= PC SOFTWARE LIST (OPEN FOR FUTURE ITEMS) =================
@@ -786,8 +800,8 @@
     window.addEventListener('DOMContentLoaded', () => {
       renderPcSoftwareList();
       renderRadioGrid();
-      loadMoroccoFivemServers();
-      setInterval(loadMoroccoFivemServers, 30000);
+      loadMoroccoFivemServers(true);
+      setInterval(() => loadMoroccoFivemServers(false), AUTO_REFRESH_MINUTES * 60 * 1000);
     });
   </script>
 </body>
