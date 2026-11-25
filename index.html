@@ -265,7 +265,7 @@
         </div>
       </div>
 
-      <!-- LIVE GROUP CHAT WITH GOOGLE SIGN-IN, REPLY, DELETE & DEVICE BAN -->
+      <!-- LIVE GROUP CHAT (GOOGLE ACCOUNT REQUIRED TO CHAT) -->
       <div id="liveGroupChatSection" class="space-y-3 pt-2">
         <div class="flex items-center justify-between gap-2 border-b border-slate-800 pb-2">
           <h2 class="text-xl font-bold flex items-center gap-2 gradient-text-multi">
@@ -291,11 +291,11 @@
         </div>
 
         <div class="bg-cyber-card/90 border border-slate-800 rounded-xl p-4 backdrop-blur-md space-y-3">
-          <!-- Google Sign-In Bar -->
-          <div class="bg-black/50 border border-slate-800/90 rounded-xl px-3 py-2 flex flex-wrap items-center justify-between gap-2 text-[11px]">
-            <div id="googleUserStatus" class="text-gray-300 flex items-center gap-2">
-              <i class="fab fa-google text-cyan-400"></i>
-              <span>اتصل بحساب Google ليظهر اسمك تلقائياً في الشات</span>
+          <!-- Google Auth Bar -->
+          <div id="googleAuthBar" class="bg-black/50 border border-slate-800/90 rounded-xl px-3 py-2 flex flex-wrap items-center justify-between gap-2 text-[11px]">
+            <div id="googleUserBadge" class="text-cyan-300 font-bold flex items-center gap-1.5">
+              <i class="fab fa-google text-emerald-400"></i>
+              <span id="googleUserNameLabel">Google</span>
             </div>
             <div class="flex items-center gap-2">
               <div id="googleSignInBtnContainer"></div>
@@ -340,27 +340,20 @@
             </button>
           </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-4 gap-2">
-            <input 
-              type="text" 
-              id="liveChatAuthor" 
-              placeholder="الاسم / اللقب..." 
-              maxlength="40"
-              class="sm:col-span-1 bg-black/60 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-400"
-            >
+          <div class="flex gap-2">
             <input 
               type="text" 
               id="liveChatInput" 
               placeholder="اكتب رسالتك هنا..." 
               maxlength="350"
               onkeypress="if(event.key==='Enter') sendLiveChatMessage()"
-              class="sm:col-span-2 bg-black/60 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-400"
+              class="flex-1 min-w-0 bg-black/60 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-400"
             >
             <button 
               type="button"
               id="liveChatSendBtn"
               onclick="sendLiveChatMessage()" 
-              class="sm:col-span-1 bg-gradient-to-r from-cyan-500 to-rose-500 hover:opacity-95 text-white py-2 px-3 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 transition"
+              class="bg-gradient-to-r from-cyan-500 to-rose-500 hover:opacity-95 disabled:opacity-40 disabled:cursor-not-allowed text-white py-2 px-4 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 flex-shrink-0 transition"
             >
               <i class="fas fa-paper-plane"></i> إرسال
             </button>
@@ -581,11 +574,11 @@
       }).catch(err => console.log("Discord error:", err));
     }
 
-    // ================= LIVE GROUP CHAT (FIREBASE + LOCAL DEMO + GOOGLE ACCOUNT NAME + BAN) =================
+    // ================= LIVE GROUP CHAT (GOOGLE ACCOUNT REQUIRED TO CHAT) =================
     const FIREBASE_DATABASE_URL = ""; // مثال: "https://my-chat-default-rtdb.firebaseio.com"
     const ADMIN_PASSCODE = "8080@";
     const CHAT_DISCORD_WEBHOOK_URL = ""; // اختياري
-    const GOOGLE_CLIENT_ID = ""; // حط هنا Google OAuth Client ID ديالك إلى بغيتي زر الدخول بـ Google
+    const GOOGLE_CLIENT_ID = ""; // حط هنا Google OAuth Client ID ديالك من Google Cloud Console
 
     const DEVICE_STORAGE_KEY = "lhajmoha_chat_device_id";
     const LOCAL_MSG_STORAGE_KEY = "lhajmoha_demo_chat_messages_v1";
@@ -618,6 +611,10 @@
       return typeof FIREBASE_DATABASE_URL === "string" && /^https:\/\/.+\.firebaseio\.com\/?$/i.test(FIREBASE_DATABASE_URL.trim());
     }
 
+    function canSendChatMessage() {
+      return Boolean(googleChatUser && googleChatUser.name);
+    }
+
     function decodeJwtPayload(token) {
       try {
         const parts = String(token || "").split(".");
@@ -641,7 +638,7 @@
 
       const email = payload.email || "";
       const emailPrefix = email.includes("@") ? email.split("@")[0] : "";
-      const displayName = payload.name || emailPrefix || "مستخدم Google";
+      const displayName = payload.name || emailPrefix || "Google User";
 
       googleChatUser = {
         name: displayName,
@@ -654,6 +651,7 @@
       } catch (_) {}
 
       applyGoogleUserToUi();
+      updateChatInputAccess();
     }
 
     function signOutGoogleChatUser() {
@@ -665,40 +663,34 @@
         window.google.accounts.id.disableAutoSelect();
       }
       applyGoogleUserToUi();
+      updateChatInputAccess();
     }
 
     function applyGoogleUserToUi() {
-      const statusEl = document.getElementById("googleUserStatus");
+      const labelEl = document.getElementById("googleUserNameLabel");
       const signInContainer = document.getElementById("googleSignInBtnContainer");
       const signOutBtn = document.getElementById("googleSignOutBtn");
-      const authorInput = document.getElementById("liveChatAuthor");
 
       if (googleChatUser) {
-        if (statusEl) {
-          statusEl.innerHTML = `<i class="fab fa-google text-emerald-400"></i> متصل كـ: <strong class="text-white">${escapeChatHtml(googleChatUser.name)}</strong> ${googleChatUser.email ? `<span class="text-cyan-300">(${escapeChatHtml(googleChatUser.email)})</span>` : ""}`;
+        if (labelEl) {
+          labelEl.textContent = googleChatUser.email
+            ? `${googleChatUser.name} (${googleChatUser.email})`
+            : googleChatUser.name;
         }
         if (signInContainer) signInContainer.classList.add("hidden");
         if (signOutBtn) signOutBtn.classList.remove("hidden");
-        if (authorInput) {
-          authorInput.value = googleChatUser.name;
-          authorInput.readOnly = true;
-          authorInput.classList.add("opacity-80");
-        }
       } else {
-        if (statusEl) {
-          statusEl.innerHTML = `<i class="fab fa-google text-cyan-400"></i> <span>اتصل بحساب Google ليظهر اسمك تلقائياً في الشات</span>`;
+        if (labelEl) {
+          labelEl.textContent = "Google";
         }
         if (signInContainer) signInContainer.classList.remove("hidden");
         if (signOutBtn) signOutBtn.classList.add("hidden");
-        if (authorInput) {
-          authorInput.readOnly = false;
-          authorInput.classList.remove("opacity-80");
-        }
       }
     }
 
     function initGoogleSignInButton() {
       applyGoogleUserToUi();
+      updateChatInputAccess();
       const container = document.getElementById("googleSignInBtnContainer");
       if (!container || !GOOGLE_CLIENT_ID || !window.google?.accounts?.id) return;
 
@@ -712,6 +704,29 @@
         size: "small",
         text: "signin_with"
       });
+    }
+
+    function updateChatInputAccess() {
+      const isBanned = bannedDeviceSet.has(MY_DEVICE_ID) && !isChatAdmin;
+      const isAuthed = canSendChatMessage();
+      const banNotice = document.getElementById("chatBanNotice");
+      const sendBtn = document.getElementById("liveChatSendBtn");
+      const inputEl = document.getElementById("liveChatInput");
+
+      if (banNotice) banNotice.classList.toggle("hidden", !isBanned);
+
+      const allowWrite = !isBanned && isAuthed;
+      if (sendBtn) sendBtn.disabled = !allowWrite;
+      if (inputEl) {
+        inputEl.disabled = !allowWrite;
+        if (isBanned) {
+          inputEl.placeholder = "أنت محظور من الكتابة في الشات...";
+        } else if (!isAuthed) {
+          inputEl.placeholder = "Google Sign-In required...";
+        } else {
+          inputEl.placeholder = "اكتب رسالتك هنا...";
+        }
+      }
     }
 
     function getOrCreateDeviceId() {
@@ -772,7 +787,7 @@
     function setReplyTarget(msgId, author, text) {
       currentReplyTo = {
         id: msgId,
-        author: author || "عضو",
+        author: author || "Google",
         text: (text || "").slice(0, 80)
       };
       const bar = document.getElementById("replyPreviewBar");
@@ -789,20 +804,6 @@
     function clearReplyTarget() {
       currentReplyTo = null;
       document.getElementById("replyPreviewBar")?.classList.add("hidden");
-    }
-
-    function updateBanUiState() {
-      const isBanned = bannedDeviceSet.has(MY_DEVICE_ID) && !isChatAdmin;
-      const banNotice = document.getElementById("chatBanNotice");
-      const sendBtn = document.getElementById("liveChatSendBtn");
-      const inputEl = document.getElementById("liveChatInput");
-
-      if (banNotice) banNotice.classList.toggle("hidden", !isBanned);
-      if (sendBtn) sendBtn.disabled = isBanned;
-      if (inputEl) {
-        inputEl.disabled = isBanned;
-        inputEl.placeholder = isBanned ? "أنت محظور من الكتابة في الشات..." : "اكتب رسالتك هنا...";
-      }
     }
 
     function toggleAdminMode() {
@@ -828,7 +829,7 @@
       }
       if (bar) bar.classList.toggle("hidden", !isChatAdmin);
 
-      updateBanUiState();
+      updateChatInputAccess();
       lastRenderedMessagesHash = "";
       syncLiveChat();
     }
@@ -856,7 +857,7 @@
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             bannedAt: Date.now(),
-            author: authorName || "مستخدم"
+            author: authorName || "Google User"
           })
         });
       } else {
@@ -867,7 +868,7 @@
 
       bannedDeviceSet.add(deviceId);
       if (chatBroadcast) chatBroadcast.postMessage({ type: "sync" });
-      updateBanUiState();
+      updateChatInputAccess();
       lastRenderedMessagesHash = "";
       await syncLiveChat();
     }
@@ -885,7 +886,7 @@
 
       bannedDeviceSet.delete(MY_DEVICE_ID);
       if (chatBroadcast) chatBroadcast.postMessage({ type: "sync" });
-      updateBanUiState();
+      updateChatInputAccess();
       lastRenderedMessagesHash = "";
       await syncLiveChat();
     }
@@ -930,7 +931,7 @@
 
       box.innerHTML = entries.map(msg => {
         const safeId = escapeChatHtml(msg.id);
-        const safeAuthor = escapeChatHtml(msg.author || "زائر");
+        const safeAuthor = escapeChatHtml(msg.author || "Google");
         const safeText = escapeChatHtml(msg.text || "");
         const safeDeviceId = escapeChatHtml(msg.deviceId || "");
         const isUserBanned = bannedDeviceSet.has(msg.deviceId);
@@ -940,7 +941,7 @@
 
         const replyHtml = msg.replyTo && msg.replyTo.text
           ? `<div class="bg-black/40 border-r-2 border-cyan-400/70 px-2 py-1 rounded mb-1 text-[10px] text-cyan-200">
-               رد على <strong>${escapeChatHtml(msg.replyTo.author || "عضو")}</strong>: ${escapeChatHtml(msg.replyTo.text)}
+               رد على <strong>${escapeChatHtml(msg.replyTo.author || "Google")}</strong>: ${escapeChatHtml(msg.replyTo.text)}
              </div>`
           : "";
 
@@ -975,17 +976,19 @@
 
     async function sendLiveChatMessage() {
       if (bannedDeviceSet.has(MY_DEVICE_ID) && !isChatAdmin) {
-        updateBanUiState();
+        updateChatInputAccess();
         return;
       }
 
-      const authorInput = document.getElementById("liveChatAuthor");
+      if (!canSendChatMessage()) {
+        updateChatInputAccess();
+        return;
+      }
+
       const msgInput = document.getElementById("liveChatInput");
       if (!msgInput) return;
 
-      const sender = googleChatUser?.name
-        ? googleChatUser.name
-        : ((authorInput?.value || "").trim() || "زائر");
+      const sender = googleChatUser.name;
       const text = msgInput.value.trim();
       if (!text) return;
 
@@ -1041,7 +1044,7 @@
 
     async function syncLiveChat() {
       await fetchBannedDevices();
-      updateBanUiState();
+      updateChatInputAccess();
 
       const box = document.getElementById("liveChatBox");
       if (!box) return;
