@@ -532,13 +532,44 @@
         </div>
       </div>
 
-      <!-- COMPACT PROBLEM REPORT BOX (STRICT GMAIL + GOOGLE ACCOUNT VERIFICATION REQUIRED) -->
+      <!-- COMPACT PROBLEM REPORT BOX (STRICT GMAIL + ANTI-SPAM + DISCORD REMOTE BLOCK SYNC) -->
       <div class="bg-cyber-card/90 border border-rose-500/30 rounded-xl p-2.5 backdrop-blur-md shadow-lg space-y-2">
         <div class="flex items-center justify-between pb-1 border-b border-slate-800/80">
           <span class="text-[11px] font-bold flex items-center gap-1.5 text-rose-400">
             <i class="fas fa-headset text-[10px]"></i> Signaler un Problème
           </span>
-          <span class="text-[9px] text-rose-300 font-bold">@gmail.com مفعل</span>
+          <div class="flex items-center gap-1.5">
+            <span class="text-[9px] text-rose-300 font-bold">@gmail.com</span>
+            <button 
+              type="button" 
+              onclick="toggleProblemModerationPanel()" 
+              class="text-[9px] bg-slate-800 hover:bg-slate-700 border border-slate-700 text-cyan-300 px-1.5 py-0.5 rounded font-bold transition"
+              title="إدارة المرسلين والحظر ضد السپام"
+            >
+              <i class="fas fa-user-shield"></i> Anti-Spam
+            </button>
+          </div>
+        </div>
+
+        <!-- Problem Moderation & Anti-Spam Panel -->
+        <div id="problemModerationPanel" class="hidden bg-black/70 border border-cyan-500/30 rounded-lg p-2 space-y-1.5 text-[10px]">
+          <div class="flex items-center justify-between gap-1">
+            <span class="font-bold text-cyan-300">إدارة المرسلين والحظر</span>
+            <button 
+              type="button" 
+              id="problemModAuthBtn"
+              onclick="toggleProblemModAuth()" 
+              class="bg-cyan-500/15 hover:bg-cyan-500/25 border border-cyan-500/40 text-cyan-200 px-1.5 py-0.5 rounded text-[9px] font-bold"
+            >
+              دخول (8080@)
+            </button>
+          </div>
+          <div id="problemSendersList" class="max-h-28 overflow-y-auto space-y-1"></div>
+        </div>
+
+        <!-- Blocked Gmail Notice -->
+        <div id="problemBlockedNotice" class="hidden bg-rose-950/80 border border-rose-500/50 text-rose-200 rounded-lg px-2 py-1 text-[10px] font-bold">
+          <i class="fas fa-ban text-rose-400"></i> تم حظر هذا البريد الإلكتروني من إرسال البلاغات.
         </div>
 
         <!-- Gmail Identification Gate -->
@@ -718,10 +749,10 @@
       }).catch(err => console.log("Discord error:", err));
     }
 
-    // ================= LIVE GROUP CHAT (COLORS PER MEMBER + DROPDOWN EMOJIS + SIMPLE REGISTRATION GATE) =================
-    const FIREBASE_DATABASE_URL = ""; // Exemple : "https://votre-projet-default-rtdb.firebaseio.com"
+    // ================= LIVE GROUP CHAT =================
+    const FIREBASE_DATABASE_URL = ""; // مثال: "https://your-project-default-rtdb.firebaseio.com"
     const ADMIN_PASSCODE = "8080@";
-    const CHAT_DISCORD_WEBHOOK_URL = ""; // Optionnel
+    const CHAT_DISCORD_WEBHOOK_URL = ""; // اختياري
 
     const CHAT_EMOJIS = ["😀", "😂", "🔥", "❤️", "👍", "😎", "🎉", "👏", "🤩", "🤔", "😍", "🙌", "💯", "🤣", "😢"];
 
@@ -1349,7 +1380,7 @@
       }
     }
 
-    // ================= PC SOFTWARE LIST (OPEN FOR FUTURE ITEMS) =================
+    // ================= PC SOFTWARE LIST =================
     const pcSoftwareList = [
       {
         name: '7-Zip',
@@ -1492,16 +1523,236 @@
       audioPlayer.volume = val;
     }
 
-    // ================= PROBLEM REPORT (STRICT @gmail.com + GOOGLE ACCOUNT VERIFICATION) =================
-    const GOOGLE_CLIENT_ID = ""; // اختياري: ضع هنا Client ID ديال Google Cloud باش يخدم زر Google الحقيقي 100%
+    // ================= PROBLEM REPORT (STRICT @gmail.com + ANTI-SPAM + DISCORD REMOTE BLOCK SYNC) =================
+    const GOOGLE_CLIENT_ID = ""; // اختياري: ضع هنا Client ID الخاص بـ Google Cloud لتفعيل زر Google
     const PROBLEM_GMAIL_STORAGE_KEY = "lhajmoha_problem_gmail_auth_v2";
+    const PROBLEM_SENDER_ID_KEY = "lhajmoha_problem_sender_id_v1";
+    const PROBLEM_BANNED_KEY = "lhajmoha_problem_banned_senders_v1";
+    const PROBLEM_SENDERS_LOG_KEY = "lhajmoha_problem_senders_log_v1";
+
+    const PROBLEM_COOLDOWN_MS = 20000;
+    const PROBLEM_WINDOW_MS = 60000;
 
     let verifiedProblemAuth = null;
+    let isProblemModAuthenticated = false;
+    let lastProblemSentAt = 0;
+    let lastProblemText = "";
+    let recentProblemTimestamps = [];
+    let remoteBannedEmailSet = new Set();
 
     try {
       const savedAuth = sessionStorage.getItem(PROBLEM_GMAIL_STORAGE_KEY);
       if (savedAuth) verifiedProblemAuth = JSON.parse(savedAuth);
     } catch (_) {}
+
+    function getOrCreateProblemSenderId() {
+      let id = localStorage.getItem(PROBLEM_SENDER_ID_KEY);
+      if (!id) {
+        id = "snd_" + Math.random().toString(36).slice(2, 10) + "_" + Date.now().toString(36);
+        localStorage.setItem(PROBLEM_SENDER_ID_KEY, id);
+      }
+      return id;
+    }
+
+    const MY_PROBLEM_SENDER_ID = getOrCreateProblemSenderId();
+
+    function emailToFirebaseKey(email) {
+      return String(email || "").trim().toLowerCase().replace(/\./g, "_dot_");
+    }
+
+    function readBannedProblemSenders() {
+      try {
+        const raw = localStorage.getItem(PROBLEM_BANNED_KEY);
+        const parsed = raw ? JSON.parse(raw) : [];
+        return Array.isArray(parsed) ? parsed : [];
+      } catch (_) {
+        return [];
+      }
+    }
+
+    function writeBannedProblemSenders(arr) {
+      try {
+        localStorage.setItem(PROBLEM_BANNED_KEY, JSON.stringify(Array.from(new Set(arr || []))));
+      } catch (_) {}
+    }
+
+    async function syncRemoteProblemBannedList() {
+      if (!hasFirebaseConfig()) return;
+      try {
+        const res = await fetch(`${getDbBaseUrl()}/bannedProblemUsers.json?t=${Date.now()}`, { cache: "no-store" });
+        if (!res.ok) return;
+        const data = await res.json();
+        const nextSet = new Set();
+        if (data && typeof data === "object") {
+          Object.entries(data).forEach(([key, val]) => {
+            if (val && typeof val === "object" && val.email) {
+              nextSet.add(String(val.email).trim().toLowerCase());
+            } else {
+              nextSet.add(String(key).replace(/_dot_/g, ".").trim().toLowerCase());
+            }
+          });
+        }
+        remoteBannedEmailSet = nextSet;
+        syncProblemGmailUi();
+      } catch (_) {}
+    }
+
+    async function setRemoteProblemBan(email, shouldBlock) {
+      if (!hasFirebaseConfig() || !email) return;
+      const cleanEmail = String(email).trim().toLowerCase();
+      const key = encodeURIComponent(emailToFirebaseKey(cleanEmail));
+      if (shouldBlock) {
+        await fetch(`${getDbBaseUrl()}/bannedProblemUsers/${key}.json`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: cleanEmail,
+            blockedBy: "Site Admin",
+            blockedAt: new Date().toISOString()
+          })
+        });
+      } else {
+        await fetch(`${getDbBaseUrl()}/bannedProblemUsers/${key}.json`, {
+          method: "DELETE"
+        });
+      }
+      await syncRemoteProblemBannedList();
+    }
+
+    function readProblemSendersLog() {
+      try {
+        const raw = localStorage.getItem(PROBLEM_SENDERS_LOG_KEY);
+        const parsed = raw ? JSON.parse(raw) : {};
+        return parsed && typeof parsed === "object" ? parsed : {};
+      } catch (_) {
+        return {};
+      }
+    }
+
+    function writeProblemSendersLog(obj) {
+      try {
+        localStorage.setItem(PROBLEM_SENDERS_LOG_KEY, JSON.stringify(obj || {}));
+      } catch (_) {}
+    }
+
+    function normalizeProblemBlockKey(senderId, email) {
+      return String(email || senderId || "").trim().toLowerCase();
+    }
+
+    function isProblemSenderBlocked(senderId, email) {
+      const banned = readBannedProblemSenders();
+      const idKey = String(senderId || "").trim().toLowerCase();
+      const mailKey = String(email || "").trim().toLowerCase();
+      return Boolean(
+        (idKey && banned.includes(idKey)) ||
+        (mailKey && banned.includes(mailKey)) ||
+        (mailKey && remoteBannedEmailSet.has(mailKey))
+      );
+    }
+
+    function recordProblemSenderActivity(senderId, email, name) {
+      const log = readProblemSendersLog();
+      const key = normalizeProblemBlockKey(senderId, email);
+      if (!key) return 1;
+      const now = Date.now();
+      const prev = log[key] || { senderId, email, name, count: 0, timestamps: [] };
+      const recent = (prev.timestamps || []).filter(t => now - t < PROBLEM_WINDOW_MS);
+      recent.push(now);
+      log[key] = {
+        senderId,
+        email,
+        name,
+        count: (prev.count || 0) + 1,
+        recentPerMin: recent.length,
+        timestamps: recent,
+        lastSeen: now
+      };
+      writeProblemSendersLog(log);
+      return recent.length;
+    }
+
+    function toggleProblemModerationPanel() {
+      const panel = document.getElementById("problemModerationPanel");
+      if (!panel) return;
+      panel.classList.toggle("hidden");
+      renderProblemSendersList();
+    }
+
+    function toggleProblemModAuth() {
+      if (!isProblemModAuthenticated) {
+        const code = prompt("أدخل رمز الإدارة (Admin):");
+        if (code === null) return;
+        if (code !== ADMIN_PASSCODE) {
+          alert("الرمز غير صحيح.");
+          return;
+        }
+        isProblemModAuthenticated = true;
+      } else {
+        isProblemModAuthenticated = false;
+      }
+      const btn = document.getElementById("problemModAuthBtn");
+      if (btn) {
+        btn.textContent = isProblemModAuthenticated ? "خروج Admin" : "دخول (8080@)";
+      }
+      renderProblemSendersList();
+    }
+
+    async function toggleBlockProblemSender(blockKey) {
+      if (!isProblemModAuthenticated || !blockKey) return;
+      const current = new Set(readBannedProblemSenders());
+      const willBlock = !current.has(blockKey) && !remoteBannedEmailSet.has(blockKey);
+      if (willBlock) {
+        current.add(blockKey);
+      } else {
+        current.delete(blockKey);
+      }
+      writeBannedProblemSenders(Array.from(current));
+      if (isValidStrictGmailAddress(blockKey)) {
+        await setRemoteProblemBan(blockKey, willBlock);
+      }
+      renderProblemSendersList();
+      syncProblemGmailUi();
+    }
+
+    function renderProblemSendersList() {
+      const listEl = document.getElementById("problemSendersList");
+      if (!listEl) return;
+
+      const log = readProblemSendersLog();
+      const items = Object.entries(log)
+        .map(([key, val]) => ({ key, ...(val || {}) }))
+        .sort((a, b) => (b.lastSeen || 0) - (a.lastSeen || 0))
+        .slice(0, 15);
+
+      if (!items.length) {
+        listEl.innerHTML = `<div class="text-gray-400 text-center py-2">لا توجد رسائل مسجلة بعد.</div>`;
+        return;
+      }
+
+      listEl.innerHTML = items.map(item => {
+        const blocked = isProblemSenderBlocked(item.senderId, item.email);
+        const safeKey = escapeChatHtml(item.key);
+        const safeMail = escapeChatHtml(item.email || item.senderId || "مرسل");
+        const perMin = item.recentPerMin || 0;
+        const spamFlag = perMin >= 3
+          ? `<span class="text-amber-300 font-bold">(${perMin}/دقيقة)</span>`
+          : `<span class="text-gray-400">(${item.count || 1})</span>`;
+
+        const actionBtn = isProblemModAuthenticated
+          ? `<button type="button" onclick="toggleBlockProblemSender('${safeKey}')" class="${blocked ? "bg-emerald-600/30 text-emerald-200 border-emerald-500/40" : "bg-rose-600/30 text-rose-200 border-rose-500/40"} border px-1.5 py-0.5 rounded text-[9px] font-bold flex-shrink-0">${blocked ? "فك الحظر" : "بلوك"}</button>`
+          : `<span class="text-[9px] text-gray-500">${blocked ? "محظور" : "نشط"}</span>`;
+
+        return `
+          <div class="bg-slate-900/90 border border-slate-800 rounded px-2 py-1 flex items-center justify-between gap-1.5">
+            <div class="min-w-0 truncate">
+              <span class="font-bold text-white truncate">${safeMail}</span>
+              ${spamFlag}
+            </div>
+            ${actionBtn}
+          </div>
+        `;
+      }).join("");
+    }
 
     function parseJwtPayload(token) {
       try {
@@ -1524,7 +1775,7 @@
       const emailVerified = Boolean(payload?.email_verified);
 
       if (!email || !isValidStrictGmailAddress(email) || !emailVerified) {
-        showProblemGmailError("خاص يكون حساب @gmail.com حقيقي ومفعّل في جوجل.");
+        showProblemGmailError("يجب استخدام حساب @gmail.com حقيقي ومفعّل في جوجل.");
         return;
       }
 
@@ -1602,7 +1853,7 @@
       const email = (input?.value || "").trim().toLowerCase();
 
       if (!isValidStrictGmailAddress(email)) {
-        showProblemGmailError("تخربيقة مرفوضة! خاص يكون جيميل حقيقي ينتهي بـ @gmail.com ويكون كاين ومفعّل.");
+        showProblemGmailError("يرجى إدخال بريد إلكتروني صحيح ينتهي بـ @gmail.com.");
         return;
       }
 
@@ -1637,11 +1888,16 @@
       const badge = document.getElementById("problemGmailBadge");
       const sendBtn = document.getElementById("problemSendBtn");
       const userInput = document.getElementById("userInput");
+      const blockedNotice = document.getElementById("problemBlockedNotice");
+
+      const currentEmail = verifiedProblemAuth?.email || "";
+      const isBlocked = isProblemSenderBlocked(MY_PROBLEM_SENDER_ID, currentEmail);
+      if (blockedNotice) blockedNotice.classList.toggle("hidden", !isBlocked);
 
       const isVerified = Boolean(
         verifiedProblemAuth &&
-        verifiedProblemAuth.email &&
-        isValidStrictGmailAddress(verifiedProblemAuth.email)
+        currentEmail &&
+        isValidStrictGmailAddress(currentEmail)
       );
 
       if (gate) gate.classList.toggle("hidden", isVerified);
@@ -1649,22 +1905,32 @@
 
       if (isVerified && badge) {
         const tag = verifiedProblemAuth.verifiedViaGoogle ? "Google ✓" : "@gmail.com";
-        badge.textContent = `${verifiedProblemAuth.name} • ${verifiedProblemAuth.email} (${tag})`;
+        badge.textContent = `${verifiedProblemAuth.name} • ${currentEmail} (${tag})`;
       }
 
-      if (sendBtn) sendBtn.disabled = !isVerified;
+      const canWrite = isVerified && !isBlocked;
+      if (sendBtn) sendBtn.disabled = !canWrite;
       if (userInput) {
-        userInput.disabled = !isVerified;
-        userInput.placeholder = isVerified
-          ? "أهلا وسهلا، اكتب مشكلتك..."
-          : "أكد حساب @gmail.com أولاً لكتابة المشكل...";
+        userInput.disabled = !canWrite;
+        if (isBlocked) {
+          userInput.placeholder = "تم حظر الإرسال من هذا الحساب...";
+        } else if (isVerified) {
+          userInput.placeholder = "أهلا وسهلا، اكتب مشكلتك...";
+        } else {
+          userInput.placeholder = "أكد حساب @gmail.com أولاً لكتابة المشكل...";
+        }
       }
     }
 
     function sendMessage() {
       if (!verifiedProblemAuth || !isValidStrictGmailAddress(verifiedProblemAuth.email)) {
         syncProblemGmailUi();
-        showProblemGmailError("ما يمكنش تصيفط حتى تدخل حساب @gmail.com صحيح ومفعّل.");
+        showProblemGmailError("لا يمكن الإرسال قبل تأكيد حساب @gmail.com صحيح.");
+        return;
+      }
+
+      if (isProblemSenderBlocked(MY_PROBLEM_SENDER_ID, verifiedProblemAuth.email)) {
+        syncProblemGmailUi();
         return;
       }
 
@@ -1672,8 +1938,30 @@
       const text = input.value.trim();
       if (!text) return;
 
+      const now = Date.now();
+      const remainingMs = PROBLEM_COOLDOWN_MS - (now - lastProblemSentAt);
+      if (lastProblemSentAt > 0 && remainingMs > 0) {
+        const secLeft = Math.ceil(remainingMs / 1000);
+        showProblemGmailError(`يرجى الانتظار ${secLeft} ثانية قبل إرسال رسالة أخرى.`);
+        return;
+      }
+
+      if (lastProblemText && text.toLowerCase() === lastProblemText.toLowerCase()) {
+        showProblemGmailError("تم إرسال هذه الرسالة مسبقاً، يرجى كتابة نص جديد.");
+        return;
+      }
+
+      clearProblemGmailError();
+      lastProblemSentAt = now;
+      lastProblemText = text;
+      recentProblemTimestamps = recentProblemTimestamps.filter(t => now - t < PROBLEM_WINDOW_MS);
+      recentProblemTimestamps.push(now);
+
       const senderName = verifiedProblemAuth.name || deriveNameFromGmail(verifiedProblemAuth.email);
       const senderEmail = verifiedProblemAuth.email;
+      const perMinCount = recordProblemSenderActivity(MY_PROBLEM_SENDER_ID, senderEmail, senderName);
+      renderProblemSendersList();
+
       const chatBox = document.getElementById('chatBox');
       
       const userMsg = document.createElement('div');
@@ -1689,7 +1977,9 @@
         [
           { name: "👤 الاسم بالجيمايل", value: senderName, inline: true },
           { name: "📧 Gmail", value: senderEmail, inline: true },
-          { name: "🔐 Google Verified", value: verifiedProblemAuth.verifiedViaGoogle ? "Oui (Google Auth)" : "Format @gmail.com vérifié", inline: true },
+          { name: "🆔 Sender ID", value: MY_PROBLEM_SENDER_ID, inline: true },
+          { name: "📊 Rate / Min", value: `${perMinCount} msg/min`, inline: true },
+          { name: "🛡️ حظر من ديسكورد", value: `\`!block ${senderEmail}\``, inline: false },
           { name: "📝 Message", value: text, inline: false }
         ],
         0xf43f5e
@@ -1712,7 +2002,10 @@
       syncChatMemberUi();
       updateChatInputAccess();
       syncProblemGmailUi();
+      renderProblemSendersList();
       initGoogleSignInButton();
+      syncRemoteProblemBannedList();
+      setInterval(syncRemoteProblemBannedList, 4000);
       syncLiveChat();
       setInterval(syncLiveChat, 2000);
       loadMoroccoWeather(true);
