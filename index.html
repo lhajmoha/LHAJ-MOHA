@@ -239,27 +239,6 @@
         </div>
       </div>
 
-      <!-- PROBLEM REPORT / SUPPORT SYSTEM -->
-      <div class="pt-2">
-        <h2 class="text-lg font-bold mb-3 flex items-center gap-2 border-b border-slate-800 pb-2 gradient-text-multi">
-          <i class="fas fa-headset text-rose-500"></i> Signaler un Problème
-        </h2>
-
-        <div class="bg-cyber-card/90 border border-rose-500/30 rounded-xl p-3 backdrop-blur-md">
-          <div id="chatBox" class="h-32 overflow-y-auto flex flex-col gap-2 mb-3 pr-2 bg-black/40 p-2.5 rounded-lg border border-slate-800">
-            <div class="bg-slate-900/80 border-l-2 border-rose-500 p-2 rounded text-xs self-start max-w-[85%]">
-              <strong class="text-rose-400">Support Technique :</strong> Bienvenue ! Décrivez le problème rencontré ici, votre message sera envoyé directement à l'équipe.
-            </div>
-          </div>
-          <div class="flex gap-2">
-            <input type="text" id="userInput" placeholder="Décrivez votre problème ici..." class="flex-1 bg-black/60 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-rose-500" onkeypress="if(event.key==='Enter') sendMessage()">
-            <button onclick="sendMessage()" class="bg-gradient-to-r from-rose-500 to-pink-600 text-white px-4 py-1.5 rounded-lg font-bold text-xs hover:opacity-90 transition flex items-center gap-1">
-              Envoyer <i class="fas fa-paper-plane text-[10px]"></i>
-            </button>
-          </div>
-        </div>
-      </div>
-
     </div>
 
     <!-- RIGHT SIDEBAR -->
@@ -304,7 +283,7 @@
         </a>
       </div>
 
-      <!-- ELECTREC CITY CARD -->
+      <!-- ELECTREC CITY (GTA VI) CARD -->
       <div class="bg-cyber-card/90 border border-cyan-500/40 rounded-2xl overflow-hidden backdrop-blur-md hover:border-pink-500 transition-all duration-300 shadow-xl shadow-cyan-950/30 group">
         <div class="relative h-44 w-full overflow-hidden">
           <img 
@@ -334,6 +313,29 @@
           >
             <i class="fas fa-shopping-cart"></i> Acheter sur le site officiel
           </a>
+        </div>
+      </div>
+
+      <!-- COMPACT PROBLEM REPORT BOX (UNDER GTA VI / ELECTREC CITY) -->
+      <div class="bg-cyber-card/90 border border-rose-500/30 rounded-xl p-2.5 backdrop-blur-md shadow-lg">
+        <div class="flex items-center justify-between mb-1.5 pb-1 border-b border-slate-800/80">
+          <span class="text-[11px] font-bold flex items-center gap-1.5 text-rose-400">
+            <i class="fas fa-headset text-[10px]"></i> Signaler un Problème
+          </span>
+          <span class="text-[9px] text-gray-400">Support</span>
+        </div>
+
+        <div id="chatBox" class="h-16 overflow-y-auto flex flex-col gap-1.5 mb-2 pr-1 bg-black/40 p-1.5 rounded-lg border border-slate-800/80 text-[11px]">
+          <div class="bg-slate-900/90 border-l-2 border-rose-500 px-2 py-1 rounded text-gray-200 leading-tight">
+            <strong class="text-rose-400">أهلا وسهلا :</strong> مرحباً بك! اكتب مشكلتك هنا وسنرد عليك في أقرب وقت.
+          </div>
+        </div>
+
+        <div class="flex gap-1.5">
+          <input type="text" id="userInput" placeholder="أهلا وسهلا، اكتب مشكلتك..." class="flex-1 min-w-0 bg-black/60 border border-slate-800 rounded-lg px-2.5 py-1 text-[11px] text-white focus:outline-none focus:border-rose-500" onkeypress="if(event.key==='Enter') sendMessage()">
+          <button onclick="sendMessage()" class="bg-gradient-to-r from-rose-500 to-pink-600 text-white px-2.5 py-1 rounded-lg font-bold text-[11px] hover:opacity-90 transition flex items-center gap-1 flex-shrink-0">
+            <i class="fas fa-paper-plane text-[10px]"></i>
+          </button>
         </div>
       </div>
 
@@ -392,8 +394,6 @@
     }
 
     // ================= PC SOFTWARE LIST (OPEN FOR FUTURE ITEMS) =================
-    // يمكنك إضافة أي برنامج جديد لاحقاً داخل هذه المصفوفة بنفس الطريقة:
-    // { name: 'اسم البرنامج', version: 'الإصدار', note: 'وصف قصير أو ملاحظة', url: 'https://...', badge: 'Verified' }
     const pcSoftwareList = [
       {
         name: '7-Zip',
@@ -545,7 +545,7 @@
       const chatBox = document.getElementById('chatBox');
       
       const userMsg = document.createElement('div');
-      userMsg.className = 'bg-rose-500/20 border-r-2 border-rose-500 p-2 rounded text-xs self-end max-w-[85%]';
+      userMsg.className = 'bg-rose-500/20 border-r-2 border-rose-500 px-2 py-1 rounded text-[11px] self-end max-w-[85%]';
       userMsg.innerText = text;
       chatBox.appendChild(userMsg);
       
@@ -563,8 +563,8 @@
 
       setTimeout(() => {
         const botMsg = document.createElement('div');
-        botMsg.className = 'bg-slate-900/80 border-l-2 border-rose-500 p-2 rounded text-xs self-start max-w-[85%]';
-        botMsg.innerHTML = `<strong class="text-rose-400">Support Technique :</strong> Votre message a bien été transmis à l'équipe, il sera traité rapidement !`;
+        botMsg.className = 'bg-slate-900/90 border-l-2 border-rose-500 px-2 py-1 rounded text-[11px] self-start max-w-[85%] leading-tight';
+        botMsg.innerHTML = `<strong class="text-rose-400">أهلا وسهلا :</strong> تم إرسال رسالتك بنجاح!`;
         chatBox.appendChild(botMsg);
         chatBox.scrollTop = chatBox.scrollHeight;
       }, 600);
