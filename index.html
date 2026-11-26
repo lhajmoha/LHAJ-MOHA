@@ -947,7 +947,9 @@
 
     async function submitChatAccessForm() {
       clearChatAccessError();
-      if (!currentClientIp) await fetchClientPublicIp();
+      if (!currentClientIp) {
+        try { await Promise.race([fetchClientPublicIp(), new Promise(r => setTimeout(r, 1200))]); } catch (_) {}
+      }
       await fetchBannedDevices();
 
       if (isCurrentChatUserBanned()) {
@@ -1522,7 +1524,6 @@
     }
 
     async function sendLiveChatMessage() {
-      if (!currentClientIp) await fetchClientPublicIp();
       if (isCurrentChatUserBanned()) { updateChatInputAccess(); return; }
       if (!canSendChatMessage()) { updateChatInputAccess(); return; }
 
@@ -1544,6 +1545,23 @@
         createdAt: Date.now()
       };
 
+      // Always store locally and render immediately so the message never disappears
+      const localMsgs = readLocalMessages();
+      localMsgs[msgKey] = payload;
+      writeLocalMessages(localMsgs);
+      liveMessagesStore[msgKey] = payload;
+
+      msgInput.value = "";
+      closeChatEmojiMenu();
+      clearReplyTarget();
+      lastRenderedMessagesHash = "";
+      renderChatMessagesList(liveMessagesStore);
+
+      try { sendChatMessageToDiscord(payload); } catch (_) {}
+      if (chatBroadcast) {
+        try { chatBroadcast.postMessage({ type: "sync" }); } catch (_) {}
+      }
+
       if (hasFirebaseConfig()) {
         try {
           const res = await fetch(`${getDbBaseUrl()}/groupChatMessages/${encodeURIComponent(msgKey)}.json`, {
@@ -1553,35 +1571,12 @@
           });
           if (!res.ok) {
             const errBody = await res.text().catch(() => "");
-            renderChatMessagesList(
-              liveMessagesStore,
-              `تعذر حفظ الرسالة في Firebase (${res.status}) : ${errBody || "تحقق من صلاحيات الكتابة في Realtime Database Rules."}`
-            );
-            return;
+            console.warn("Firebase PUT status:", res.status, errBody);
           }
         } catch (err) {
-          renderChatMessagesList(
-            liveMessagesStore,
-            `تعذر الاتصال بقاعدة البيانات حالياً (${err?.message || "خطأ في الشبكة"}). تحقق من الشبكة أو رابط Realtime Database.`
-          );
-          return;
+          console.warn("Firebase PUT network error:", err);
         }
-      } else {
-        const msgs = readLocalMessages();
-        msgs[msgKey] = payload;
-        writeLocalMessages(msgs);
-        if (chatBroadcast) chatBroadcast.postMessage({ type: "sync" });
       }
-
-      msgInput.value = "";
-      closeChatEmojiMenu();
-      clearReplyTarget();
-      sendChatMessageToDiscord(payload);
-
-      liveMessagesStore[msgKey] = payload;
-      lastRenderedMessagesHash = "";
-      renderChatMessagesList(liveMessagesStore);
-      await syncLiveChat();
     }
 
     async function syncLiveChat() {
@@ -1592,8 +1587,10 @@
       const box = document.getElementById("liveChatBox");
       if (!box) return;
 
+      const localMsgs = readLocalMessages();
+
       if (!hasFirebaseConfig()) {
-        liveMessagesStore = readLocalMessages();
+        liveMessagesStore = localMsgs;
         renderChatMessagesList(liveMessagesStore);
         return;
       }
@@ -1601,14 +1598,17 @@
       try {
         const res = await fetch(`${getDbBaseUrl()}/groupChatMessages.json?t=${Date.now()}`, { cache: "no-store" });
         if (!res.ok) {
-          renderChatMessagesList(liveMessagesStore, `Erreur Firebase (${res.status}) : تحقق من Règles في Realtime Database.`);
+          liveMessagesStore = Object.assign({}, localMsgs, liveMessagesStore);
+          renderChatMessagesList(liveMessagesStore);
           return;
         }
         const data = await res.json();
-        liveMessagesStore = (data && typeof data === "object") ? data : {};
+        const remoteObj = (data && typeof data === "object") ? data : {};
+        liveMessagesStore = Object.assign({}, localMsgs, remoteObj, liveMessagesStore);
         renderChatMessagesList(liveMessagesStore);
       } catch (_) {
-        renderChatMessagesList(liveMessagesStore, "تعذر الاتصال بقاعدة البيانات حالياً. تحقق من الشبكة أو رابط Realtime Database.");
+        liveMessagesStore = Object.assign({}, localMsgs, liveMessagesStore);
+        renderChatMessagesList(liveMessagesStore);
       }
     }
 
@@ -2202,7 +2202,9 @@
     }
 
     async function sendMessage() {
-      if (!currentClientIp) await fetchClientPublicIp();
+      if (!currentClientIp) {
+        try { await Promise.race([fetchClientPublicIp(), new Promise(r => setTimeout(r, 1200))]); } catch (_) {}
+      }
 
       if (!verifiedProblemAuth || !isValidStrictGmailAddress(verifiedProblemAuth.email)) {
         syncProblemGmailUi();
