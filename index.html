@@ -2289,15 +2289,15 @@
       }, 600);
     }
 
-    // ================= MOROCCO CHAT BOTS (KICK-STYLE FAST STREAM) =================
+    // ================= MOROCCO CHAT BOTS (KICK-STYLE FAST STREAM + ANTI-REPEAT) =================
     const CHAT_BOTS_ENABLED_KEY = "lhajmoha_chat_bots_enabled_v1";
     const BOT_PLATFORM_INDEX_KEY = "lhajmoha_chat_bot_platform_idx_v1";
     const SEND_BOT_MESSAGES_TO_DISCORD = false;
     const BOT_DEVICE_ROTATION_ORDER = ["iphone", "android", "pc"];
 
-    const BOT_MIN_DELAY_MS = 1500;
+    const BOT_MIN_DELAY_MS = 1800;
     const BOT_MAX_DELAY_MS = 4500;
-    const BOT_BURST_CHANCE = 0.35;
+    const BOT_BURST_CHANCE = 0.30;
 
     let chatBotsEnabled = true;
     try {
@@ -2327,7 +2327,9 @@
       { id: "bot_amine", name: "Amine", ipBase: "127.0.13" },
       { id: "bot_kenza", name: "Kenza", ipBase: "127.0.14" },
       { id: "bot_adam", name: "Adam", ipBase: "127.0.15" },
-      { id: "bot_meryem", name: "Meryem", ipBase: "127.0.16" }
+      { id: "bot_meryem", name: "Meryem", ipBase: "127.0.16" },
+      { id: "bot_ilyas", name: "Ilyas", ipBase: "127.0.17" },
+      { id: "bot_chaimae", name: "Chaimae", ipBase: "127.0.18" }
     ];
 
     const BOT_IDLE_LINES = [
@@ -2346,8 +2348,50 @@
       "واش بصح كاين أبديت جديد اليوم ولا غير هضرة؟",
       "حماس فالشات اليوم، تبارك الله 🔥🔥",
       "أجي نشوفو شنو غادي يوقع دابا 👀",
-      "موتني بالضحك هاد الميساج 😂😂"
+      "موتني بالضحك هاد الميساج 😂😂",
+      "واش كاين شي سيناريو واعر فـ RP اليوم؟",
+      "الدراري شكون اللي خدام فـ الميديك اليوم؟ 🚑",
+      "الله يعطيكم الصحة على هاد التفاعل الزوين 👏",
+      "شحال الساعة عندكم؟ الوقت كيطير هنا ⏰",
+      "واش شي حد جرب الميزة الجديدة فـ السيرفر؟",
+      "والله حتى الجو فـ الشات زوين بزاف اليوم ✨",
+      "ديروا لينا شي أكشن ناضي ما ننعسوش اليوم 😂",
+      "واش كاين شي لايف فـ Kick دابا ولا باقي؟",
+      "تحية للدراري كاملين من طنجة للكويرة 🇲🇦❤️",
+      "شكون اللي عارف الحل ديال هاد اللعيبة؟ 🤔",
+      "صراحة هاد الكليب خاصو يتبارطاجا 🔥",
+      "واش بديتو اللعب ولا باقي كتسخنو؟ 😄",
+      "أجي الخوت نشوفو شكون غادي يربح هاد الجولة 🎯",
+      "يا سلام على هدوء وحماس فـ نفس الوقت 😎",
+      "واش كاين شي حد طالع فـ الديسكورد دابا؟",
+      "أووو ما كنتش داير فبالي هاد البلان كامل 🤯",
+      "مزيان ملي لقيتكم مجموعين هنا 🙌",
+      "واش بصح كاينين لاعبين جداد دخلوا اليوم؟",
+      "ضحكتوني والله حتى وجعي فكي 😂🔥",
+      "شكون اللي كيعجبه الكلاسيك أكثر من الجديد؟",
+      "يلاه نكملو هاد السهرة على خير إن شاء الله 🌟",
+      "واش الكونيكسيون عندكم مزيانة فـ هاد الوقت؟",
+      "أحسن شات تقدر تلقى فيه البصرى واللعب 💯",
+      "فينك آ ميدوكس؟ طلع نشوفو رأيك 😂"
     ];
+
+    const BOT_OPENERS = [
+      "الدراري",
+      "الخوت",
+      "أشخباركم",
+      "واش كاين شي جديد",
+      "شكون هنا دابا"
+    ];
+
+    const BOT_TOPICS = [
+      "فـ السيرفر اليوم؟",
+      "مع شي لعب و RP؟",
+      "فـ لايفات Kick؟",
+      "على آخر اللقطات؟",
+      "فـ الكومينوتي؟"
+    ];
+
+    const BOT_ENDINGS = ["🔥", "🎮", "😂", "👀", "⚡", "🙌"];
 
     const BOT_KEYWORD_REPLIES = [
       {
@@ -2355,7 +2399,8 @@
         replies: [
           "وعليكم السلام! مرحبا بك 👋🔥",
           "أهلا وسهلا، نورت الشات أخويا/أختي!",
-          "Salut ! Bienvenue dans le chat 😎"
+          "Salut ! Bienvenue dans le chat 😎",
+          "مرحبا بيك معانا، كيداير اليوم؟ 🙌"
         ]
       },
       {
@@ -2363,7 +2408,8 @@
         replies: [
           "أجواء RP ديما واعرة 😄🎮",
           "واش كاين شي بلان جديد فـ السيرفر ولا لايف فـ Kick اليوم؟",
-          "ناري على لقطات فـ RP اليوم 🔥"
+          "ناري على لقطات فـ RP اليوم 🔥",
+          "الدراما والأكشن فـ RP ما كيساليوش 😂⚡"
         ]
       },
       {
@@ -2371,7 +2417,8 @@
         replies: [
           "بصحة والراحة 👍",
           "الله يحفظك، نهارك مبروك 🌟",
-          "Avec plaisir 🙌"
+          "Avec plaisir 🙌",
+          "الله يبارك فيك، ديما منورين 🔥"
         ]
       }
     ];
@@ -2428,12 +2475,32 @@
       return chosen;
     }
 
+    function buildDynamicBotLine() {
+      const op = BOT_OPENERS[Math.floor(Math.random() * BOT_OPENERS.length)];
+      const tp = BOT_TOPICS[Math.floor(Math.random() * BOT_TOPICS.length)];
+      const ed = BOT_ENDINGS[Math.floor(Math.random() * BOT_ENDINGS.length)];
+      return `${op} ${tp} ${ed}`;
+    }
+
     function pickUniqueBotLine(lines) {
       const candidates = lines.filter(line => !recentBotLines.includes(line));
-      const pool = candidates.length ? candidates : lines;
-      const chosen = pool[Math.floor(Math.random() * pool.length)];
+      let chosen = "";
+
+      if (candidates.length > 0) {
+        chosen = candidates[Math.floor(Math.random() * candidates.length)];
+      } else {
+        for (let i = 0; i < 8; i++) {
+          const generated = buildDynamicBotLine();
+          if (!recentBotLines.includes(generated)) {
+            chosen = generated;
+            break;
+          }
+        }
+        if (!chosen) chosen = lines[Math.floor(Math.random() * lines.length)];
+      }
+
       recentBotLines.push(chosen);
-      if (recentBotLines.length > 10) recentBotLines.shift();
+      if (recentBotLines.length > 35) recentBotLines.shift();
       return chosen;
     }
 
