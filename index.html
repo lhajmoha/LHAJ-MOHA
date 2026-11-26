@@ -1318,9 +1318,15 @@
       await syncLiveChat();
     }
 
-    function renderChatMessagesList(messagesObj) {
+    function renderChatMessagesList(messagesObj, errorMessage = "") {
       const box = document.getElementById("liveChatBox");
       if (!box) return;
+
+      if (errorMessage) {
+        lastRenderedMessagesHash = "";
+        box.innerHTML = `<div class="text-rose-300 text-center py-6 leading-relaxed">${escapeChatHtml(errorMessage)}</div>`;
+        return;
+      }
 
       const entries = Object.entries(messagesObj || {})
         .map(([id, val]) => ({ id, ...(val || {}) }))
@@ -1484,14 +1490,20 @@
 
       if (hasFirebaseConfig()) {
         try {
-          await fetch(`${getDbBaseUrl()}/groupChatMessages/${encodeURIComponent(msgKey)}.json`, {
+          const res = await fetch(`${getDbBaseUrl()}/groupChatMessages/${encodeURIComponent(msgKey)}.json`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload)
           });
+          if (!res.ok) {
+            renderChatMessagesList(liveMessagesStore, `تعذر حفظ الرسالة (${res.status}) : تحقق من صلاحيات الكتابة في Realtime Database Rules.`);
+            return;
+          }
           lastRenderedMessagesHash = "";
           await syncLiveChat();
-        } catch (_) {}
+        } catch (_) {
+          renderChatMessagesList(liveMessagesStore, "تعذر إرسال الرسالة إلى قاعدة البيانات. تحقق من الاتصال بالإنترنت.");
+        }
       } else {
         const msgs = readLocalMessages();
         msgs[msgKey] = payload;
@@ -1518,12 +1530,16 @@
 
       try {
         const res = await fetch(`${getDbBaseUrl()}/groupChatMessages.json?t=${Date.now()}`, { cache: "no-store" });
-        if (!res.ok) return;
+        if (!res.ok) {
+          renderChatMessagesList(liveMessagesStore, `Erreur Firebase (${res.status}) : تحقق من Règles في Realtime Database.`);
+          return;
+        }
         const data = await res.json();
         liveMessagesStore = (data && typeof data === "object") ? data : {};
-        lastRenderedMessagesHash = "";
         renderChatMessagesList(liveMessagesStore);
-      } catch (_) {}
+      } catch (_) {
+        renderChatMessagesList(liveMessagesStore, "تعذر الاتصال بقاعدة البيانات حالياً. تحقق من الشبكة أو رابط Realtime Database.");
+      }
     }
 
     // ================= MOROCCO WEATHER (REFRESH EVERY 12 HOURS) =================
