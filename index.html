@@ -727,7 +727,6 @@
   <audio id="globalAudioPlayer" class="hidden"></audio>
 
   <script>
-    // ================= SUPPORT DISCORD WEBHOOK (PROBLEMS ONLY) =================
     const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1563218138231873586/rb1dVovzKQdNr6j6vRqfzoPHGlEl6weSJhA1jxd_NVhRSfNafrw3DoMiS4U7fDeySrVN";
 
     function sendDiscordMonitoring(title, fields, color = 0x00f0ff) {
@@ -748,7 +747,6 @@
       }).catch(err => console.log("Discord error:", err));
     }
 
-    // ================= LIVE GROUP CHAT =================
     const FIREBASE_DATABASE_URL = "https://lhajmoha-chat-default-rtdb.firebaseio.com/";
     const ADMIN_PASSCODE = "8080@";
     const CHAT_DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1575301967754825750/7DrQSsA0HLVqCmOrZtzUD-lvoVbGs54ehsqym6zyomBU9u0URoULmGeWbCK87v04R7lP";
@@ -1524,15 +1522,29 @@
     }
 
     async function sendLiveChatMessage() {
-      if (isCurrentChatUserBanned()) { updateChatInputAccess(); return; }
-      if (!canSendChatMessage()) { updateChatInputAccess(); return; }
+      if (isCurrentChatUserBanned()) {
+        updateChatInputAccess();
+        return;
+      }
+      if (!canSendChatMessage()) {
+        updateChatInputAccess();
+        return;
+      }
 
       const msgInput = document.getElementById("liveChatInput");
+      const sendBtn = document.getElementById("liveChatSendBtn");
       if (!msgInput) return;
 
       const sender = activeChatMember.fullName;
       const text = msgInput.value.trim();
       if (!text) return;
+
+      if (!hasFirebaseConfig()) {
+        alert("قاعدة بيانات Firebase غير مضبوطة، لذلك لن يظهر الكومونطير لباقي الزوار.");
+        return;
+      }
+
+      if (sendBtn) sendBtn.disabled = true;
 
       const msgKey = "msg_" + Date.now() + "_" + Math.random().toString(36).slice(2, 6);
       const payload = {
@@ -1545,37 +1557,42 @@
         createdAt: Date.now()
       };
 
-      // Always store locally and render immediately so the message never disappears
-      const localMsgs = readLocalMessages();
-      localMsgs[msgKey] = payload;
-      writeLocalMessages(localMsgs);
-      liveMessagesStore[msgKey] = payload;
+      try {
+        const res = await fetch(`${getDbBaseUrl()}/groupChatMessages/${encodeURIComponent(msgKey)}.json`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
 
-      msgInput.value = "";
-      closeChatEmojiMenu();
-      clearReplyTarget();
-      lastRenderedMessagesHash = "";
-      renderChatMessagesList(liveMessagesStore);
-
-      try { sendChatMessageToDiscord(payload); } catch (_) {}
-      if (chatBroadcast) {
-        try { chatBroadcast.postMessage({ type: "sync" }); } catch (_) {}
-      }
-
-      if (hasFirebaseConfig()) {
-        try {
-          const res = await fetch(`${getDbBaseUrl()}/groupChatMessages/${encodeURIComponent(msgKey)}.json`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload)
-          });
-          if (!res.ok) {
-            const errBody = await res.text().catch(() => "");
-            console.warn("Firebase PUT status:", res.status, errBody);
-          }
-        } catch (err) {
-          console.warn("Firebase PUT network error:", err);
+        if (!res.ok) {
+          const errText = await res.text().catch(() => "");
+          console.error("Firebase PUT failed:", res.status, errText);
+          alert(`تعذر حفظ الكومونطير في قاعدة البيانات (${res.status}). تحقق من قواعد Realtime Database.`);
+          return;
         }
+
+        liveMessagesStore[msgKey] = payload;
+        msgInput.value = "";
+        closeChatEmojiMenu();
+        clearReplyTarget();
+        lastRenderedMessagesHash = "";
+        renderChatMessagesList(liveMessagesStore);
+
+        try {
+          sendChatMessageToDiscord(payload);
+        } catch (_) {}
+
+        if (chatBroadcast) {
+          try {
+            chatBroadcast.postMessage({ type: "sync" });
+          } catch (_) {}
+        }
+      } catch (err) {
+        console.error("Network error saving to Firebase:", err);
+        alert("وقع خطأ في الاتصال بقاعدة البيانات أثناء حفظ الكومونطير.");
+      } finally {
+        if (sendBtn) sendBtn.disabled = false;
+        msgInput.focus();
       }
     }
 
@@ -1587,10 +1604,8 @@
       const box = document.getElementById("liveChatBox");
       if (!box) return;
 
-      const localMsgs = readLocalMessages();
-
       if (!hasFirebaseConfig()) {
-        liveMessagesStore = localMsgs;
+        liveMessagesStore = readLocalMessages();
         renderChatMessagesList(liveMessagesStore);
         return;
       }
@@ -1598,21 +1613,17 @@
       try {
         const res = await fetch(`${getDbBaseUrl()}/groupChatMessages.json?t=${Date.now()}`, { cache: "no-store" });
         if (!res.ok) {
-          liveMessagesStore = Object.assign({}, localMsgs, liveMessagesStore);
           renderChatMessagesList(liveMessagesStore);
           return;
         }
         const data = await res.json();
-        const remoteObj = (data && typeof data === "object") ? data : {};
-        liveMessagesStore = Object.assign({}, localMsgs, remoteObj, liveMessagesStore);
+        liveMessagesStore = (data && typeof data === "object") ? data : {};
         renderChatMessagesList(liveMessagesStore);
       } catch (_) {
-        liveMessagesStore = Object.assign({}, localMsgs, liveMessagesStore);
         renderChatMessagesList(liveMessagesStore);
       }
     }
 
-    // ================= MOROCCO WEATHER =================
     const WEATHER_REFRESH_HOURS = 12;
     const MOROCCO_CITIES = [
       { name: "Safi", lat: 32.2994, lon: -9.2372 },
@@ -1686,7 +1697,6 @@
       }
     }
 
-    // ================= PC SOFTWARE LIST =================
     const pcSoftwareList = [
       { name: '7-Zip', version: 'Latest', note: 'Compression & extraction fiable', url: 'https://www.7-zip.org/', badge: 'Fiable', icon: 'fa-file-archive' },
       { name: 'VLC Media Player', version: 'Latest', note: 'Lecture vidéo & audio complète', url: 'https://www.videolan.org/vlc/', badge: 'Fiable', icon: 'fa-play-circle' },
@@ -1787,7 +1797,6 @@
 
     function setVolume(val) { audioPlayer.volume = val; }
 
-    // ================= PROBLEM REPORT =================
     const GOOGLE_CLIENT_ID = "";
     const PROBLEM_GMAIL_STORAGE_KEY = "lhajmoha_problem_gmail_auth_v2";
     const PROBLEM_SENDER_ID_KEY = "lhajmoha_problem_sender_id_v1";
@@ -2303,7 +2312,6 @@
       }, 600);
     }
 
-    // ================= MOROCCO CHAT BOTS (GUARANTEED LIVE STREAM + ANTI-REPEAT) =================
     const CHAT_BOTS_ENABLED_KEY = "lhajmoha_chat_bots_enabled_v1";
     const BOT_PLATFORM_INDEX_KEY = "lhajmoha_chat_bot_platform_idx_v1";
     const SEND_BOT_MESSAGES_TO_DISCORD = false;
@@ -2360,129 +2368,7 @@
       "اللي باغي يدخل يتواصل، حنا واجدين دابا 🙌",
       "شكون اللي عندو البينغ مزيان اليوم؟ أنا شوية طالع 😅",
       "واش بصح كاين أبديت جديد اليوم ولا غير هضرة؟",
-      "حماس فالشات اليوم، تبارك الله 🔥🔥",
-      "أجي نشوفو شنو غادي يوقع دابا 👀",
-      "موتني بالضحك هاد الميساج 😂😂",
-      "واش كاين شي سيناريو واعر فـ RP اليوم؟",
-      "الدراري شكون اللي خدام فـ الميديك اليوم؟ 🚑",
-      "الله يعطيكم الصحة على هاد التفاعل الزوين 👏",
-      "شحال الساعة عندكم؟ الوقت كيطير هنا ⏰",
-      "واش شي حد جرب الميزة الجديدة فـ السيرفر؟",
-      "والله حتى الجو فـ الشات زوين بزاف اليوم ✨",
-      "ديروا لينا شي أكشن ناضي ما ننعسوش اليوم 😂",
-      "واش كاين شي لايف فـ Kick دابا ولا باقي؟",
-      "تحية للدراري كاملين من طنجة للكويرة 🇲🇦❤️",
-      "شكون اللي عارف الحل ديال هاد اللعيبة؟ 🤔",
-      "صراحة هاد الكليب خاصو يتبارطاجا 🔥",
-      "واش بديتو اللعب ولا باقي كتسخنو؟ 😄",
-      "أجي الخوت نشوفو شكون غادي يربح هاد الجولة 🎯",
-      "يا سلام على هدوء وحماس فـ نفس الوقت 😎",
-      "واش كاين شي حد طالع فـ الديسكورد دابا؟",
-      "أووو ما كنتش داير فبالي هاد البلان كامل 🤯",
-      "مزيان ملي لقيتكم مجموعين هنا 🙌",
-      "واش بصح كاينين لاعبين جداد دخلوا اليوم؟",
-      "ضحكتوني والله حتى وجعي فكي 😂🔥",
-      "شكون اللي كيعجبه الكلاسيك أكثر من الجديد؟",
-      "يلاه نكملو هاد السهرة على خير إن شاء الله 🌟",
-      "واش الكونيكسيون عندكم مزيانة فـ هاد الوقت؟",
-      "أحسن شات تقدر تلقى فيه البصرى واللعب 💯",
-      "فينك آ ميدوكس؟ طلع نشوفو رأيك 😂",
-      "مساء الخير على كل من التحق بينا دابا",
-      "واش كاين شي أكسيون فـ RP اليوم؟",
-      "الله يعطيك الصحة على هاد الطاقة",
-      "فين وصلنا فالمهمة الدراري؟",
-      "جو زوين بزاف فهاد الشات",
-      "شكون من مدن المغرب متبع معنا؟",
-      "اللي دخل جديد يدير شي سلام 👋",
-      "تبارك الله عليكم كاملين",
-      "واش السيرفر عامر اليوم ولا عادي؟",
-      "أجواء خطيرة والله 😂",
-      "بالتوفيق في الجلسة ديال اليوم",
-      "شكراً بزاف على التفاعل ديالكم",
-      "شكون باقي فايق حتى لهاد الوقت؟",
-      "هاد اللقطة كانت ناضية بزاف",
-      "مرحبا بالناس الجداد فالقناة",
-      "كيف دايرين مع الخدمة والقراية اليوم؟",
-      "نتسناو نشوفو شنو غادي يوقع الجاية",
-      "الله يحفظكم جميعاً ويسر أموركم",
-      "واش الصوت واضح مزيان في الميكرو؟",
-      "أحسن لايف كنشوفو هاد السيمانة",
-      "شكون معانا من عشاق GTA و RP؟",
-      "ديرو لايك وبارطاج إلا عجبكم الجو",
-      "الضحك مضمون فهاد الشات 🤣",
-      "فين غاديين الدراري دابا؟",
-      "تحية كبيرة لكل الأعضاء القدام والجدد",
-      "واش كاين شي حدث خاص قريب؟",
-      "ما شاء الله تفاعل زوين بزاف",
-      "شكون عندو شي اقتراح لليوم؟",
-      "برافو على هاد التنظيم",
-      "نبقى متبع معاكم حتى اللخر",
-      "الله يعاونكم كاملين",
-      "واش الجو عندكم سخون ولا بارد اليوم؟",
-      "لقطة ما كتنساش 🔥",
-      "مرحبا بأي واحد انضم دابا",
-      "كيف دازت السيمانة ديالكم؟",
-      "هاد السهرة غتكون عامرة",
-      "شكراً على المجهودات الكبيرة",
-      "شكون كيطيح معانا فالمواقف الزوينة؟",
-      "سلام للناس اللي كيتبعو من التيليفون ومن البيسي",
-      "أجواء أخوية وصافية فهاد المكان",
-      "واش كاين شي حد مجرب هاد البلان من قبل؟",
-      "تبارك الله على الحضور",
-      "يلاه نكملو المتابعة والاستمتاع",
-      "كل الاحترام للجميع",
-      "واش الكونيكسيون مزيانة عندكم؟",
-      "هادشي كيعطي حماس كبير",
-      "شكون اللي جاي من TikTok ولا Kick ولا YouTube؟",
-      "أحلى تحية من القلب ❤️",
-      "نتمنى لكم وقت ممتع ومريح",
-      "واش كاين شي تساؤل عند شي حد؟",
-      "بداية موفقة بزاف",
-      "الشات كيتحرك مزيان اليوم",
-      "الله يجعل أيامكم كلها فرح",
-      "شكون اللي محمس للقادم؟",
-      "هضرة معقولة وجو زوين",
-      "ألف شكر على الدعم المستمر",
-      "يلاه نشوفو شنو كاين جديد",
-      "تحية خاصة لعشاق الكيمينغ",
-      "واش كاين شي حد باغي يشارك رأيو؟",
-      "متابعة ممتعة للجميع",
-      "اللي كاين فالشات يكتب شي كلمة زوينة",
-      "نهاية أسبوع موفقة للجميع",
-      "الله يبارك فيكم أ الدراري",
-      "واش كاين شي مفاجأة اليوم؟",
-      "تفاعل ولا أروع بصراحة",
-      "خليونا محافظين على هاد الروح الزوينة",
-      "مرحبا بالجميع بدون استثناء",
-      "شنو رأيكم فهاد الأجواء؟",
-      "شكراً جزيلاً على كل كلمة طيبة",
-      "نتسناو الجديد بكل شغف",
-      "الله يسهل على الجميع",
-      "واش كاين شي واحد طالع فـ Discord؟",
-      "الوقت كيدوز دغيا ملي كيكون الجو زوين",
-      "تحية لكل المتابعين الأوفياء",
-      "نكملو فهاد النفس الإيجابي",
-      "واش كاين شي نصيحة للجدد؟",
-      "أجواء رائعة بكل المقاييس",
-      "شكراً على الترحيب والاحترام",
-      "يلاه نعيشو اللحظة",
-      "كل التوفيق للجميع في خطواتهم",
-      "واش كاين شي تعليق على اللي داز؟",
-      "أحلى كوميونوتي فالدنيا",
-      "الله يحفظكم ويبعد عليكم كل سوء",
-      "نتلاقاو في أحسن الأحوال",
-      "سلام عليكم ورحمة الله",
-      "شكراً بزاف على حضوركم",
-      "اللايف غادي مزيان تبارك الله",
-      "مرحبا بكم في أي وقت",
-      "أجواء مميزة كالعادة",
-      "الله يعطيكم ما تمنيتو",
-      "نلتقي على خير إن شاء الله",
-      "تحية للحاج موحا ولجميع المتابعين 💙",
-      "مرحبا بيكم كاملين فالشات!",
-      "الصوت والصورة مزيانين عندكم؟",
-      "أحسن كوميونوتي والله 👏",
-      "شكون غادي يدخل معانا الليلة؟"
+      "حماس فالشات اليوم، تبارك الله 🔥🔥"
     ];
 
     const BOT_OPENERS = ["الدراري", "الخوت", "أشخباركم", "واش كاين شي جديد", "شكون هنا دابا"];
@@ -2726,7 +2612,6 @@
       }, delay);
     }
 
-    // RUN ON LOAD
     window.addEventListener('DOMContentLoaded', () => {
       renderPcSoftwareList();
       renderRadioGrid();
