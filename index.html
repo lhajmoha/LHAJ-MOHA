@@ -729,8 +729,8 @@
       }).catch(err => console.log("Discord error:", err));
     }
 
-    // ================= LIVE GROUP CHAT (DEDICATED CHAT WEBHOOK + SHARED FIREBASE SYNC) =================
-    // ضع هنا رابط قاعدة بيانات Firebase Realtime Database لتظهر رسائل الهاتف والبيسي للجميع بشكل دائم
+    // ================= LIVE GROUP CHAT (DEDICATED CHAT WEBHOOK + CROSS-DEVICE SYNC) =================
+    // ضع هنا رابط قاعدة بيانات Firebase Realtime Database لتظهر رسائل التيليفون والبيسي عند الطرفين
     const FIREBASE_DATABASE_URL = ""; // مثال: "https://your-project-default-rtdb.firebaseio.com"
     const ADMIN_PASSCODE = "8080@";
     const CHAT_DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1575301967754825750/7DrQSsA0HLVqCmOrZtzUD-lvoVbGs54ehsqym6zyomBU9u0URoULmGeWbCK87v04R7lP";
@@ -796,6 +796,8 @@
     let bannedIpSet = new Set();
     let lastRenderedMessagesHash = "";
     let activeChatMember = null;
+    let liveMessagesStore = {};
+    let chatEventSource = null;
 
     try {
       const savedSession = sessionStorage.getItem(CHAT_MEMBER_SESSION_KEY);
@@ -1289,6 +1291,8 @@
       if (!isChatAdmin || !msgId) return;
       if (!confirm("Supprimer ce message définitivement ?")) return;
 
+      delete liveMessagesStore[msgId];
+
       if (hasFirebaseConfig()) {
         await fetch(`${getDbBaseUrl()}/groupChatMessages/${encodeURIComponent(msgId)}.json`, {
           method: "DELETE"
@@ -1372,6 +1376,60 @@
       box.scrollTop = box.scrollHeight;
     }
 
+    function connectFirebaseChatStream() {
+      if (!hasFirebaseConfig() || typeof EventSource === "undefined") return;
+      if (chatEventSource) {
+        try { chatEventSource.close(); } catch (_) {}
+        chatEventSource = null;
+      }
+
+      try {
+        const streamUrl = `${getDbBaseUrl()}/groupChatMessages.json`;
+        const es = new EventSource(streamUrl);
+        chatEventSource = es;
+
+        const handlePatch = (event) => {
+          try {
+            const parsed = JSON.parse(event.data || "{}");
+            const path = parsed.path || "/";
+            const data = parsed.data;
+
+            if (path === "/") {
+              liveMessagesStore = (data && typeof data === "object") ? data : {};
+            } else {
+              const cleanKey = path.replace(/^\/+/, "").split("/")[0];
+              if (cleanKey) {
+                if (data === null) {
+                  delete liveMessagesStore[cleanKey];
+                } else if (path === `/${cleanKey}`) {
+                  liveMessagesStore[cleanKey] = data;
+                } else if (liveMessagesStore[cleanKey]) {
+                  const subKeys = path.replace(/^\/+/, "").split("/").slice(1);
+                  let target = liveMessagesStore[cleanKey];
+                  for (let i = 0; i < subKeys.length - 1; i++) {
+                    if (!target[subKeys[i]] || typeof target[subKeys[i]] !== "object") {
+                      target[subKeys[i]] = {};
+                    }
+                    target = target[subKeys[i]];
+                  }
+                  target[subKeys[subKeys.length - 1]] = data;
+                }
+              }
+            }
+
+            lastRenderedMessagesHash = "";
+            renderChatMessagesList(liveMessagesStore);
+          } catch (_) {}
+        };
+
+        es.addEventListener("put", handlePatch);
+        es.addEventListener("patch", handlePatch);
+        es.onerror = () => {
+          syncLiveChat();
+        };
+      } catch (_) {}
+    }
+
     async function sendLiveChatMessage() {
       if (!currentClientIp) {
         await fetchClientPublicIp();
@@ -1394,6 +1452,7 @@
       const text = msgInput.value.trim();
       if (!text) return;
 
+      const msgKey = "msg_" + Date.now() + "_" + Math.random().toString(36).slice(2, 6);
       const payload = {
         author: sender,
         text,
@@ -1407,12 +1466,16 @@
       closeChatEmojiMenu();
       clearReplyTarget();
 
+      liveMessagesStore[msgKey] = payload;
+      lastRenderedMessagesHash = "";
+      renderChatMessagesList(liveMessagesStore);
+
       sendChatMessageToDiscord(payload);
 
       if (hasFirebaseConfig()) {
         try {
-          await fetch(`${getDbBaseUrl()}/groupChatMessages.json`, {
-            method: "POST",
+          await fetch(`${getDbBaseUrl()}/groupChatMessages/${encodeURIComponent(msgKey)}.json`, {
+            method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload)
           });
@@ -1421,7 +1484,7 @@
         } catch (_) {}
       } else {
         const msgs = readLocalMessages();
-        msgs["msg_" + Date.now() + "_" + Math.random().toString(36).slice(2, 6)] = payload;
+        msgs[msgKey] = payload;
         writeLocalMessages(msgs);
         if (chatBroadcast) chatBroadcast.postMessage({ type: "sync" });
         lastRenderedMessagesHash = "";
@@ -1437,7 +1500,8 @@
       if (!box) return;
 
       if (!hasFirebaseConfig()) {
-        renderChatMessagesList(readLocalMessages());
+        liveMessagesStore = readLocalMessages();
+        renderChatMessagesList(liveMessagesStore);
         return;
       }
 
@@ -1445,7 +1509,9 @@
         const res = await fetch(`${getDbBaseUrl()}/groupChatMessages.json?t=${Date.now()}`, { cache: "no-store" });
         if (!res.ok) return;
         const data = await res.json();
-        renderChatMessagesList(data || {});
+        liveMessagesStore = (data && typeof data === "object") ? data : {};
+        lastRenderedMessagesHash = "";
+        renderChatMessagesList(liveMessagesStore);
       } catch (_) {}
     }
 
@@ -2290,7 +2356,8 @@
       setInterval(syncRemoteProblemBannedList, 4000);
       setInterval(syncProblem24hQuotaUi, 30000);
       syncLiveChat();
-      setInterval(syncLiveChat, 2000);
+      connectFirebaseChatStream();
+      setInterval(syncLiveChat, 1500);
       loadMoroccoWeather(true);
       setInterval(() => loadMoroccoWeather(false), WEATHER_REFRESH_HOURS * 60 * 60 * 1000);
     });
@@ -2301,15 +2368,18 @@
 
     window.addEventListener('pageshow', () => {
       syncLiveChat();
+      connectFirebaseChatStream();
     });
 
     window.addEventListener('online', () => {
       syncLiveChat();
+      connectFirebaseChatStream();
     });
 
     document.addEventListener('visibilitychange', () => {
       if (!document.hidden) {
         syncLiveChat();
+        connectFirebaseChatStream();
       }
     });
 
