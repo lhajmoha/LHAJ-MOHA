@@ -304,7 +304,7 @@
               type="button"
               onclick="toggleChatBots()" 
               id="chatBotsToggleBtn"
-              class="text-[11px] bg-slate-900/90 hover:bg-slate-800 border border-emerald-500/40 text-emerald-300 px-2.5 py-1 rounded-lg font-bold transition"
+              class="hidden text-[11px] bg-slate-900/90 hover:bg-slate-800 border border-emerald-500/40 text-emerald-300 px-2.5 py-1 rounded-lg font-bold transition"
             >
               <i class="fas fa-robot"></i> Bots: ON
             </button>
@@ -1161,6 +1161,7 @@
       }
       if (bar) bar.classList.toggle("hidden", !isChatAdmin);
       if (isChatAdmin) renderAdminBannedList();
+      syncChatBotsButtonUi();
 
       updateChatInputAccess();
       lastRenderedMessagesHash = "";
@@ -2288,7 +2289,7 @@
       }, 600);
     }
 
-    // ================= MOROCCAN CHAT BOTS (DARIJA & FRENCH) =================
+    // ================= MOROCCAN CHAT BOTS (ADMIN-ONLY TOGGLE) =================
     const CHAT_BOTS_ENABLED_KEY = "lhajmoha_chat_bots_enabled_v1";
     const SEND_BOT_MESSAGES_TO_DISCORD = false;
 
@@ -2347,6 +2348,11 @@
     function syncChatBotsButtonUi() {
       const btn = document.getElementById("chatBotsToggleBtn");
       if (!btn) return;
+      if (!isChatAdmin) {
+        btn.classList.add("hidden");
+        return;
+      }
+      btn.classList.remove("hidden");
       btn.innerHTML = chatBotsEnabled
         ? '<i class="fas fa-robot"></i> Bots: ON'
         : '<i class="fas fa-robot"></i> Bots: OFF';
@@ -2356,6 +2362,7 @@
     }
 
     function toggleChatBots() {
+      if (!isChatAdmin) return;
       chatBotsEnabled = !chatBotsEnabled;
       try { localStorage.setItem(CHAT_BOTS_ENABLED_KEY, String(chatBotsEnabled)); } catch (_) {}
       syncChatBotsButtonUi();
