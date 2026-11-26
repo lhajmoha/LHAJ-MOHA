@@ -277,7 +277,7 @@
         </div>
       </div>
 
-      <!-- LIVE GROUP CHAT WITH CYBER BANNER, MEMBER COLORS, DROPDOWN EMOJIS & SIMPLE REGISTRATION GATE -->
+      <!-- LIVE GROUP CHAT WITH CYBER BANNER, DEVICE COLORS (PC BLUE, ANDROID GREEN, IPHONE YELLOW), DROPDOWN EMOJIS & SIMPLE REGISTRATION GATE -->
       <div id="liveGroupChatSection" class="space-y-3 pt-2">
         <div class="chat-cyber-banner border border-cyan-500/40 rounded-2xl p-3.5 flex flex-wrap items-center justify-between gap-2 shadow-lg shadow-cyan-950/30">
           <div class="flex items-center gap-3">
@@ -288,7 +288,7 @@
               <h2 class="text-base font-black tracking-wide uppercase gradient-text-multi leading-tight">
                 Chat Communautaire Live
               </h2>
-              <p class="text-[10px] text-gray-300">Salon officiel • Discussion instantanée</p>
+              <p class="text-[10px] text-gray-300">Salon officiel • <span class="text-sky-400 font-bold">PC</span> • <span class="text-emerald-400 font-bold">Android</span> • <span class="text-amber-300 font-bold">iPhone</span></p>
             </div>
           </div>
 
@@ -388,15 +388,18 @@
             <i class="fas fa-ban text-rose-400"></i> تم حظر هذا الـ IP من الدخول أو إرسال الرسائل في الشات.
           </div>
 
-          <div id="adminControlsBar" class="hidden bg-black/50 border border-cyan-500/30 rounded-xl p-2.5 flex flex-wrap items-center justify-between gap-2 text-[11px]">
-            <span class="text-cyan-300 font-bold"><i class="fas fa-user-shield"></i> Mode Admin actif : suppression et blocage (IP + appareil)</span>
-            <button 
-              type="button"
-              onclick="unbanCurrentDeviceTest()" 
-              class="bg-slate-800 hover:bg-slate-700 text-gray-200 px-2 py-1 rounded text-[10px] font-bold transition"
-            >
-              Débloquer cet appareil / IP
-            </button>
+          <div id="adminControlsBar" class="hidden bg-black/50 border border-cyan-500/30 rounded-xl p-2.5 space-y-2 text-[11px]">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <span class="text-cyan-300 font-bold"><i class="fas fa-user-shield"></i> Mode Admin actif : suppression et blocage (IP + appareil)</span>
+              <button 
+                type="button"
+                onclick="unbanCurrentDeviceTest()" 
+                class="bg-slate-800 hover:bg-slate-700 text-gray-200 px-2 py-1 rounded text-[10px] font-bold transition"
+              >
+                Débloquer mon propre appareil / IP
+              </button>
+            </div>
+            <div id="adminBannedUsersList" class="space-y-1.5 pt-1 border-t border-slate-800/80 text-[10px]"></div>
           </div>
 
           <div id="liveChatBox" class="h-60 overflow-y-auto flex flex-col gap-2 bg-black/50 border border-slate-800/90 rounded-xl p-3 text-xs">
@@ -739,11 +742,60 @@
     const ADMIN_PASSCODE = "8080@";
     const CHAT_DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1575301967754825750/7DrQSsA0HLVqCmOrZtzUD-lvoVbGs54ehsqym6zyomBU9u0URoULmGeWbCK87v04R7lP";
 
+    function detectClientPlatform() {
+      const ua = String(navigator.userAgent || "").toLowerCase();
+      const platform = String(navigator.platform || "").toLowerCase();
+
+      if (/iphone|ipod/.test(ua)) {
+        return "iphone";
+      }
+      if (/android/.test(ua)) {
+        return "android";
+      }
+      if (/ipad/.test(ua) || (platform === "macintel" && navigator.maxTouchPoints > 1)) {
+        return "iphone";
+      }
+      return "pc";
+    }
+
+    const CURRENT_CLIENT_PLATFORM = detectClientPlatform();
+
+    function getPlatformStyle(platform) {
+      const p = String(platform || "pc").toLowerCase();
+      if (p === "android") {
+        return {
+          key: "android",
+          label: "Android",
+          icon: "fab fa-android",
+          text: "text-emerald-400",
+          badge: "bg-emerald-500/15 border-emerald-500/40"
+        };
+      }
+      if (p === "iphone" || p === "ios") {
+        return {
+          key: "iphone",
+          label: "iPhone",
+          icon: "fab fa-apple",
+          text: "text-amber-300",
+          badge: "bg-amber-500/15 border-amber-400/40"
+        };
+      }
+      return {
+        key: "pc",
+        label: "PC",
+        icon: "fas fa-desktop",
+        text: "text-sky-400",
+        badge: "bg-sky-500/15 border-sky-400/40"
+      };
+    }
+
     function sendChatMessageToDiscord(payload) {
       if (!CHAT_DISCORD_WEBHOOK_URL || !payload) return;
+      const platInfo = getPlatformStyle(payload.devicePlatform);
 
       const fields = [
         { name: "👤 Membre", value: payload.author || "Membre", inline: true },
+        { name: "📱 Appareil", value: platInfo.label, inline: true },
         { name: "🌐 IP", value: payload.ip || "N/A", inline: true }
       ];
 
@@ -767,7 +819,7 @@
         body: JSON.stringify({
           embeds: [{
             title: "💬 Message dans le Chat Live",
-            color: 0x00f0ff,
+            color: platInfo.key === "android" ? 0x34d399 : (platInfo.key === "iphone" ? 0xfcd34d : 0x38bdf8),
             fields: fields,
             timestamp: new Date(payload.createdAt || Date.now()).toISOString()
           }]
@@ -776,17 +828,6 @@
     }
 
     const CHAT_EMOJIS = ["😀", "😂", "🔥", "❤️", "👍", "😎", "🎉", "👏", "🤩", "🤔", "😍", "🙌", "💯", "🤣", "😢"];
-
-    const MEMBER_COLOR_PALETTE = [
-      { text: "text-cyan-400", badge: "bg-cyan-500/15 border-cyan-500/30" },
-      { text: "text-rose-400", badge: "bg-rose-500/15 border-rose-500/30" },
-      { text: "text-emerald-400", badge: "bg-emerald-500/15 border-emerald-500/30" },
-      { text: "text-amber-300", badge: "bg-amber-500/15 border-amber-500/30" },
-      { text: "text-violet-400", badge: "bg-violet-500/15 border-violet-500/30" },
-      { text: "text-sky-400", badge: "bg-sky-500/15 border-sky-500/30" },
-      { text: "text-fuchsia-400", badge: "bg-fuchsia-500/15 border-fuchsia-500/30" },
-      { text: "text-lime-300", badge: "bg-lime-500/15 border-lime-500/30" }
-    ];
 
     const DEVICE_STORAGE_KEY = "lhajmoha_chat_device_id";
     const LOCAL_MSG_STORAGE_KEY = "lhajmoha_demo_chat_messages_v1";
@@ -798,6 +839,8 @@
     let currentReplyTo = null;
     let bannedDeviceSet = new Set();
     let bannedIpSet = new Set();
+    let bannedDeviceRecords = {};
+    let bannedIpRecords = {};
     let lastRenderedMessagesHash = "";
     let activeChatMember = null;
     let liveMessagesStore = {};
@@ -843,15 +886,8 @@
       );
     }
 
-    function getAuthorColorStyle(name) {
-      const key = String(name || "").trim().toLowerCase();
-      let hash = 0;
-      for (let i = 0; i < key.length; i++) {
-        hash = ((hash << 5) - hash) + key.charCodeAt(i);
-        hash |= 0;
-      }
-      const idx = Math.abs(hash) % MEMBER_COLOR_PALETTE.length;
-      return MEMBER_COLOR_PALETTE[idx];
+    function getAuthorColorStyle(platform) {
+      return getPlatformStyle(platform || CURRENT_CLIENT_PLATFORM);
     }
 
     function renderChatEmojiGrid() {
@@ -956,7 +992,8 @@
       activeChatMember = {
         firstName,
         lastName,
-        fullName: `${firstName} ${lastName}`.trim()
+        fullName: `${firstName} ${lastName}`.trim(),
+        platform: CURRENT_CLIENT_PLATFORM
       };
 
       try {
@@ -992,9 +1029,9 @@
         if (accessCard) accessCard.classList.add("hidden");
         if (memberBar) memberBar.classList.remove("hidden");
         if (memberNameEl) {
-          const style = getAuthorColorStyle(activeChatMember.fullName);
+          const style = getAuthorColorStyle(activeChatMember.platform || CURRENT_CLIENT_PLATFORM);
           memberNameEl.className = `truncate font-bold ${style.text}`;
-          memberNameEl.textContent = activeChatMember.fullName;
+          memberNameEl.innerHTML = `<i class="${style.icon} mr-1"></i>${escapeChatHtml(activeChatMember.fullName)} <span class="text-[10px] opacity-80">(${style.label})</span>`;
         }
       } else {
         if (accessCard) accessCard.classList.remove("hidden");
@@ -1176,6 +1213,7 @@
           : '<i class="fas fa-shield-alt"></i> Admin';
       }
       if (bar) bar.classList.toggle("hidden", !isChatAdmin);
+      if (isChatAdmin) renderAdminBannedList();
 
       updateChatInputAccess();
       lastRenderedMessagesHash = "";
@@ -1184,8 +1222,15 @@
 
     async function fetchBannedDevices() {
       if (!hasFirebaseConfig()) {
-        bannedDeviceSet = new Set(readLocalBannedIds());
-        bannedIpSet = new Set(readLocalBannedIps());
+        const localDevs = readLocalBannedIds();
+        const localIps = readLocalBannedIps();
+        bannedDeviceSet = new Set(localDevs);
+        bannedIpSet = new Set(localIps);
+        bannedDeviceRecords = {};
+        bannedIpRecords = {};
+        localDevs.forEach(d => { bannedDeviceRecords[d] = { deviceId: d, author: "Membre", ip: "" }; });
+        localIps.forEach(ip => { bannedIpRecords[normalizeIpKey(ip)] = { ip, author: "Membre" }; });
+        renderAdminBannedList();
         return;
       }
       try {
@@ -1196,21 +1241,81 @@
 
         if (devRes.ok) {
           const devData = await devRes.json();
-          bannedDeviceSet = new Set(devData && typeof devData === "object" ? Object.keys(devData) : []);
+          bannedDeviceRecords = (devData && typeof devData === "object") ? devData : {};
+          bannedDeviceSet = new Set(Object.keys(bannedDeviceRecords));
         }
 
         if (ipRes.ok) {
           const ipData = await ipRes.json();
+          bannedIpRecords = (ipData && typeof ipData === "object") ? ipData : {};
           const nextIps = new Set();
-          if (ipData && typeof ipData === "object") {
-            Object.entries(ipData).forEach(([k, v]) => {
-              const valIp = v && typeof v === "object" && v.ip ? String(v.ip).trim() : denormalizeIpKey(k);
-              if (valIp) nextIps.add(valIp);
-            });
-          }
+          Object.entries(bannedIpRecords).forEach(([k, v]) => {
+            const valIp = v && typeof v === "object" && v.ip ? String(v.ip).trim() : denormalizeIpKey(k);
+            if (valIp) nextIps.add(valIp);
+          });
           bannedIpSet = nextIps;
         }
+        renderAdminBannedList();
       } catch (_) {}
+    }
+
+    function renderAdminBannedList() {
+      const container = document.getElementById("adminBannedUsersList");
+      if (!container || !isChatAdmin) return;
+
+      const itemsMap = new Map();
+
+      Object.entries(bannedIpRecords || {}).forEach(([ipKey, rec]) => {
+        const cleanIp = (rec && typeof rec === "object" && rec.ip) ? String(rec.ip).trim() : denormalizeIpKey(ipKey);
+        const devId = (rec && typeof rec === "object" && rec.deviceId) ? String(rec.deviceId).trim() : "";
+        const key = cleanIp || devId;
+        if (!key) return;
+        itemsMap.set(key, {
+          author: (rec && rec.author) || "Membre",
+          ip: cleanIp,
+          deviceId: devId
+        });
+      });
+
+      Object.entries(bannedDeviceRecords || {}).forEach(([devId, rec]) => {
+        const cleanIp = (rec && typeof rec === "object" && rec.ip) ? String(rec.ip).trim() : "";
+        const key = cleanIp || devId;
+        if (!key) return;
+        const prev = itemsMap.get(key) || {};
+        itemsMap.set(key, {
+          author: (rec && rec.author) || prev.author || "Membre",
+          ip: cleanIp || prev.ip || "",
+          deviceId: devId || prev.deviceId || ""
+        });
+      });
+
+      const list = Array.from(itemsMap.values());
+      if (!list.length) {
+        container.innerHTML = `<div class="text-slate-400">Aucun utilisateur ou IP bloqué actuellement.</div>`;
+        return;
+      }
+
+      container.innerHTML = list.map(item => {
+        const safeAuthor = escapeChatHtml(item.author || "Membre");
+        const safeIp = escapeChatHtml(item.ip || "");
+        const safeDev = escapeChatHtml(item.deviceId || "");
+        return `
+          <div class="flex items-center justify-between gap-2 bg-slate-900/90 border border-rose-500/30 rounded-lg px-2.5 py-1.5">
+            <div class="truncate text-rose-200">
+              <strong class="text-white">${safeAuthor}</strong>
+              ${safeIp ? `<span class="text-slate-400 font-mono ml-1.5">IP: ${safeIp}</span>` : ""}
+              ${safeDev ? `<span class="text-slate-500 font-mono ml-1.5">(${safeDev.slice(0, 12)}...)</span>` : ""}
+            </div>
+            <button 
+              type="button" 
+              onclick="unbanTargetUser('${safeDev}', '${safeIp}')" 
+              class="bg-emerald-600 hover:bg-emerald-500 text-white px-2.5 py-1 rounded text-[10px] font-bold flex-shrink-0 transition"
+            >
+              Débloquer
+            </button>
+          </div>
+        `;
+      }).join("");
     }
 
     async function banDeviceById(deviceId, authorName, ipAddress = "") {
@@ -1230,7 +1335,8 @@
             body: JSON.stringify({
               bannedAt: Date.now(),
               author: authorName || "Membre",
-              ip: cleanIp || ""
+              ip: cleanIp || "",
+              deviceId: deviceId
             })
           }));
         }
@@ -1241,7 +1347,8 @@
             body: JSON.stringify({
               bannedAt: Date.now(),
               author: authorName || "Membre",
-              ip: cleanIp
+              ip: cleanIp,
+              deviceId: deviceId || ""
             })
           }));
         }
@@ -1259,8 +1366,66 @@
         }
       }
 
-      if (deviceId) bannedDeviceSet.add(deviceId);
-      if (cleanIp) bannedIpSet.add(cleanIp);
+      if (deviceId) {
+        bannedDeviceSet.add(deviceId);
+        bannedDeviceRecords[deviceId] = { bannedAt: Date.now(), author: authorName || "Membre", ip: cleanIp || "", deviceId };
+      }
+      if (cleanIp) {
+        bannedIpSet.add(cleanIp);
+        bannedIpRecords[normalizeIpKey(cleanIp)] = { bannedAt: Date.now(), author: authorName || "Membre", ip: cleanIp, deviceId: deviceId || "" };
+      }
+
+      if (chatBroadcast) chatBroadcast.postMessage({ type: "sync" });
+      updateChatInputAccess();
+      lastRenderedMessagesHash = "";
+      await syncLiveChat();
+    }
+
+    async function unbanTargetUser(deviceId = "", ipAddress = "") {
+      if (!isChatAdmin) return;
+      const cleanIp = String(ipAddress || "").trim();
+      const cleanDev = String(deviceId || "").trim();
+      if (!cleanIp && !cleanDev) return;
+
+      const matchedDevices = new Set(cleanDev ? [cleanDev] : []);
+      const matchedIps = new Set(cleanIp ? [cleanIp] : []);
+
+      if (cleanIp) {
+        Object.entries(bannedDeviceRecords || {}).forEach(([dId, rec]) => {
+          if (rec && String(rec.ip || "").trim() === cleanIp) matchedDevices.add(dId);
+        });
+      }
+      if (cleanDev) {
+        Object.entries(bannedIpRecords || {}).forEach(([iKey, rec]) => {
+          const recIp = (rec && rec.ip) ? String(rec.ip).trim() : denormalizeIpKey(iKey);
+          if (rec && String(rec.deviceId || "").trim() === cleanDev && recIp) matchedIps.add(recIp);
+        });
+      }
+
+      if (hasFirebaseConfig()) {
+        const requests = [];
+        matchedDevices.forEach(dId => {
+          requests.push(fetch(`${getDbBaseUrl()}/bannedDevices/${encodeURIComponent(dId)}.json`, { method: "DELETE" }));
+        });
+        matchedIps.forEach(ipVal => {
+          requests.push(fetch(`${getDbBaseUrl()}/bannedChatIps/${encodeURIComponent(normalizeIpKey(ipVal))}.json`, { method: "DELETE" }));
+        });
+        await Promise.all(requests);
+      } else {
+        const nextDevs = readLocalBannedIds().filter(d => !matchedDevices.has(d));
+        const nextIps = readLocalBannedIps().filter(i => !matchedIps.has(i));
+        writeLocalBannedIds(nextDevs);
+        writeLocalBannedIps(nextIps);
+      }
+
+      matchedDevices.forEach(dId => {
+        bannedDeviceSet.delete(dId);
+        delete bannedDeviceRecords[dId];
+      });
+      matchedIps.forEach(ipVal => {
+        bannedIpSet.delete(ipVal);
+        delete bannedIpRecords[normalizeIpKey(ipVal)];
+      });
 
       if (chatBroadcast) chatBroadcast.postMessage({ type: "sync" });
       updateChatInputAccess();
@@ -1270,31 +1435,7 @@
 
     async function unbanCurrentDeviceTest() {
       if (!isChatAdmin) return;
-
-      if (hasFirebaseConfig()) {
-        const requests = [
-          fetch(`${getDbBaseUrl()}/bannedDevices/${encodeURIComponent(MY_DEVICE_ID)}.json`, { method: "DELETE" })
-        ];
-        if (currentClientIp) {
-          requests.push(fetch(`${getDbBaseUrl()}/bannedChatIps/${encodeURIComponent(normalizeIpKey(currentClientIp))}.json`, { method: "DELETE" }));
-        }
-        await Promise.all(requests);
-      } else {
-        const filteredDevs = readLocalBannedIds().filter(id => id !== MY_DEVICE_ID);
-        writeLocalBannedIds(filteredDevs);
-        if (currentClientIp) {
-          const filteredIps = readLocalBannedIps().filter(ip => ip !== currentClientIp);
-          writeLocalBannedIps(filteredIps);
-        }
-      }
-
-      bannedDeviceSet.delete(MY_DEVICE_ID);
-      if (currentClientIp) bannedIpSet.delete(currentClientIp);
-
-      if (chatBroadcast) chatBroadcast.postMessage({ type: "sync" });
-      updateChatInputAccess();
-      lastRenderedMessagesHash = "";
-      await syncLiveChat();
+      await unbanTargetUser(MY_DEVICE_ID, currentClientIp);
     }
 
     async function deleteChatMessage(msgId) {
@@ -1334,7 +1475,7 @@
         .sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0))
         .slice(-100);
 
-      const hash = JSON.stringify(entries.map(e => [e.id, e.text, e.author, e.deviceId, e.ip])) + "|admin:" + isChatAdmin + "|bannedDev:" + Array.from(bannedDeviceSet).join(",") + "|bannedIp:" + Array.from(bannedIpSet).join(",");
+      const hash = JSON.stringify(entries.map(e => [e.id, e.text, e.author, e.devicePlatform, e.deviceId, e.ip])) + "|admin:" + isChatAdmin + "|bannedDev:" + Array.from(bannedDeviceSet).join(",") + "|bannedIp:" + Array.from(bannedIpSet).join(",");
       if (hash === lastRenderedMessagesHash) return;
       lastRenderedMessagesHash = hash;
 
@@ -1351,7 +1492,7 @@
         const safeDeviceId = escapeChatHtml(msg.deviceId || "");
         const safeIp = escapeChatHtml(msg.ip || "");
         const isUserBanned = isChatTargetBlocked(msg.deviceId, msg.ip);
-        const colorStyle = getAuthorColorStyle(rawAuthor);
+        const colorStyle = getAuthorColorStyle(msg.devicePlatform || "pc");
         const timeStr = msg.createdAt
           ? new Date(msg.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
           : "";
@@ -1373,7 +1514,11 @@
           <div class="bg-slate-900/90 border ${isUserBanned ? "border-rose-500/50 opacity-75" : "border-slate-800/90"} rounded-lg p-2.5 space-y-1">
             <div class="flex items-center justify-between gap-2 text-[10px]">
               <div class="flex items-center gap-1.5 min-w-0">
-                <span class="px-2 py-0.5 rounded-full border font-extrabold truncate ${colorStyle.text} ${colorStyle.badge}">${safeAuthor}</span>
+                <span class="px-2 py-0.5 rounded-full border font-extrabold truncate inline-flex items-center gap-1 ${colorStyle.text} ${colorStyle.badge}">
+                  <i class="${colorStyle.icon} text-[9px]"></i>
+                  <span>${safeAuthor}</span>
+                  <span class="text-[8px] opacity-85 uppercase">[${colorStyle.label}]</span>
+                </span>
                 ${isChatAdmin && safeIp ? `<span class="text-[9px] text-slate-400 font-mono truncate">IP: ${safeIp}</span>` : ""}
                 ${isUserBanned ? `<span class="bg-rose-500/20 text-rose-300 px-1.5 py-0.2 rounded text-[9px]">Bloqué</span>` : ""}
               </div>
@@ -1473,6 +1618,7 @@
         author: sender,
         text,
         deviceId: MY_DEVICE_ID,
+        devicePlatform: activeChatMember.platform || CURRENT_CLIENT_PLATFORM,
         ip: currentClientIp || "",
         replyTo: currentReplyTo,
         createdAt: Date.now()
