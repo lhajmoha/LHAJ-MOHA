@@ -2289,7 +2289,7 @@
       }, 600);
     }
 
-    // ================= MOROCCO CHAT BOTS (IPHONE / ANDROID / PC ROTATION) =================
+    // ================= MOROCCO CHAT BOTS (MULTI-NAME + ANTI-REPEAT + DARIJA) =================
     const CHAT_BOTS_ENABLED_KEY = "lhajmoha_chat_bots_enabled_v1";
     const BOT_PLATFORM_INDEX_KEY = "lhajmoha_chat_bot_platform_idx_v1";
     const SEND_BOT_MESSAGES_TO_DISCORD = false;
@@ -2308,81 +2308,63 @@
     } catch (_) {}
 
     const MOROCCAN_CHAT_BOTS = [
-      {
-        id: "bot_youssef",
-        name: "Youssef El Amrani",
-        profiles: {
-          iphone: { deviceId: "bot_dev_youssef_iphone", ip: "127.0.1.1" },
-          android: { deviceId: "bot_dev_youssef_android", ip: "127.0.1.2" },
-          pc: { deviceId: "bot_dev_youssef_pc", ip: "127.0.1.3" }
-        }
-      },
-      {
-        id: "bot_salma",
-        name: "Salma Bennani",
-        profiles: {
-          iphone: { deviceId: "bot_dev_salma_iphone", ip: "127.0.2.1" },
-          android: { deviceId: "bot_dev_salma_android", ip: "127.0.2.2" },
-          pc: { deviceId: "bot_dev_salma_pc", ip: "127.0.2.3" }
-        }
-      },
-      {
-        id: "bot_ayoub",
-        name: "Ayoub Idrissi",
-        profiles: {
-          iphone: { deviceId: "bot_dev_ayoub_iphone", ip: "127.0.3.1" },
-          android: { deviceId: "bot_dev_ayoub_android", ip: "127.0.3.2" },
-          pc: { deviceId: "bot_dev_ayoub_pc", ip: "127.0.3.3" }
-        }
-      },
-      {
-        id: "bot_sara",
-        name: "Sara Chraibi",
-        profiles: {
-          iphone: { deviceId: "bot_dev_sara_iphone", ip: "127.0.4.1" },
-          android: { deviceId: "bot_dev_sara_android", ip: "127.0.4.2" },
-          pc: { deviceId: "bot_dev_sara_pc", ip: "127.0.4.3" }
-        }
-      }
+      { id: "bot_midox", name: "Midox", ipBase: "127.0.1" },
+      { id: "bot_raphael", name: "Raphaël", ipBase: "127.0.2" },
+      { id: "bot_luffy", name: "Luffy", ipBase: "127.0.3" },
+      { id: "bot_salma", name: "Salma Bennani", ipBase: "127.0.4" },
+      { id: "bot_ayoub", name: "Ayoub Idrissi", ipBase: "127.0.5" },
+      { id: "bot_sara", name: "Sara Chraibi", ipBase: "127.0.6" },
+      { id: "bot_youssef", name: "Youssef El Amrani", ipBase: "127.0.7" },
+      { id: "bot_zoro", name: "Zoro", ipBase: "127.0.8" },
+      { id: "bot_kaito", name: "Kaito", ipBase: "127.0.9" },
+      { id: "bot_nora", name: "Nora", ipBase: "127.0.10" },
+      { id: "bot_rayane", name: "Rayane", ipBase: "127.0.11" },
+      { id: "bot_lina", name: "Lina", ipBase: "127.0.12" }
     ];
 
     const BOT_IDLE_LINES = [
       "السلام عليكم الدراري، كيدايرين اليوم؟ 🔥",
-      "Salut tout le monde ! Ça discute tranquille ici 😎",
-      "واش كاين شي لايف اليوم فـ GTA RP ولا Kick؟ 🎮",
-      "Bonne ambiance dans le chat, bienvenue aux nouveaux membres 🙌",
+      "GTA RP ولا Kick؟ واش كاين شي لايف اليوم فـ السيرفر؟ 🎮",
+      "واش كاين شي حد أونلاين دابا ندخلوا سكواد؟ 👀",
+      "والله حتى اللقطة ديال البارح كانت ناضية بزاف 😂🔥",
+      "فين غابرين الخوت؟ شكون اللي طالع اليوم؟",
+      "واش تبدل شي حاجة فـ الماب ولا باقي نفس البلان؟ ⚡",
+      "ناري على أكشن وقع دابا، ما كنتش متوقعو نهائياً 🤯",
       "شكون متبع الراديو دابا؟ Hit Radio ولا Radio Mars؟ 📻",
-      "N'oubliez pas de check les liens officiels en haut si besoin !"
+      "هاد الشات اليوم عامر بالحيوية، تبارك الله 🙌",
+      "شكون اللي عندو البينغ مزيان اليوم؟ أنا شوية طالع 😅"
     ];
 
     const BOT_KEYWORD_REPLIES = [
       {
         match: /(سلام|salam|اهلا|مرحبا|كيداير|kidayr|ça va|bonjour|bonsoir|salut)/i,
         replies: [
-          "وعليكم السلام! مرحبا بك معانا فالشات 👋",
-          "Salut ! Bienvenue dans le chat, ça va bien et toi ?",
-          "أهلا وسهلا، نورت الشات أخويا/أختي 🔥"
+          "وعليكم السلام! مرحبا بك معانا فالشات 👋🔥",
+          "أهلا وسهلا، نورت الشات أخويا/أختي، كيداير اليوم؟",
+          "Salut ! Bienvenue dans le chat, ça va bien et toi ? 😎"
         ]
       },
       {
         match: /(gta|fivem|rp|medic|لايف|live|kick|tiktok)/i,
         replies: [
-          "أجواء RP ديما واعرة، خاص غير الوقت والكونيكسيون 😄",
-          "Le RP c'est toujours lourd quand l'ambiance est bonne !",
-          "تابع الحسابات الرسمية باش يوصلك جديد اللايفات والكلبسات ⚡"
+          "أجواء RP ديما واعرة، خاص غير الوقت والكونيكسيون 😄🎮",
+          "واش كاين شي بلان جديد فـ السيرفر ولا لايف فـ Kick اليوم؟",
+          "Le RP c'est toujours lourd quand l'ambiance est bonne ⚡"
         ]
       },
       {
         match: /(merci|شكرا|chokran|top|bien|zwin)/i,
         replies: [
           "بصحة والراحة، مرحبا فكل وقت 👍",
-          "Avec plaisir ! N'hésite pas si tu as besoin.",
-          "الله يحفظك، نهارك مبروك 🌟"
+          "الله يحفظك، نهارك مبروك ودائماً منورين 🔥",
+          "Avec plaisir ! N'hésite pas si tu as besoin 🙌"
         ]
       }
     ];
 
     let lastBotMessageAt = 0;
+    let lastUsedBotId = "";
+    let recentBotLines = [];
     const repliedUserMsgIds = new Set();
 
     function getNextRotatingBotPlatform() {
@@ -2418,18 +2400,34 @@
     }
 
     function pickRandomBot(excludeId = "") {
-      const pool = MOROCCAN_CHAT_BOTS.filter(b => b.id !== excludeId);
+      const blockedId = excludeId || lastUsedBotId;
+      const pool = MOROCCAN_CHAT_BOTS.filter(b => b.id !== blockedId);
       const list = pool.length ? pool : MOROCCAN_CHAT_BOTS;
-      return list[Math.floor(Math.random() * list.length)];
+      const chosen = list[Math.floor(Math.random() * list.length)];
+      lastUsedBotId = chosen.id;
+      return chosen;
+    }
+
+    function pickUniqueBotLine(lines) {
+      const candidates = lines.filter(line => !recentBotLines.includes(line));
+      const pool = candidates.length ? candidates : lines;
+      const chosen = pool[Math.floor(Math.random() * pool.length)];
+      recentBotLines.push(chosen);
+      if (recentBotLines.length > 6) recentBotLines.shift();
+      return chosen;
     }
 
     async function publishBotChatMessage(bot, text, replyTo = null) {
       if (!chatBotsEnabled || !bot || !text) return;
       const now = Date.now();
-      if (now - lastBotMessageAt < 18000) return;
+      if (now - lastBotMessageAt < 12000) return;
 
       const platform = getNextRotatingBotPlatform();
-      const profile = (bot.profiles && bot.profiles[platform]) || { deviceId: `bot_dev_${bot.id}_${platform}`, ip: "127.0.0.1" };
+      const suffix = platform === "iphone" ? "1" : (platform === "android" ? "2" : "3");
+      const profile = {
+        deviceId: `bot_dev_${bot.id}_${platform}`,
+        ip: `${bot.ipBase || "127.0.1"}.${suffix}`
+      };
 
       lastBotMessageAt = now;
       const msgKey = "msg_bot_" + now + "_" + Math.random().toString(36).slice(2, 6);
@@ -2486,7 +2484,7 @@
       if (!matchedRule) return;
 
       const bot = pickRandomBot();
-      const replyLine = matchedRule.replies[Math.floor(Math.random() * matchedRule.replies.length)];
+      const replyLine = pickUniqueBotLine(matchedRule.replies);
       setTimeout(() => {
         publishBotChatMessage(bot, replyLine, {
           id: latest.id,
@@ -2499,9 +2497,9 @@
     function maybeSendPeriodicBotChat() {
       if (!chatBotsEnabled || document.hidden) return;
       const now = Date.now();
-      if (now - lastBotMessageAt < 150000) return;
+      if (now - lastBotMessageAt < 45000) return;
       const bot = pickRandomBot();
-      const line = BOT_IDLE_LINES[Math.floor(Math.random() * BOT_IDLE_LINES.length)];
+      const line = pickUniqueBotLine(BOT_IDLE_LINES);
       publishBotChatMessage(bot, line, null);
     }
 
