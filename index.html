@@ -1544,16 +1544,6 @@
         createdAt: Date.now()
       };
 
-      msgInput.value = "";
-      closeChatEmojiMenu();
-      clearReplyTarget();
-
-      liveMessagesStore[msgKey] = payload;
-      lastRenderedMessagesHash = "";
-      renderChatMessagesList(liveMessagesStore);
-
-      sendChatMessageToDiscord(payload);
-
       if (hasFirebaseConfig()) {
         try {
           const res = await fetch(`${getDbBaseUrl()}/groupChatMessages/${encodeURIComponent(msgKey)}.json`, {
@@ -1562,22 +1552,36 @@
             body: JSON.stringify(payload)
           });
           if (!res.ok) {
-            renderChatMessagesList(liveMessagesStore, `تعذر حفظ الرسالة (${res.status}) : تحقق من صلاحيات الكتابة في Realtime Database Rules.`);
+            const errBody = await res.text().catch(() => "");
+            renderChatMessagesList(
+              liveMessagesStore,
+              `تعذر حفظ الرسالة في Firebase (${res.status}) : ${errBody || "تحقق من صلاحيات الكتابة في Realtime Database Rules."}`
+            );
             return;
           }
-          lastRenderedMessagesHash = "";
-          await syncLiveChat();
-        } catch (_) {
-          renderChatMessagesList(liveMessagesStore, "تعذر إرسال الرسالة إلى قاعدة البيانات. تحقق من الاتصال بالإنترنت.");
+        } catch (err) {
+          renderChatMessagesList(
+            liveMessagesStore,
+            `تعذر الاتصال بقاعدة البيانات حالياً (${err?.message || "خطأ في الشبكة"}). تحقق من الشبكة أو رابط Realtime Database.`
+          );
+          return;
         }
       } else {
         const msgs = readLocalMessages();
         msgs[msgKey] = payload;
         writeLocalMessages(msgs);
         if (chatBroadcast) chatBroadcast.postMessage({ type: "sync" });
-        lastRenderedMessagesHash = "";
-        renderChatMessagesList(msgs);
       }
+
+      msgInput.value = "";
+      closeChatEmojiMenu();
+      clearReplyTarget();
+      sendChatMessageToDiscord(payload);
+
+      liveMessagesStore[msgKey] = payload;
+      lastRenderedMessagesHash = "";
+      renderChatMessagesList(liveMessagesStore);
+      await syncLiveChat();
     }
 
     async function syncLiveChat() {
