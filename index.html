@@ -2289,9 +2289,11 @@
       }, 600);
     }
 
-    // ================= MOROCCAN CHAT BOTS (ADMIN-ONLY TOGGLE) =================
+    // ================= MOROCCO CHAT BOTS (IPHONE / ANDROID / PC ROTATION) =================
     const CHAT_BOTS_ENABLED_KEY = "lhajmoha_chat_bots_enabled_v1";
+    const BOT_PLATFORM_INDEX_KEY = "lhajmoha_chat_bot_platform_idx_v1";
     const SEND_BOT_MESSAGES_TO_DISCORD = false;
+    const BOT_DEVICE_ROTATION_ORDER = ["iphone", "android", "pc"];
 
     let chatBotsEnabled = true;
     try {
@@ -2299,11 +2301,49 @@
       if (savedBotFlag !== null) chatBotsEnabled = savedBotFlag === "true";
     } catch (_) {}
 
+    let botPlatformRotationIndex = 0;
+    try {
+      const savedIdx = parseInt(localStorage.getItem(BOT_PLATFORM_INDEX_KEY) || "0", 10);
+      if (!Number.isNaN(savedIdx) && savedIdx >= 0) botPlatformRotationIndex = savedIdx;
+    } catch (_) {}
+
     const MOROCCAN_CHAT_BOTS = [
-      { id: "bot_youssef", name: "Youssef El Amrani", platform: "pc", deviceId: "bot_dev_youssef", ip: "127.0.0.1" },
-      { id: "bot_salma", name: "Salma Bennani", platform: "iphone", deviceId: "bot_dev_salma", ip: "127.0.0.2" },
-      { id: "bot_ayoub", name: "Ayoub Idrissi", platform: "android", deviceId: "bot_dev_ayoub", ip: "127.0.0.3" },
-      { id: "bot_sara", name: "Sara Chraibi", platform: "iphone", deviceId: "bot_dev_sara", ip: "127.0.0.4" }
+      {
+        id: "bot_youssef",
+        name: "Youssef El Amrani",
+        profiles: {
+          iphone: { deviceId: "bot_dev_youssef_iphone", ip: "127.0.1.1" },
+          android: { deviceId: "bot_dev_youssef_android", ip: "127.0.1.2" },
+          pc: { deviceId: "bot_dev_youssef_pc", ip: "127.0.1.3" }
+        }
+      },
+      {
+        id: "bot_salma",
+        name: "Salma Bennani",
+        profiles: {
+          iphone: { deviceId: "bot_dev_salma_iphone", ip: "127.0.2.1" },
+          android: { deviceId: "bot_dev_salma_android", ip: "127.0.2.2" },
+          pc: { deviceId: "bot_dev_salma_pc", ip: "127.0.2.3" }
+        }
+      },
+      {
+        id: "bot_ayoub",
+        name: "Ayoub Idrissi",
+        profiles: {
+          iphone: { deviceId: "bot_dev_ayoub_iphone", ip: "127.0.3.1" },
+          android: { deviceId: "bot_dev_ayoub_android", ip: "127.0.3.2" },
+          pc: { deviceId: "bot_dev_ayoub_pc", ip: "127.0.3.3" }
+        }
+      },
+      {
+        id: "bot_sara",
+        name: "Sara Chraibi",
+        profiles: {
+          iphone: { deviceId: "bot_dev_sara_iphone", ip: "127.0.4.1" },
+          android: { deviceId: "bot_dev_sara_android", ip: "127.0.4.2" },
+          pc: { deviceId: "bot_dev_sara_pc", ip: "127.0.4.3" }
+        }
+      }
     ];
 
     const BOT_IDLE_LINES = [
@@ -2345,6 +2385,15 @@
     let lastBotMessageAt = 0;
     const repliedUserMsgIds = new Set();
 
+    function getNextRotatingBotPlatform() {
+      const chosen = BOT_DEVICE_ROTATION_ORDER[botPlatformRotationIndex % BOT_DEVICE_ROTATION_ORDER.length] || "iphone";
+      botPlatformRotationIndex = (botPlatformRotationIndex + 1) % BOT_DEVICE_ROTATION_ORDER.length;
+      try {
+        localStorage.setItem(BOT_PLATFORM_INDEX_KEY, String(botPlatformRotationIndex));
+      } catch (_) {}
+      return chosen;
+    }
+
     function syncChatBotsButtonUi() {
       const btn = document.getElementById("chatBotsToggleBtn");
       if (!btn) return;
@@ -2379,14 +2428,17 @@
       const now = Date.now();
       if (now - lastBotMessageAt < 18000) return;
 
+      const platform = getNextRotatingBotPlatform();
+      const profile = (bot.profiles && bot.profiles[platform]) || { deviceId: `bot_dev_${bot.id}_${platform}`, ip: "127.0.0.1" };
+
       lastBotMessageAt = now;
       const msgKey = "msg_bot_" + now + "_" + Math.random().toString(36).slice(2, 6);
       const payload = {
         author: bot.name,
         text: String(text).slice(0, 350),
-        deviceId: bot.deviceId,
-        devicePlatform: bot.platform,
-        ip: bot.ip,
+        deviceId: profile.deviceId,
+        devicePlatform: platform,
+        ip: profile.ip,
         isBot: true,
         replyTo: replyTo,
         createdAt: now
