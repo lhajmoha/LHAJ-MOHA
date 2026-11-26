@@ -277,7 +277,7 @@
         </div>
       </div>
 
-      <!-- LIVE GROUP CHAT WITH CYBER BANNER, DEVICE COLORS (PC BLUE, ANDROID GREEN, IPHONE YELLOW), DROPDOWN EMOJIS & SIMPLE REGISTRATION GATE -->
+      <!-- LIVE GROUP CHAT -->
       <div id="liveGroupChatSection" class="space-y-3 pt-2">
         <div class="chat-cyber-banner border border-cyan-500/40 rounded-2xl p-3.5 flex flex-wrap items-center justify-between gap-2 shadow-lg shadow-cyan-950/30">
           <div class="flex items-center gap-3">
@@ -302,6 +302,14 @@
             </span>
             <button 
               type="button"
+              onclick="toggleChatBots()" 
+              id="chatBotsToggleBtn"
+              class="text-[11px] bg-slate-900/90 hover:bg-slate-800 border border-emerald-500/40 text-emerald-300 px-2.5 py-1 rounded-lg font-bold transition"
+            >
+              <i class="fas fa-robot"></i> Bots: ON
+            </button>
+            <button 
+              type="button"
               onclick="toggleAdminMode()" 
               id="adminModeBtn"
               class="text-[11px] bg-slate-900/90 hover:bg-slate-800 border border-slate-700 text-cyan-300 px-2.5 py-1 rounded-lg font-bold transition"
@@ -317,7 +325,7 @@
             <strong>Mode local uniquement :</strong> أضف رابط قاعدة بيانات <code>FIREBASE_DATABASE_URL</code> لتظهر الرسائل بين الهاتف والبيسي وباقي المستخدمين.
           </div>
 
-          <!-- Simple Access Form (Prénom, Nom, Mot de passe, Confirmation) -->
+          <!-- Simple Access Form -->
           <div id="chatAccessCard" class="bg-black/60 border border-cyan-500/30 rounded-xl p-3.5 space-y-2.5">
             <div class="flex items-center justify-between gap-2">
               <span class="text-xs font-extrabold text-cyan-300 flex items-center gap-1.5">
@@ -369,7 +377,7 @@
             </button>
           </div>
 
-          <!-- Active Member Bar (Shown once registered) -->
+          <!-- Active Member Bar -->
           <div id="chatActiveMemberBar" class="hidden bg-black/50 border border-emerald-500/30 rounded-xl px-3 py-2 flex items-center justify-between gap-2 text-[11px]">
             <span class="font-bold flex items-center gap-1.5 truncate">
               <i class="fas fa-user-check text-emerald-400"></i>
@@ -445,7 +453,6 @@
               <i class="fas fa-paper-plane"></i> Envoyer
             </button>
 
-            <!-- Dropdown Emoji Menu Beside Envoyer -->
             <div 
               id="chatEmojiDropdown" 
               onclick="event.stopPropagation()"
@@ -540,7 +547,7 @@
         </div>
       </div>
 
-      <!-- COMPACT PROBLEM REPORT BOX (STRICT GMAIL + 24H 2-MSG IP LIMIT) -->
+      <!-- COMPACT PROBLEM REPORT BOX -->
       <div class="bg-cyber-card/90 border border-rose-500/30 rounded-xl p-2.5 backdrop-blur-md shadow-lg space-y-2">
         <div class="flex items-center justify-between pb-1 border-b border-slate-800/80">
           <span class="text-[11px] font-bold flex items-center gap-1.5 text-rose-400">
@@ -549,17 +556,14 @@
           <span class="text-[9px] text-rose-300 font-bold">@gmail.com</span>
         </div>
 
-        <!-- Blocked Gmail Notice -->
         <div id="problemBlockedNotice" class="hidden bg-rose-950/80 border border-rose-500/50 text-rose-200 rounded-lg px-2 py-1 text-[10px] font-bold">
           <i class="fas fa-ban text-rose-400"></i> تم حظر هذا البريد الإلكتروني من إرسال البلاغات.
         </div>
 
-        <!-- 24h Limit / Pending Response Notice -->
         <div id="problem24hLimitNotice" class="hidden bg-amber-950/70 border border-amber-500/50 text-amber-200 rounded-lg px-2 py-1 text-[10px] font-bold leading-snug">
           <i class="fas fa-clock text-amber-400"></i> تم إرسال رسالتك، يرجى انتظار 24 ساعة حتى يتم الاستجابة لها.
         </div>
 
-        <!-- Gmail Identification Gate -->
         <div id="problemGmailGate" class="bg-black/50 border border-rose-500/25 rounded-lg p-2 space-y-1.5">
           <div class="text-[10px] text-rose-300 font-bold flex items-center gap-1">
             <i class="fab fa-google text-rose-400"></i> خاص يكون حساب جوجل (@gmail.com) مفعل وديالك:
@@ -586,7 +590,6 @@
           <div id="problemGmailError" class="hidden text-[10px] text-rose-400 font-bold leading-snug"></div>
         </div>
 
-        <!-- Verified Gmail Bar -->
         <div id="problemGmailVerifiedBar" class="hidden bg-emerald-950/40 border border-emerald-500/30 rounded-lg px-2 py-1 flex items-center justify-between gap-2 text-[10px]">
           <span id="problemGmailBadge" class="text-emerald-300 font-bold truncate"></span>
           <button 
@@ -623,7 +626,7 @@
         </div>
       </div>
 
-      <!-- LHAJ MOHA MEDIC ACADEMY CARD (WITHOUT IMAGE, GTA STYLE + DISCORD BELOW) -->
+      <!-- LHAJ MOHA MEDIC ACADEMY CARD -->
       <div class="medic-gta-card border border-rose-500/40 hover:border-cyan-400/70 rounded-2xl p-3.5 backdrop-blur-md transition">
         <div class="flex items-center justify-between gap-2 mb-2 pb-2 border-b border-slate-800/90">
           <div class="flex items-center gap-2 min-w-0">
@@ -658,7 +661,7 @@
         </a>
       </div>
 
-      <!-- COMPACT MOROCCO WEATHER WIDGET (AUTO REFRESH EVERY 12 HOURS) -->
+      <!-- COMPACT MOROCCO WEATHER WIDGET -->
       <div class="bg-[#0b0e17]/95 border border-slate-800 hover:border-cyan-500/40 rounded-2xl p-3 backdrop-blur-md transition shadow-xl">
         <div class="flex items-center justify-between gap-2 mb-2 pb-2 border-b border-slate-800/90">
           <span class="text-xs font-black uppercase tracking-wider text-white flex items-center gap-1.5">
@@ -737,7 +740,7 @@
       }).catch(err => console.log("Discord error:", err));
     }
 
-    // ================= LIVE GROUP CHAT (DEDICATED CHAT WEBHOOK + CROSS-DEVICE SYNC) =================
+    // ================= LIVE GROUP CHAT =================
     const FIREBASE_DATABASE_URL = "https://lhajmoha-chat-default-rtdb.firebaseio.com/";
     const ADMIN_PASSCODE = "8080@";
     const CHAT_DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1575301967754825750/7DrQSsA0HLVqCmOrZtzUD-lvoVbGs54ehsqym6zyomBU9u0URoULmGeWbCK87v04R7lP";
@@ -746,15 +749,9 @@
       const ua = String(navigator.userAgent || "").toLowerCase();
       const platform = String(navigator.platform || "").toLowerCase();
 
-      if (/iphone|ipod/.test(ua)) {
-        return "iphone";
-      }
-      if (/android/.test(ua)) {
-        return "android";
-      }
-      if (/ipad/.test(ua) || (platform === "macintel" && navigator.maxTouchPoints > 1)) {
-        return "iphone";
-      }
+      if (/iphone|ipod/.test(ua)) return "iphone";
+      if (/android/.test(ua)) return "android";
+      if (/ipad/.test(ua) || (platform === "macintel" && navigator.maxTouchPoints > 1)) return "iphone";
       return "pc";
     }
 
@@ -763,30 +760,12 @@
     function getPlatformStyle(platform) {
       const p = String(platform || "pc").toLowerCase();
       if (p === "android") {
-        return {
-          key: "android",
-          label: "Android",
-          icon: "fab fa-android",
-          text: "text-emerald-400",
-          badge: "bg-emerald-500/15 border-emerald-500/40"
-        };
+        return { key: "android", label: "Android", icon: "fab fa-android", text: "text-emerald-400", badge: "bg-emerald-500/15 border-emerald-500/40" };
       }
       if (p === "iphone" || p === "ios") {
-        return {
-          key: "iphone",
-          label: "iPhone",
-          icon: "fab fa-apple",
-          text: "text-amber-300",
-          badge: "bg-amber-500/15 border-amber-400/40"
-        };
+        return { key: "iphone", label: "iPhone", icon: "fab fa-apple", text: "text-amber-300", badge: "bg-amber-500/15 border-amber-400/40" };
       }
-      return {
-        key: "pc",
-        label: "PC",
-        icon: "fas fa-desktop",
-        text: "text-sky-400",
-        badge: "bg-sky-500/15 border-sky-400/40"
-      };
+      return { key: "pc", label: "PC", icon: "fas fa-desktop", text: "text-sky-400", badge: "bg-sky-500/15 border-sky-400/40" };
     }
 
     function sendChatMessageToDiscord(payload) {
@@ -960,9 +939,7 @@
 
     async function submitChatAccessForm() {
       clearChatAccessError();
-      if (!currentClientIp) {
-        await fetchClientPublicIp();
-      }
+      if (!currentClientIp) await fetchClientPublicIp();
       await fetchBannedDevices();
 
       if (isCurrentChatUserBanned()) {
@@ -1067,42 +1044,28 @@
         banNotice.classList.toggle("hidden", !isBanned);
       }
 
-      if (accessCard) {
-        accessCard.classList.toggle("opacity-60", isBanned);
-      }
+      if (accessCard) accessCard.classList.toggle("opacity-60", isBanned);
       if (accessBtn) accessBtn.disabled = isBanned;
-      accessInputs.forEach(inp => {
-        inp.disabled = isBanned;
-      });
-      if (isBanned) {
-        showChatAccessError("تم حظر هذا الـ IP من التسجيل أو الدخول في الشات.");
-      }
+      accessInputs.forEach(inp => { inp.disabled = isBanned; });
+      if (isBanned) showChatAccessError("تم حظر هذا الـ IP من التسجيل أو الدخول في الشات.");
 
       if (sendBtn) sendBtn.disabled = !isAllowed;
       if (emojiBtn) emojiBtn.disabled = !isAllowed;
       if (!isAllowed) closeChatEmojiMenu();
       if (inputEl) {
         inputEl.disabled = !isAllowed;
-        if (isBanned) {
-          inputEl.placeholder = "هذا الـ IP محظور في هذا الشات...";
-        } else if (!canSendChatMessage()) {
-          inputEl.placeholder = "Remplissez Prénom, Nom et Mot de passe pour chatter...";
-        } else {
-          inputEl.placeholder = "Écrivez votre message...";
-        }
+        if (isBanned) inputEl.placeholder = "هذا الـ IP محظور في هذا الشات...";
+        else if (!canSendChatMessage()) inputEl.placeholder = "Remplissez Prénom, Nom et Mot de passe pour chatter...";
+        else inputEl.placeholder = "Écrivez votre message...";
       }
     }
 
     function getOrCreateDeviceId() {
       let id = "";
-      try {
-        id = localStorage.getItem(DEVICE_STORAGE_KEY) || "";
-      } catch (_) {}
+      try { id = localStorage.getItem(DEVICE_STORAGE_KEY) || ""; } catch (_) {}
       if (!id) {
         id = "dev_" + Math.random().toString(36).slice(2, 12) + "_" + Date.now().toString(36);
-        try {
-          localStorage.setItem(DEVICE_STORAGE_KEY, id);
-        } catch (_) {}
+        try { localStorage.setItem(DEVICE_STORAGE_KEY, id); } catch (_) {}
       }
       return id;
     }
@@ -1114,15 +1077,11 @@
         const raw = localStorage.getItem(LOCAL_MSG_STORAGE_KEY);
         const parsed = raw ? JSON.parse(raw) : {};
         return parsed && typeof parsed === "object" ? parsed : {};
-      } catch (_) {
-        return {};
-      }
+      } catch (_) { return {}; }
     }
 
     function writeLocalMessages(obj) {
-      try {
-        localStorage.setItem(LOCAL_MSG_STORAGE_KEY, JSON.stringify(obj || {}));
-      } catch (_) {}
+      try { localStorage.setItem(LOCAL_MSG_STORAGE_KEY, JSON.stringify(obj || {})); } catch (_) {}
     }
 
     function readLocalBannedIds() {
@@ -1130,15 +1089,11 @@
         const raw = localStorage.getItem(LOCAL_BAN_STORAGE_KEY);
         const arr = raw ? JSON.parse(raw) : [];
         return Array.isArray(arr) ? arr : [];
-      } catch (_) {
-        return [];
-      }
+      } catch (_) { return []; }
     }
 
     function writeLocalBannedIds(idsArray) {
-      try {
-        localStorage.setItem(LOCAL_BAN_STORAGE_KEY, JSON.stringify(Array.from(new Set(idsArray || []))));
-      } catch (_) {}
+      try { localStorage.setItem(LOCAL_BAN_STORAGE_KEY, JSON.stringify(Array.from(new Set(idsArray || [])))); } catch (_) {}
     }
 
     function readLocalBannedIps() {
@@ -1146,15 +1101,11 @@
         const raw = localStorage.getItem(LOCAL_IP_BAN_STORAGE_KEY);
         const arr = raw ? JSON.parse(raw) : [];
         return Array.isArray(arr) ? arr : [];
-      } catch (_) {
-        return [];
-      }
+      } catch (_) { return []; }
     }
 
     function writeLocalBannedIps(ipsArray) {
-      try {
-        localStorage.setItem(LOCAL_IP_BAN_STORAGE_KEY, JSON.stringify(Array.from(new Set(ipsArray || []))));
-      } catch (_) {}
+      try { localStorage.setItem(LOCAL_IP_BAN_STORAGE_KEY, JSON.stringify(Array.from(new Set(ipsArray || [])))); } catch (_) {}
     }
 
     function escapeChatHtml(str) {
@@ -1170,11 +1121,7 @@
     }
 
     function setReplyTarget(msgId, author, text) {
-      currentReplyTo = {
-        id: msgId,
-        author: author || "Membre",
-        text: (text || "").slice(0, 80)
-      };
+      currentReplyTo = { id: msgId, author: author || "Membre", text: (text || "").slice(0, 80) };
       const bar = document.getElementById("replyPreviewBar");
       const nameEl = document.getElementById("replyTargetName");
       const textEl = document.getElementById("replyTargetText");
@@ -1270,11 +1217,7 @@
         const devId = (rec && typeof rec === "object" && rec.deviceId) ? String(rec.deviceId).trim() : "";
         const key = cleanIp || devId;
         if (!key) return;
-        itemsMap.set(key, {
-          author: (rec && rec.author) || "Membre",
-          ip: cleanIp,
-          deviceId: devId
-        });
+        itemsMap.set(key, { author: (rec && rec.author) || "Membre", ip: cleanIp, deviceId: devId });
       });
 
       Object.entries(bannedDeviceRecords || {}).forEach(([devId, rec]) => {
@@ -1332,24 +1275,14 @@
           requests.push(fetch(`${getDbBaseUrl()}/bannedDevices/${encodeURIComponent(deviceId)}.json`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              bannedAt: Date.now(),
-              author: authorName || "Membre",
-              ip: cleanIp || "",
-              deviceId: deviceId
-            })
+            body: JSON.stringify({ bannedAt: Date.now(), author: authorName || "Membre", ip: cleanIp || "", deviceId })
           }));
         }
         if (cleanIp) {
           requests.push(fetch(`${getDbBaseUrl()}/bannedChatIps/${encodeURIComponent(normalizeIpKey(cleanIp))}.json`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              bannedAt: Date.now(),
-              author: authorName || "Membre",
-              ip: cleanIp,
-              deviceId: deviceId || ""
-            })
+            body: JSON.stringify({ bannedAt: Date.now(), author: authorName || "Membre", ip: cleanIp, deviceId: deviceId || "" })
           }));
         }
         await Promise.all(requests);
@@ -1418,14 +1351,8 @@
         writeLocalBannedIps(nextIps);
       }
 
-      matchedDevices.forEach(dId => {
-        bannedDeviceSet.delete(dId);
-        delete bannedDeviceRecords[dId];
-      });
-      matchedIps.forEach(ipVal => {
-        bannedIpSet.delete(ipVal);
-        delete bannedIpRecords[normalizeIpKey(ipVal)];
-      });
+      matchedDevices.forEach(dId => { bannedDeviceSet.delete(dId); delete bannedDeviceRecords[dId]; });
+      matchedIps.forEach(ipVal => { bannedIpSet.delete(ipVal); delete bannedIpRecords[normalizeIpKey(ipVal)]; });
 
       if (chatBroadcast) chatBroadcast.postMessage({ type: "sync" });
       updateChatInputAccess();
@@ -1445,9 +1372,7 @@
       delete liveMessagesStore[msgId];
 
       if (hasFirebaseConfig()) {
-        await fetch(`${getDbBaseUrl()}/groupChatMessages/${encodeURIComponent(msgId)}.json`, {
-          method: "DELETE"
-        });
+        await fetch(`${getDbBaseUrl()}/groupChatMessages/${encodeURIComponent(msgId)}.json`, { method: "DELETE" });
       } else {
         const msgs = readLocalMessages();
         delete msgs[msgId];
@@ -1568,9 +1493,7 @@
                   const subKeys = path.replace(/^\/+/, "").split("/").slice(1);
                   let target = liveMessagesStore[cleanKey];
                   for (let i = 0; i < subKeys.length - 1; i++) {
-                    if (!target[subKeys[i]] || typeof target[subKeys[i]] !== "object") {
-                      target[subKeys[i]] = {};
-                    }
+                    if (!target[subKeys[i]] || typeof target[subKeys[i]] !== "object") target[subKeys[i]] = {};
                     target = target[subKeys[i]];
                   }
                   target[subKeys[subKeys.length - 1]] = data;
@@ -1585,26 +1508,14 @@
 
         es.addEventListener("put", handlePatch);
         es.addEventListener("patch", handlePatch);
-        es.onerror = () => {
-          syncLiveChat();
-        };
+        es.onerror = () => { syncLiveChat(); };
       } catch (_) {}
     }
 
     async function sendLiveChatMessage() {
-      if (!currentClientIp) {
-        await fetchClientPublicIp();
-      }
-
-      if (isCurrentChatUserBanned()) {
-        updateChatInputAccess();
-        return;
-      }
-
-      if (!canSendChatMessage()) {
-        updateChatInputAccess();
-        return;
-      }
+      if (!currentClientIp) await fetchClientPublicIp();
+      if (isCurrentChatUserBanned()) { updateChatInputAccess(); return; }
+      if (!canSendChatMessage()) { updateChatInputAccess(); return; }
 
       const msgInput = document.getElementById("liveChatInput");
       if (!msgInput) return;
@@ -1688,9 +1599,8 @@
       }
     }
 
-    // ================= MOROCCO WEATHER (REFRESH EVERY 12 HOURS) =================
+    // ================= MOROCCO WEATHER =================
     const WEATHER_REFRESH_HOURS = 12;
-
     const MOROCCO_CITIES = [
       { name: "Safi", lat: 32.2994, lon: -9.2372 },
       { name: "Casablanca", lat: 33.5731, lon: -7.5898 },
@@ -1722,12 +1632,8 @@
         const res = await fetch(url, { cache: "no-store" });
         if (!res.ok) throw new Error("Weather fetch failed");
         const data = await res.json();
-        const temp = typeof data?.current?.temperature_2m === "number"
-          ? Math.round(data.current.temperature_2m)
-          : null;
-        const code = typeof data?.current?.weather_code === "number"
-          ? data.current.weather_code
-          : 0;
+        const temp = typeof data?.current?.temperature_2m === "number" ? Math.round(data.current.temperature_2m) : null;
+        const code = typeof data?.current?.weather_code === "number" ? data.current.weather_code : 0;
         const info = getWeatherInfo(code);
         return { name: city.name, temp, condition: info.label, icon: info.icon };
       } catch (_) {
@@ -1740,10 +1646,7 @@
       isLoadingWeather = true;
 
       const listEl = document.getElementById("moroccoWeatherList");
-      if (!listEl) {
-        isLoadingWeather = false;
-        return;
-      }
+      if (!listEl) { isLoadingWeather = false; return; }
 
       if (showSpinner || !listEl.dataset.initialized) {
         listEl.innerHTML = `<div class="text-gray-400 py-3 text-center"><i class="fas fa-spinner fa-spin"></i> Chargement météo...</div>`;
@@ -1772,30 +1675,9 @@
 
     // ================= PC SOFTWARE LIST =================
     const pcSoftwareList = [
-      {
-        name: '7-Zip',
-        version: 'Latest',
-        note: 'Compression & extraction fiable',
-        url: 'https://www.7-zip.org/',
-        badge: 'Fiable',
-        icon: 'fa-file-archive'
-      },
-      {
-        name: 'VLC Media Player',
-        version: 'Latest',
-        note: 'Lecture vidéo & audio complète',
-        url: 'https://www.videolan.org/vlc/',
-        badge: 'Fiable',
-        icon: 'fa-play-circle'
-      },
-      {
-        name: 'OBS Studio',
-        version: 'Latest',
-        note: 'Stream & enregistrement écran',
-        url: 'https://obsproject.com/',
-        badge: 'Streaming',
-        icon: 'fa-video'
-      }
+      { name: '7-Zip', version: 'Latest', note: 'Compression & extraction fiable', url: 'https://www.7-zip.org/', badge: 'Fiable', icon: 'fa-file-archive' },
+      { name: 'VLC Media Player', version: 'Latest', note: 'Lecture vidéo & audio complète', url: 'https://www.videolan.org/vlc/', badge: 'Fiable', icon: 'fa-play-circle' },
+      { name: 'OBS Studio', version: 'Latest', note: 'Stream & enregistrement écran', url: 'https://obsproject.com/', badge: 'Streaming', icon: 'fa-video' }
     ];
 
     function renderPcSoftwareList() {
@@ -1803,16 +1685,10 @@
       const countEl = document.getElementById('softwareCount');
       if (!container) return;
 
-      if (countEl) {
-        countEl.textContent = `${pcSoftwareList.length} ${pcSoftwareList.length > 1 ? 'programmes' : 'programme'}`;
-      }
+      if (countEl) countEl.textContent = `${pcSoftwareList.length} ${pcSoftwareList.length > 1 ? 'programmes' : 'programme'}`;
 
       if (!pcSoftwareList.length) {
-        container.innerHTML = `
-          <div class="bg-black/40 border border-dashed border-slate-700 rounded-xl p-4 text-center text-xs text-gray-400">
-            Aucun programme ajouté pour le moment. La liste est prête pour vos prochains ajouts.
-          </div>
-        `;
+        container.innerHTML = `<div class="bg-black/40 border border-dashed border-slate-700 rounded-xl p-4 text-center text-xs text-gray-400">Aucun programme ajouté pour le moment.</div>`;
         return;
       }
 
@@ -1825,32 +1701,21 @@
             <div class="min-w-0">
               <div class="flex items-center gap-1.5">
                 <span class="font-bold text-xs text-white truncate">${app.name}</span>
-                <span class="text-[9px] bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 px-1.5 py-0.2 rounded-full flex-shrink-0">
-                  ${app.badge || 'Ready'}
-                </span>
+                <span class="text-[9px] bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 px-1.5 py-0.2 rounded-full flex-shrink-0">${app.badge || 'Ready'}</span>
               </div>
               <p class="text-[11px] text-gray-400 truncate">${app.note || ''}</p>
             </div>
           </div>
-
-          <a 
-            href="${app.url}" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            title="Télécharger / Ouvrir ${app.name}"
-            class="bg-cyan-500/15 hover:bg-cyan-500 text-cyan-300 hover:text-black border border-cyan-500/30 px-2.5 py-1.5 rounded-lg text-[11px] font-bold flex items-center gap-1 flex-shrink-0 transition"
-          >
+          <a href="${app.url}" target="_blank" rel="noopener noreferrer" title="Télécharger / Ouvrir ${app.name}" class="bg-cyan-500/15 hover:bg-cyan-500 text-cyan-300 hover:text-black border border-cyan-500/30 px-2.5 py-1.5 rounded-lg text-[11px] font-bold flex items-center gap-1 flex-shrink-0 transition">
             <i class="fas fa-download text-[10px]"></i> Get
           </a>
         </div>
       `).join('');
     }
 
-    // DIRECT LOGO LINKS FOR RADIOS
     const HIT_RADIO_LOGO = "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Hit_Radio_logo.svg/1200px-Hit_Radio_logo.svg.png";
     const RADIO_MARS_LOGO = "https://upload.wikimedia.org/wikipedia/commons/f/f6/Radio_Mars.png";
 
-    // ================= RADIO STATIONS =================
     const radioStations = [
       { id: 'hitradio', name: 'Hit Radio', stream: 'https://hitradio-maroc.ice.infomaniak.ch/hitradio-maroc-128.mp3', logo: HIT_RADIO_LOGO, localFallback: 'hit radio.png' },
       { id: 'radiomars', name: 'Radio Mars', stream: 'https://radiomars.ice.infomaniak.ch/radiomars-128.mp3', logo: RADIO_MARS_LOGO, localFallback: 'radio maras.jpg' }
@@ -1886,12 +1751,10 @@
     function playRadio(stationId) {
       const station = radioStations.find(s => s.id === stationId);
       if (!station) return;
-
       currentStation = station;
       audioPlayer.src = station.stream;
       audioPlayer.play();
       isPlaying = true;
-
       document.getElementById('playerStation').innerText = station.name;
       document.getElementById('stickyPlayer').classList.remove('hidden');
       document.getElementById('mainPlayIcon').className = 'fas fa-pause';
@@ -1909,12 +1772,10 @@
       isPlaying = !isPlaying;
     }
 
-    function setVolume(val) {
-      audioPlayer.volume = val;
-    }
+    function setVolume(val) { audioPlayer.volume = val; }
 
-    // ================= PROBLEM REPORT (STRICT @gmail.com + 24H 2-MSG IP LIMIT + DISCORD REMOTE BLOCK SYNC) =================
-    const GOOGLE_CLIENT_ID = ""; // اختياري: ضع هنا Client ID الخاص بـ Google Cloud لتفعيل زر Google
+    // ================= PROBLEM REPORT =================
+    const GOOGLE_CLIENT_ID = "";
     const PROBLEM_GMAIL_STORAGE_KEY = "lhajmoha_problem_gmail_auth_v2";
     const PROBLEM_SENDER_ID_KEY = "lhajmoha_problem_sender_id_v1";
     const PROBLEM_BANNED_KEY = "lhajmoha_problem_banned_senders_v1";
@@ -1944,14 +1805,10 @@
 
     function getOrCreateProblemSenderId() {
       let id = "";
-      try {
-        id = localStorage.getItem(PROBLEM_SENDER_ID_KEY) || "";
-      } catch (_) {}
+      try { id = localStorage.getItem(PROBLEM_SENDER_ID_KEY) || ""; } catch (_) {}
       if (!id) {
         id = "snd_" + Math.random().toString(36).slice(2, 10) + "_" + Date.now().toString(36);
-        try {
-          localStorage.setItem(PROBLEM_SENDER_ID_KEY, id);
-        } catch (_) {}
+        try { localStorage.setItem(PROBLEM_SENDER_ID_KEY, id); } catch (_) {}
       }
       return id;
     }
@@ -1959,19 +1816,14 @@
     const MY_PROBLEM_SENDER_ID = getOrCreateProblemSenderId();
 
     async function fetchClientPublicIp() {
-      if (currentClientIp) {
-        updateChatInputAccess();
-        return currentClientIp;
-      }
+      if (currentClientIp) { updateChatInputAccess(); return currentClientIp; }
       try {
         const res = await fetch("https://api.ipify.org?format=json", { cache: "no-store" });
         if (!res.ok) return "";
         const data = await res.json();
         if (data && typeof data.ip === "string" && data.ip.trim()) {
           currentClientIp = data.ip.trim();
-          try {
-            sessionStorage.setItem(PROBLEM_IP_CACHE_KEY, currentClientIp);
-          } catch (_) {}
+          try { sessionStorage.setItem(PROBLEM_IP_CACHE_KEY, currentClientIp); } catch (_) {}
           syncProblem24hQuotaUi();
           updateChatInputAccess();
           return currentClientIp;
@@ -1985,15 +1837,11 @@
         const raw = localStorage.getItem(PROBLEM_24H_IP_LOCK_KEY);
         const parsed = raw ? JSON.parse(raw) : {};
         return parsed && typeof parsed === "object" ? parsed : {};
-      } catch (_) {
-        return {};
-      }
+      } catch (_) { return {}; }
     }
 
     function write24hIpLockStore(obj) {
-      try {
-        localStorage.setItem(PROBLEM_24H_IP_LOCK_KEY, JSON.stringify(obj || {}));
-      } catch (_) {}
+      try { localStorage.setItem(PROBLEM_24H_IP_LOCK_KEY, JSON.stringify(obj || {})); } catch (_) {}
     }
 
     function getActiveIpLock(ipAddress) {
@@ -2002,10 +1850,7 @@
       const store = read24hIpLockStore();
       const entry = store[ipAddress];
       if (!entry || typeof entry.expiresAt !== "number" || entry.expiresAt <= now) {
-        if (entry) {
-          delete store[ipAddress];
-          write24hIpLockStore(store);
-        }
+        if (entry) { delete store[ipAddress]; write24hIpLockStore(store); }
         return null;
       }
       return entry;
@@ -2019,12 +1864,7 @@
       let entry = store[ipAddress];
 
       if (!entry || typeof entry.expiresAt !== "number" || entry.expiresAt <= now) {
-        entry = {
-          lockedEmail: cleanEmail,
-          count: 0,
-          createdAt: now,
-          expiresAt: now + PROBLEM_24H_MS
-        };
+        entry = { lockedEmail: cleanEmail, count: 0, createdAt: now, expiresAt: now + PROBLEM_24H_MS };
         store[ipAddress] = entry;
         write24hIpLockStore(store);
       }
@@ -2039,12 +1879,7 @@
       let entry = store[ipAddress];
 
       if (!entry || typeof entry.expiresAt !== "number" || entry.expiresAt <= now) {
-        entry = {
-          lockedEmail: cleanEmail,
-          count: 1,
-          createdAt: now,
-          expiresAt: now + PROBLEM_24H_MS
-        };
+        entry = { lockedEmail: cleanEmail, count: 1, createdAt: now, expiresAt: now + PROBLEM_24H_MS };
       } else {
         entry.count = (entry.count || 0) + 1;
       }
@@ -2067,15 +1902,11 @@
         const raw = localStorage.getItem(PROBLEM_24H_QUOTA_KEY);
         const parsed = raw ? JSON.parse(raw) : {};
         return parsed && typeof parsed === "object" ? parsed : {};
-      } catch (_) {
-        return {};
-      }
+      } catch (_) { return {}; }
     }
 
     function write24hQuotaStore(obj) {
-      try {
-        localStorage.setItem(PROBLEM_24H_QUOTA_KEY, JSON.stringify(obj || {}));
-      } catch (_) {}
+      try { localStorage.setItem(PROBLEM_24H_QUOTA_KEY, JSON.stringify(obj || {})); } catch (_) {}
     }
 
     function getActive24hTimestampsForKey(store, key, now) {
@@ -2104,11 +1935,7 @@
         ? Math.max(0, ipLock.expiresAt - now)
         : (oldestActive ? Math.max(0, PROBLEM_24H_MS - (now - oldestActive)) : 0);
 
-      return {
-        reached: maxCount >= PROBLEM_MAX_MSGS_24H,
-        count: maxCount,
-        remainingMs
-      };
+      return { reached: maxCount >= PROBLEM_MAX_MSGS_24H, count: maxCount, remainingMs };
     }
 
     function record24hQuotaUsage(email, ipAddress) {
@@ -2148,9 +1975,7 @@
         const raw = localStorage.getItem(PROBLEM_BANNED_KEY);
         const parsed = raw ? JSON.parse(raw) : [];
         return Array.isArray(parsed) ? parsed : [];
-      } catch (_) {
-        return [];
-      }
+      } catch (_) { return []; }
     }
 
     async function syncRemoteProblemBannedList() {
@@ -2162,11 +1987,8 @@
         const nextSet = new Set();
         if (data && typeof data === "object") {
           Object.entries(data).forEach(([key, val]) => {
-            if (val && typeof val === "object" && val.email) {
-              nextSet.add(String(val.email).trim().toLowerCase());
-            } else {
-              nextSet.add(String(key).replace(/_dot_/g, ".").trim().toLowerCase());
-            }
+            if (val && typeof val === "object" && val.email) nextSet.add(String(val.email).trim().toLowerCase());
+            else nextSet.add(String(key).replace(/_dot_/g, ".").trim().toLowerCase());
           });
         }
         remoteBannedEmailSet = nextSet;
@@ -2179,15 +2001,11 @@
         const raw = localStorage.getItem(PROBLEM_SENDERS_LOG_KEY);
         const parsed = raw ? JSON.parse(raw) : {};
         return parsed && typeof parsed === "object" ? parsed : {};
-      } catch (_) {
-        return {};
-      }
+      } catch (_) { return {}; }
     }
 
     function writeProblemSendersLog(obj) {
-      try {
-        localStorage.setItem(PROBLEM_SENDERS_LOG_KEY, JSON.stringify(obj || {}));
-      } catch (_) {}
+      try { localStorage.setItem(PROBLEM_SENDERS_LOG_KEY, JSON.stringify(obj || {})); } catch (_) {}
     }
 
     function normalizeProblemBlockKey(senderId, email) {
@@ -2213,15 +2031,7 @@
       const prev = log[key] || { senderId, email, name, count: 0, timestamps: [] };
       const recent = (prev.timestamps || []).filter(t => now - t < PROBLEM_WINDOW_MS);
       recent.push(now);
-      log[key] = {
-        senderId,
-        email,
-        name,
-        count: (prev.count || 0) + 1,
-        recentPerMin: recent.length,
-        timestamps: recent,
-        lastSeen: now
-      };
+      log[key] = { senderId, email, name, count: (prev.count || 0) + 1, recentPerMin: recent.length, timestamps: recent, lastSeen: now };
       writeProblemSendersLog(log);
       return recent.length;
     }
@@ -2235,9 +2045,7 @@
           "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2)
         ).join(""));
         return JSON.parse(json);
-      } catch (_) {
-        return null;
-      }
+      } catch (_) { return null; }
     }
 
     function handleGoogleCredentialResponse(response) {
@@ -2259,23 +2067,14 @@
       }
 
       const displayName = String(payload?.name || "").trim() || deriveNameFromGmail(email);
-      verifiedProblemAuth = {
-        email,
-        name: displayName,
-        verifiedViaGoogle: true
-      };
-
-      try {
-        sessionStorage.setItem(PROBLEM_GMAIL_STORAGE_KEY, JSON.stringify(verifiedProblemAuth));
-      } catch (_) {}
-
+      verifiedProblemAuth = { email, name: displayName, verifiedViaGoogle: true };
+      try { sessionStorage.setItem(PROBLEM_GMAIL_STORAGE_KEY, JSON.stringify(verifiedProblemAuth)); } catch (_) {}
       syncProblemGmailUi();
     }
 
     function initGoogleSignInButton() {
       const container = document.getElementById("googleSignInContainer");
-      if (!container) return;
-      if (!GOOGLE_CLIENT_ID || !window.google?.accounts?.id) return;
+      if (!container || !GOOGLE_CLIENT_ID || !window.google?.accounts?.id) return;
 
       try {
         window.google.accounts.id.initialize({
@@ -2306,10 +2105,7 @@
 
     function deriveNameFromGmail(email) {
       const prefix = String(email || "").split("@")[0] || "";
-      return prefix
-        .replace(/[._-]+/g, " ")
-        .trim()
-        .replace(/\b\w/g, ch => ch.toUpperCase()) || prefix;
+      return prefix.replace(/[._-]+/g, " ").trim().replace(/\b\w/g, ch => ch.toUpperCase()) || prefix;
     }
 
     function showProblemGmailError(msg) {
@@ -2343,24 +2139,14 @@
         return;
       }
 
-      verifiedProblemAuth = {
-        email,
-        name: deriveNameFromGmail(email),
-        verifiedViaGoogle: false
-      };
-
-      try {
-        sessionStorage.setItem(PROBLEM_GMAIL_STORAGE_KEY, JSON.stringify(verifiedProblemAuth));
-      } catch (_) {}
-
+      verifiedProblemAuth = { email, name: deriveNameFromGmail(email), verifiedViaGoogle: false };
+      try { sessionStorage.setItem(PROBLEM_GMAIL_STORAGE_KEY, JSON.stringify(verifiedProblemAuth)); } catch (_) {}
       syncProblemGmailUi();
     }
 
     function resetProblemGmail() {
       verifiedProblemAuth = null;
-      try {
-        sessionStorage.removeItem(PROBLEM_GMAIL_STORAGE_KEY);
-      } catch (_) {}
+      try { sessionStorage.removeItem(PROBLEM_GMAIL_STORAGE_KEY); } catch (_) {}
       const input = document.getElementById("problemGmailInput");
       if (input) input.value = "";
       clearProblemGmailError();
@@ -2381,12 +2167,7 @@
       if (blockedNotice) blockedNotice.classList.toggle("hidden", !isBlocked);
 
       const quotaReached = syncProblem24hQuotaUi();
-
-      const isVerified = Boolean(
-        verifiedProblemAuth &&
-        currentEmail &&
-        isValidStrictGmailAddress(currentEmail)
-      );
+      const isVerified = Boolean(verifiedProblemAuth && currentEmail && isValidStrictGmailAddress(currentEmail));
 
       if (gate) gate.classList.toggle("hidden", isVerified);
       if (verifiedBar) verifiedBar.classList.toggle("hidden", !isVerified);
@@ -2400,22 +2181,15 @@
       if (sendBtn) sendBtn.disabled = !canWrite;
       if (userInput) {
         userInput.disabled = !canWrite;
-        if (isBlocked) {
-          userInput.placeholder = "تم حظر الإرسال من هذا الحساب...";
-        } else if (quotaReached) {
-          userInput.placeholder = PENDING_24H_MESSAGE_AR;
-        } else if (isVerified) {
-          userInput.placeholder = "أهلا وسهلا، اكتب مشكلتك...";
-        } else {
-          userInput.placeholder = "أكد حساب @gmail.com أولاً لكتابة المشكل...";
-        }
+        if (isBlocked) userInput.placeholder = "تم حظر الإرسال من هذا الحساب...";
+        else if (quotaReached) userInput.placeholder = PENDING_24H_MESSAGE_AR;
+        else if (isVerified) userInput.placeholder = "أهلا وسهلا، اكتب مشكلتك...";
+        else userInput.placeholder = "أكد حساب @gmail.com أولاً لكتابة المشكل...";
       }
     }
 
     async function sendMessage() {
-      if (!currentClientIp) {
-        await fetchClientPublicIp();
-      }
+      if (!currentClientIp) await fetchClientPublicIp();
 
       if (!verifiedProblemAuth || !isValidStrictGmailAddress(verifiedProblemAuth.email)) {
         syncProblemGmailUi();
@@ -2483,7 +2257,6 @@
       const perMinCount = recordProblemSenderActivity(MY_PROBLEM_SENDER_ID, senderEmail, senderName);
 
       const chatBox = document.getElementById('chatBox');
-      
       const userMsg = document.createElement('div');
       userMsg.className = 'bg-rose-500/20 border-r-2 border-rose-500 px-2 py-1 rounded text-[11px] self-end max-w-[85%]';
       userMsg.innerHTML = `<div class="text-[9px] text-rose-300 font-bold">${escapeChatHtml(senderName)} (${escapeChatHtml(senderEmail)})</div><div>${escapeChatHtml(text)}</div>`;
@@ -2515,11 +2288,170 @@
       }, 600);
     }
 
+    // ================= MOROCCAN CHAT BOTS (DARIJA & FRENCH) =================
+    const CHAT_BOTS_ENABLED_KEY = "lhajmoha_chat_bots_enabled_v1";
+    const SEND_BOT_MESSAGES_TO_DISCORD = false;
+
+    let chatBotsEnabled = true;
+    try {
+      const savedBotFlag = localStorage.getItem(CHAT_BOTS_ENABLED_KEY);
+      if (savedBotFlag !== null) chatBotsEnabled = savedBotFlag === "true";
+    } catch (_) {}
+
+    const MOROCCAN_CHAT_BOTS = [
+      { id: "bot_youssef", name: "Youssef El Amrani", platform: "pc", deviceId: "bot_dev_youssef", ip: "127.0.0.1" },
+      { id: "bot_salma", name: "Salma Bennani", platform: "iphone", deviceId: "bot_dev_salma", ip: "127.0.0.2" },
+      { id: "bot_ayoub", name: "Ayoub Idrissi", platform: "android", deviceId: "bot_dev_ayoub", ip: "127.0.0.3" },
+      { id: "bot_sara", name: "Sara Chraibi", platform: "iphone", deviceId: "bot_dev_sara", ip: "127.0.0.4" }
+    ];
+
+    const BOT_IDLE_LINES = [
+      "السلام عليكم الدراري، كيدايرين اليوم؟ 🔥",
+      "Salut tout le monde ! Ça discute tranquille ici 😎",
+      "واش كاين شي لايف اليوم فـ GTA RP ولا Kick؟ 🎮",
+      "Bonne ambiance dans le chat, bienvenue aux nouveaux membres 🙌",
+      "شكون متبع الراديو دابا؟ Hit Radio ولا Radio Mars؟ 📻",
+      "N'oubliez pas de check les liens officiels en haut si besoin !"
+    ];
+
+    const BOT_KEYWORD_REPLIES = [
+      {
+        match: /(سلام|salam|اهلا|مرحبا|كيداير|kidayr|ça va|bonjour|bonsoir|salut)/i,
+        replies: [
+          "وعليكم السلام! مرحبا بك معانا فالشات 👋",
+          "Salut ! Bienvenue dans le chat, ça va bien et toi ?",
+          "أهلا وسهلا، نورت الشات أخويا/أختي 🔥"
+        ]
+      },
+      {
+        match: /(gta|fivem|rp|medic|لايف|live|kick|tiktok)/i,
+        replies: [
+          "أجواء RP ديما واعرة، خاص غير الوقت والكونيكسيون 😄",
+          "Le RP c'est toujours lourd quand l'ambiance est bonne !",
+          "تابع الحسابات الرسمية باش يوصلك جديد اللايفات والكلبسات ⚡"
+        ]
+      },
+      {
+        match: /(merci|شكرا|chokran|top|bien|zwin)/i,
+        replies: [
+          "بصحة والراحة، مرحبا فكل وقت 👍",
+          "Avec plaisir ! N'hésite pas si tu as besoin.",
+          "الله يحفظك، نهارك مبروك 🌟"
+        ]
+      }
+    ];
+
+    let lastBotMessageAt = 0;
+    const repliedUserMsgIds = new Set();
+
+    function syncChatBotsButtonUi() {
+      const btn = document.getElementById("chatBotsToggleBtn");
+      if (!btn) return;
+      btn.innerHTML = chatBotsEnabled
+        ? '<i class="fas fa-robot"></i> Bots: ON'
+        : '<i class="fas fa-robot"></i> Bots: OFF';
+      btn.className = chatBotsEnabled
+        ? "text-[11px] bg-slate-900/90 hover:bg-slate-800 border border-emerald-500/40 text-emerald-300 px-2.5 py-1 rounded-lg font-bold transition"
+        : "text-[11px] bg-slate-900/90 hover:bg-slate-800 border border-slate-700 text-slate-400 px-2.5 py-1 rounded-lg font-bold transition";
+    }
+
+    function toggleChatBots() {
+      chatBotsEnabled = !chatBotsEnabled;
+      try { localStorage.setItem(CHAT_BOTS_ENABLED_KEY, String(chatBotsEnabled)); } catch (_) {}
+      syncChatBotsButtonUi();
+    }
+
+    function pickRandomBot(excludeId = "") {
+      const pool = MOROCCAN_CHAT_BOTS.filter(b => b.id !== excludeId);
+      const list = pool.length ? pool : MOROCCAN_CHAT_BOTS;
+      return list[Math.floor(Math.random() * list.length)];
+    }
+
+    async function publishBotChatMessage(bot, text, replyTo = null) {
+      if (!chatBotsEnabled || !bot || !text) return;
+      const now = Date.now();
+      if (now - lastBotMessageAt < 18000) return;
+
+      lastBotMessageAt = now;
+      const msgKey = "msg_bot_" + now + "_" + Math.random().toString(36).slice(2, 6);
+      const payload = {
+        author: bot.name,
+        text: String(text).slice(0, 350),
+        deviceId: bot.deviceId,
+        devicePlatform: bot.platform,
+        ip: bot.ip,
+        isBot: true,
+        replyTo: replyTo,
+        createdAt: now
+      };
+
+      liveMessagesStore[msgKey] = payload;
+      lastRenderedMessagesHash = "";
+      renderChatMessagesList(liveMessagesStore);
+
+      if (SEND_BOT_MESSAGES_TO_DISCORD && typeof sendChatMessageToDiscord === "function") {
+        sendChatMessageToDiscord(payload);
+      }
+
+      if (hasFirebaseConfig()) {
+        try {
+          await fetch(`${getDbBaseUrl()}/groupChatMessages/${encodeURIComponent(msgKey)}.json`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          });
+        } catch (_) {}
+      } else {
+        const msgs = readLocalMessages();
+        msgs[msgKey] = payload;
+        writeLocalMessages(msgs);
+        if (chatBroadcast) chatBroadcast.postMessage({ type: "sync" });
+      }
+    }
+
+    function maybeReplyToLatestHumanMessage() {
+      if (!chatBotsEnabled) return;
+      const entries = Object.entries(liveMessagesStore || {})
+        .map(([id, val]) => ({ id, ...(val || {}) }))
+        .filter(m => m.text && !m.isBot && !String(m.deviceId || "").startsWith("bot_dev_"))
+        .sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
+
+      if (!entries.length) return;
+      const latest = entries[entries.length - 1];
+      if (!latest || repliedUserMsgIds.has(latest.id)) return;
+      if (Date.now() - (latest.createdAt || 0) > 45000) return;
+
+      repliedUserMsgIds.add(latest.id);
+      const text = String(latest.text || "");
+      const matchedRule = BOT_KEYWORD_REPLIES.find(rule => rule.match.test(text));
+      if (!matchedRule) return;
+
+      const bot = pickRandomBot();
+      const replyLine = matchedRule.replies[Math.floor(Math.random() * matchedRule.replies.length)];
+      setTimeout(() => {
+        publishBotChatMessage(bot, replyLine, {
+          id: latest.id,
+          author: latest.author || "Membre",
+          text: text.slice(0, 80)
+        });
+      }, 2500);
+    }
+
+    function maybeSendPeriodicBotChat() {
+      if (!chatBotsEnabled || document.hidden) return;
+      const now = Date.now();
+      if (now - lastBotMessageAt < 150000) return;
+      const bot = pickRandomBot();
+      const line = BOT_IDLE_LINES[Math.floor(Math.random() * BOT_IDLE_LINES.length)];
+      publishBotChatMessage(bot, line, null);
+    }
+
     // RUN ON LOAD
     window.addEventListener('DOMContentLoaded', () => {
       renderPcSoftwareList();
       renderRadioGrid();
       renderChatEmojiGrid();
+      syncChatBotsButtonUi();
       syncChatCloudWarning();
       syncChatMemberUi();
       updateChatInputAccess();
@@ -2532,34 +2464,21 @@
       syncLiveChat();
       connectFirebaseChatStream();
       setInterval(syncLiveChat, 1500);
+      setInterval(() => {
+        maybeReplyToLatestHumanMessage();
+        maybeSendPeriodicBotChat();
+      }, 8000);
       loadMoroccoWeather(true);
       setInterval(() => loadMoroccoWeather(false), WEATHER_REFRESH_HOURS * 60 * 60 * 1000);
     });
 
-    window.addEventListener('load', () => {
-      initGoogleSignInButton();
-    });
-
-    window.addEventListener('pageshow', () => {
-      syncLiveChat();
-      connectFirebaseChatStream();
-    });
-
-    window.addEventListener('online', () => {
-      syncLiveChat();
-      connectFirebaseChatStream();
-    });
-
+    window.addEventListener('load', () => { initGoogleSignInButton(); });
+    window.addEventListener('pageshow', () => { syncLiveChat(); connectFirebaseChatStream(); });
+    window.addEventListener('online', () => { syncLiveChat(); connectFirebaseChatStream(); });
     document.addEventListener('visibilitychange', () => {
-      if (!document.hidden) {
-        syncLiveChat();
-        connectFirebaseChatStream();
-      }
+      if (!document.hidden) { syncLiveChat(); connectFirebaseChatStream(); }
     });
-
-    document.addEventListener('click', () => {
-      closeChatEmojiMenu();
-    });
+    document.addEventListener('click', () => { closeChatEmojiMenu(); });
   </script>
 </body>
 </html>
