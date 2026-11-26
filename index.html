@@ -418,7 +418,8 @@
             <div id="adminBannedUsersList" class="space-y-1.5 pt-1 border-t border-slate-800/80 text-[10px]"></div>
           </div>
 
-          <div id="liveChatBox" class="h-60 overflow-y-auto flex flex-col gap-2 bg-black/50 border border-slate-800/90 rounded-xl p-3 text-xs">
+          <!-- Bigger height on PC (lg:h-80) for clear desktop chat view -->
+          <div id="liveChatBox" class="h-60 lg:h-80 overflow-y-auto flex flex-col gap-2 bg-black/50 border border-slate-800/90 rounded-xl p-3 text-xs">
             <div class="text-gray-400 text-center py-6">
               <i class="fas fa-spinner fa-spin"></i> Chargement des messages...
             </div>
@@ -872,7 +873,7 @@
     }
 
     function getAuthorColorStyle(platform) {
-      return getPlatformStyle(platform || CURRENT_CLIENT_PLATFORM);
+      return getPlatformStyle(platform || "pc");
     }
 
     function renderChatEmojiGrid() {
@@ -978,7 +979,7 @@
         firstName,
         lastName,
         fullName: `${firstName} ${lastName}`.trim(),
-        platform: CURRENT_CLIENT_PLATFORM
+        platform: "pc"
       };
 
       try {
@@ -1014,7 +1015,7 @@
         if (accessCard) accessCard.classList.add("hidden");
         if (memberBar) memberBar.classList.remove("hidden");
         if (memberNameEl) {
-          const style = getAuthorColorStyle(activeChatMember.platform || CURRENT_CLIENT_PLATFORM);
+          const style = getAuthorColorStyle(activeChatMember.platform || "pc");
           memberNameEl.className = `truncate font-bold ${style.text}`;
           memberNameEl.innerHTML = `<i class="${style.icon} mr-1"></i>${escapeChatHtml(activeChatMember.fullName)} <span class="text-[10px] opacity-80">(${style.label})</span>`;
         }
@@ -1072,7 +1073,7 @@
       let id = "";
       try { id = localStorage.getItem(DEVICE_STORAGE_KEY) || ""; } catch (_) {}
       if (!id) {
-        id = "dev_" + Math.random().toString(36).slice(2, 12) + "_" + Date.now().toString(36);
+        id = "dev_pc_" + Math.random().toString(36).slice(2, 12) + "_" + Date.now().toString(36);
         try { localStorage.setItem(DEVICE_STORAGE_KEY, id); } catch (_) {}
       }
       return id;
@@ -1394,6 +1395,7 @@
       await syncLiveChat();
     }
 
+    // All non-empty messages are shown publicly to everyone so any sent message appears globally
     function renderChatMessagesList(messagesObj, errorMessage = "") {
       const box = document.getElementById("liveChatBox");
       if (!box) return;
@@ -1406,7 +1408,7 @@
 
       const entries = Object.entries(messagesObj || {})
         .map(([id, val]) => ({ id, ...(val || {}) }))
-        .filter(item => item.text && (item.isOwnLocalEcho || !isChatTargetBlocked(item.deviceId, item.ip) || isChatAdmin))
+        .filter(item => item.text && String(item.text).trim().length > 0)
         .sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0))
         .slice(-100);
 
@@ -1540,11 +1542,6 @@
       const text = msgInput.value.trim();
       if (!text) return;
 
-      if (!hasFirebaseConfig()) {
-        alert("قاعدة بيانات Firebase غير مضبوطة، لذلك لن يظهر الكومونطير لباقي الزوار.");
-        return;
-      }
-
       if (sendBtn) sendBtn.disabled = true;
 
       const msgKey = "msg_" + Date.now() + "_" + Math.random().toString(36).slice(2, 6);
@@ -1552,24 +1549,30 @@
         author: sender,
         text,
         deviceId: MY_DEVICE_ID,
-        devicePlatform: activeChatMember.platform || CURRENT_CLIENT_PLATFORM,
+        devicePlatform: activeChatMember.platform || "pc",
         ip: currentClientIp || "",
         replyTo: currentReplyTo,
         createdAt: Date.now()
       };
 
       try {
-        const res = await fetch(`${getDbBaseUrl()}/groupChatMessages/${encodeURIComponent(msgKey)}.json`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        });
+        if (hasFirebaseConfig()) {
+          const res = await fetch(`${getDbBaseUrl()}/groupChatMessages/${encodeURIComponent(msgKey)}.json`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          });
 
-        if (!res.ok) {
-          const errText = await res.text().catch(() => "");
-          console.error("Firebase PUT failed:", res.status, errText);
-          alert(`تعذر حفظ الكومونطير في قاعدة البيانات (${res.status}). تحقق من قواعد Realtime Database.`);
-          return;
+          if (!res.ok) {
+            const errText = await res.text().catch(() => "");
+            console.error("Firebase PUT failed:", res.status, errText);
+            alert(`تعذر حفظ الكومونطير في قاعدة البيانات (${res.status}). تحقق من قواعد Realtime Database.`);
+            return;
+          }
+        } else {
+          const localMsgs = readLocalMessages();
+          localMsgs[msgKey] = payload;
+          writeLocalMessages(localMsgs);
         }
 
         liveMessagesStore[msgKey] = payload;
@@ -1589,8 +1592,8 @@
           } catch (_) {}
         }
       } catch (err) {
-        console.error("Network error saving to Firebase:", err);
-        alert("وقع خطأ في الاتصال بقاعدة البيانات أثناء حفظ الكومونطير.");
+        console.error("Network error saving message:", err);
+        alert("وقع خطأ في الاتصال أثناء إرسال الرسالة.");
       } finally {
         if (sendBtn) sendBtn.disabled = false;
         msgInput.focus();
@@ -2327,7 +2330,8 @@
     const CHAT_BOTS_ENABLED_KEY = "lhajmoha_chat_bots_enabled_v1";
     const BOT_PLATFORM_INDEX_KEY = "lhajmoha_chat_bot_platform_idx_v1";
     const SEND_BOT_MESSAGES_TO_DISCORD = false;
-    const BOT_DEVICE_ROTATION_ORDER = ["iphone", "android", "pc"];
+    // Bots primarily chat from PC so desktop chat activity stands out clearly
+    const BOT_DEVICE_ROTATION_ORDER = ["pc", "pc", "pc", "android", "iphone"];
 
     const BOT_MIN_DELAY_MS = 2200;
     const BOT_MAX_DELAY_MS = 4800;
@@ -2428,7 +2432,7 @@
     }
 
     function getNextRotatingBotPlatform() {
-      const chosen = BOT_DEVICE_ROTATION_ORDER[botPlatformRotationIndex % BOT_DEVICE_ROTATION_ORDER.length] || "iphone";
+      const chosen = BOT_DEVICE_ROTATION_ORDER[botPlatformRotationIndex % BOT_DEVICE_ROTATION_ORDER.length] || "pc";
       botPlatformRotationIndex = (botPlatformRotationIndex + 1) % BOT_DEVICE_ROTATION_ORDER.length;
       try {
         localStorage.setItem(BOT_PLATFORM_INDEX_KEY, String(botPlatformRotationIndex));
