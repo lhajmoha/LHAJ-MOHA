@@ -2289,11 +2289,15 @@
       }, 600);
     }
 
-    // ================= MOROCCO CHAT BOTS (MULTI-NAME + ANTI-REPEAT + DARIJA) =================
+    // ================= MOROCCO CHAT BOTS (KICK-STYLE FAST STREAM) =================
     const CHAT_BOTS_ENABLED_KEY = "lhajmoha_chat_bots_enabled_v1";
     const BOT_PLATFORM_INDEX_KEY = "lhajmoha_chat_bot_platform_idx_v1";
     const SEND_BOT_MESSAGES_TO_DISCORD = false;
     const BOT_DEVICE_ROTATION_ORDER = ["iphone", "android", "pc"];
+
+    const BOT_MIN_DELAY_MS = 1500;
+    const BOT_MAX_DELAY_MS = 4500;
+    const BOT_BURST_CHANCE = 0.35;
 
     let chatBotsEnabled = true;
     try {
@@ -2319,45 +2323,55 @@
       { id: "bot_kaito", name: "Kaito", ipBase: "127.0.9" },
       { id: "bot_nora", name: "Nora", ipBase: "127.0.10" },
       { id: "bot_rayane", name: "Rayane", ipBase: "127.0.11" },
-      { id: "bot_lina", name: "Lina", ipBase: "127.0.12" }
+      { id: "bot_lina", name: "Lina", ipBase: "127.0.12" },
+      { id: "bot_amine", name: "Amine", ipBase: "127.0.13" },
+      { id: "bot_kenza", name: "Kenza", ipBase: "127.0.14" },
+      { id: "bot_adam", name: "Adam", ipBase: "127.0.15" },
+      { id: "bot_meryem", name: "Meryem", ipBase: "127.0.16" }
     ];
 
     const BOT_IDLE_LINES = [
+      "ناري 🔥",
+      "والله حتى ناضي 😂",
+      "أوووه لقطة خطيرة 🤯",
       "السلام عليكم الدراري، كيدايرين اليوم؟ 🔥",
       "GTA RP ولا Kick؟ واش كاين شي لايف اليوم فـ السيرفر؟ 🎮",
       "واش كاين شي حد أونلاين دابا ندخلوا سكواد؟ 👀",
-      "والله حتى اللقطة ديال البارح كانت ناضية بزاف 😂🔥",
+      "هاد اللقطة خاصها كليب دغيا 😂🔥",
       "فين غابرين الخوت؟ شكون اللي طالع اليوم؟",
       "واش تبدل شي حاجة فـ الماب ولا باقي نفس البلان؟ ⚡",
-      "ناري على أكشن وقع دابا، ما كنتش متوقعو نهائياً 🤯",
       "شكون متبع الراديو دابا؟ Hit Radio ولا Radio Mars؟ 📻",
-      "هاد الشات اليوم عامر بالحيوية، تبارك الله 🙌",
-      "شكون اللي عندو البينغ مزيان اليوم؟ أنا شوية طالع 😅"
+      "اللي باغي يدخل يتواصل، حنا واجدين دابا 🙌",
+      "شكون اللي عندو البينغ مزيان اليوم؟ أنا شوية طالع 😅",
+      "واش بصح كاين أبديت جديد اليوم ولا غير هضرة؟",
+      "حماس فالشات اليوم، تبارك الله 🔥🔥",
+      "أجي نشوفو شنو غادي يوقع دابا 👀",
+      "موتني بالضحك هاد الميساج 😂😂"
     ];
 
     const BOT_KEYWORD_REPLIES = [
       {
         match: /(سلام|salam|اهلا|مرحبا|كيداير|kidayr|ça va|bonjour|bonsoir|salut)/i,
         replies: [
-          "وعليكم السلام! مرحبا بك معانا فالشات 👋🔥",
-          "أهلا وسهلا، نورت الشات أخويا/أختي، كيداير اليوم؟",
-          "Salut ! Bienvenue dans le chat, ça va bien et toi ? 😎"
+          "وعليكم السلام! مرحبا بك 👋🔥",
+          "أهلا وسهلا، نورت الشات أخويا/أختي!",
+          "Salut ! Bienvenue dans le chat 😎"
         ]
       },
       {
         match: /(gta|fivem|rp|medic|لايف|live|kick|tiktok)/i,
         replies: [
-          "أجواء RP ديما واعرة، خاص غير الوقت والكونيكسيون 😄🎮",
+          "أجواء RP ديما واعرة 😄🎮",
           "واش كاين شي بلان جديد فـ السيرفر ولا لايف فـ Kick اليوم؟",
-          "Le RP c'est toujours lourd quand l'ambiance est bonne ⚡"
+          "ناري على لقطات فـ RP اليوم 🔥"
         ]
       },
       {
         match: /(merci|شكرا|chokran|top|bien|zwin)/i,
         replies: [
-          "بصحة والراحة، مرحبا فكل وقت 👍",
-          "الله يحفظك، نهارك مبروك ودائماً منورين 🔥",
-          "Avec plaisir ! N'hésite pas si tu as besoin 🙌"
+          "بصحة والراحة 👍",
+          "الله يحفظك، نهارك مبروك 🌟",
+          "Avec plaisir 🙌"
         ]
       }
     ];
@@ -2365,7 +2379,12 @@
     let lastBotMessageAt = 0;
     let lastUsedBotId = "";
     let recentBotLines = [];
+    let fastBotLoopTimer = null;
     const repliedUserMsgIds = new Set();
+
+    function getRandomBotInterval() {
+      return Math.floor(Math.random() * (BOT_MAX_DELAY_MS - BOT_MIN_DELAY_MS + 1)) + BOT_MIN_DELAY_MS;
+    }
 
     function getNextRotatingBotPlatform() {
       const chosen = BOT_DEVICE_ROTATION_ORDER[botPlatformRotationIndex % BOT_DEVICE_ROTATION_ORDER.length] || "iphone";
@@ -2397,6 +2416,7 @@
       chatBotsEnabled = !chatBotsEnabled;
       try { localStorage.setItem(CHAT_BOTS_ENABLED_KEY, String(chatBotsEnabled)); } catch (_) {}
       syncChatBotsButtonUi();
+      if (chatBotsEnabled) scheduleNextFastBotMessage(400);
     }
 
     function pickRandomBot(excludeId = "") {
@@ -2413,14 +2433,14 @@
       const pool = candidates.length ? candidates : lines;
       const chosen = pool[Math.floor(Math.random() * pool.length)];
       recentBotLines.push(chosen);
-      if (recentBotLines.length > 6) recentBotLines.shift();
+      if (recentBotLines.length > 10) recentBotLines.shift();
       return chosen;
     }
 
-    async function publishBotChatMessage(bot, text, replyTo = null) {
+    async function publishBotChatMessage(bot, text, replyTo = null, bypassRateLimit = false) {
       if (!chatBotsEnabled || !bot || !text) return;
       const now = Date.now();
-      if (now - lastBotMessageAt < 12000) return;
+      if (!bypassRateLimit && (now - lastBotMessageAt < 650)) return;
 
       const platform = getNextRotatingBotPlatform();
       const suffix = platform === "iphone" ? "1" : (platform === "android" ? "2" : "3");
@@ -2490,17 +2510,34 @@
           id: latest.id,
           author: latest.author || "Membre",
           text: text.slice(0, 80)
-        });
-      }, 2500);
+        }, true);
+      }, 900);
     }
 
-    function maybeSendPeriodicBotChat() {
-      if (!chatBotsEnabled || document.hidden) return;
-      const now = Date.now();
-      if (now - lastBotMessageAt < 45000) return;
-      const bot = pickRandomBot();
-      const line = pickUniqueBotLine(BOT_IDLE_LINES);
-      publishBotChatMessage(bot, line, null);
+    function scheduleNextFastBotMessage(customDelay = null) {
+      if (fastBotLoopTimer) {
+        clearTimeout(fastBotLoopTimer);
+        fastBotLoopTimer = null;
+      }
+
+      const delay = typeof customDelay === "number" ? customDelay : getRandomBotInterval();
+      fastBotLoopTimer = setTimeout(async () => {
+        if (chatBotsEnabled && !document.hidden) {
+          const bot = pickRandomBot();
+          const line = pickUniqueBotLine(BOT_IDLE_LINES);
+          await publishBotChatMessage(bot, line, null, true);
+
+          if (Math.random() < BOT_BURST_CHANCE) {
+            setTimeout(async () => {
+              if (!chatBotsEnabled || document.hidden) return;
+              const secondBot = pickRandomBot(bot.id);
+              const secondLine = pickUniqueBotLine(BOT_IDLE_LINES);
+              await publishBotChatMessage(secondBot, secondLine, null, true);
+            }, 700 + Math.floor(Math.random() * 700));
+          }
+        }
+        scheduleNextFastBotMessage();
+      }, delay);
     }
 
     // RUN ON LOAD
@@ -2521,10 +2558,8 @@
       syncLiveChat();
       connectFirebaseChatStream();
       setInterval(syncLiveChat, 1500);
-      setInterval(() => {
-        maybeReplyToLatestHumanMessage();
-        maybeSendPeriodicBotChat();
-      }, 8000);
+      setInterval(maybeReplyToLatestHumanMessage, 2500);
+      scheduleNextFastBotMessage(800);
       loadMoroccoWeather(true);
       setInterval(() => loadMoroccoWeather(false), WEATHER_REFRESH_HOURS * 60 * 60 * 1000);
     });
