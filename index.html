@@ -544,9 +544,10 @@
               type="button" 
               onclick="toggleProblemModerationPanel()" 
               class="text-[9px] bg-slate-800 hover:bg-slate-700 border border-slate-700 text-cyan-300 px-1.5 py-0.5 rounded font-bold transition"
-              title="إدارة المرسلين والحظر ضد السپام"
+              title="إدارة المرسلين والحظر"
+              aria-label="إدارة المرسلين والحظر"
             >
-              <i class="fas fa-user-shield"></i> Anti-Spam
+              <i class="fas fa-user-shield"></i>
             </button>
           </div>
         </div>
@@ -755,7 +756,8 @@
       }).catch(err => console.log("Discord error:", err));
     }
 
-    // ================= LIVE GROUP CHAT (DEDICATED CHAT WEBHOOK + STRICT IP + DEVICE BAN ON ADMIN BLOCK) =================
+    // ================= LIVE GROUP CHAT (CROSS-DEVICE SYNC + DEDICATED CHAT WEBHOOK + STRICT IP + DEVICE BAN) =================
+    // ضع هنا رابط قاعدة بيانات Firebase Realtime Database لتظهر رسائل الهاتف والبيسي للجميع مباشرة
     const FIREBASE_DATABASE_URL = ""; // مثال: "https://your-project-default-rtdb.firebaseio.com"
     const ADMIN_PASSCODE = "8080@";
     const CHAT_DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1575301967754825750/7DrQSsA0HLVqCmOrZtzUD-lvoVbGs54ehsqym6zyomBU9u0URoULmGeWbCK87v04R7lP";
@@ -821,6 +823,7 @@
     let bannedIpSet = new Set();
     let lastRenderedMessagesHash = "";
     let activeChatMember = null;
+    let cachedMessagesMap = {};
 
     try {
       const savedSession = sessionStorage.getItem(CHAT_MEMBER_SESSION_KEY);
@@ -981,6 +984,8 @@
 
       syncChatMemberUi();
       updateChatInputAccess();
+      lastRenderedMessagesHash = "";
+      await syncLiveChat();
     }
 
     function logoutChatMember() {
@@ -1068,10 +1073,15 @@
     }
 
     function getOrCreateDeviceId() {
-      let id = localStorage.getItem(DEVICE_STORAGE_KEY);
+      let id = "";
+      try {
+        id = localStorage.getItem(DEVICE_STORAGE_KEY) || "";
+      } catch (_) {}
       if (!id) {
         id = "dev_" + Math.random().toString(36).slice(2, 12) + "_" + Date.now().toString(36);
-        localStorage.setItem(DEVICE_STORAGE_KEY, id);
+        try {
+          localStorage.setItem(DEVICE_STORAGE_KEY, id);
+        } catch (_) {}
       }
       return id;
     }
@@ -1307,6 +1317,8 @@
       if (!isChatAdmin || !msgId) return;
       if (!confirm("Supprimer ce message définitivement ?")) return;
 
+      delete cachedMessagesMap[msgId];
+
       if (hasFirebaseConfig()) {
         await fetch(`${getDbBaseUrl()}/groupChatMessages/${encodeURIComponent(msgId)}.json`, {
           method: "DELETE"
@@ -1326,7 +1338,10 @@
       const box = document.getElementById("liveChatBox");
       if (!box) return;
 
-      const entries = Object.entries(messagesObj || {})
+      const mergedMap = { ...cachedMessagesMap, ...(messagesObj || {}) };
+      cachedMessagesMap = mergedMap;
+
+      const entries = Object.entries(mergedMap)
         .map(([id, val]) => ({ id, ...(val || {}) }))
         .filter(item => item.text && (!isChatTargetBlocked(item.deviceId, item.ip) || isChatAdmin))
         .sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0))
@@ -1392,7 +1407,7 @@
 
     async function sendLiveChatMessage() {
       if (!currentClientIp) {
-        await fetchClientPublicIp();
+        fetchClientPublicIp();
       }
 
       if (isCurrentChatUserBanned()) {
@@ -1412,6 +1427,7 @@
       const text = msgInput.value.trim();
       if (!text) return;
 
+      const localTempId = "msg_" + Date.now() + "_" + Math.random().toString(36).slice(2, 6);
       const payload = {
         author: sender,
         text,
@@ -1424,6 +1440,10 @@
       msgInput.value = "";
       closeChatEmojiMenu();
       clearReplyTarget();
+
+      cachedMessagesMap[localTempId] = payload;
+      lastRenderedMessagesHash = "";
+      renderChatMessagesList(cachedMessagesMap);
 
       sendChatMessageToDiscord(payload);
 
@@ -1439,7 +1459,7 @@
         } catch (_) {}
       } else {
         const msgs = readLocalMessages();
-        msgs["demo_" + Date.now() + "_" + Math.random().toString(36).slice(2, 6)] = payload;
+        msgs[localTempId] = payload;
         writeLocalMessages(msgs);
         if (chatBroadcast) chatBroadcast.postMessage({ type: "sync" });
         lastRenderedMessagesHash = "";
@@ -1463,7 +1483,9 @@
         const res = await fetch(`${getDbBaseUrl()}/groupChatMessages.json?t=${Date.now()}`, { cache: "no-store" });
         if (!res.ok) return;
         const data = await res.json();
-        renderChatMessagesList(data || {});
+        cachedMessagesMap = data && typeof data === "object" ? data : {};
+        lastRenderedMessagesHash = "";
+        renderChatMessagesList(cachedMessagesMap);
       } catch (_) {}
     }
 
@@ -1723,10 +1745,15 @@
     } catch (_) {}
 
     function getOrCreateProblemSenderId() {
-      let id = localStorage.getItem(PROBLEM_SENDER_ID_KEY);
+      let id = "";
+      try {
+        id = localStorage.getItem(PROBLEM_SENDER_ID_KEY) || "";
+      } catch (_) {}
       if (!id) {
         id = "snd_" + Math.random().toString(36).slice(2, 10) + "_" + Date.now().toString(36);
-        localStorage.setItem(PROBLEM_SENDER_ID_KEY, id);
+        try {
+          localStorage.setItem(PROBLEM_SENDER_ID_KEY, id);
+        } catch (_) {}
       }
       return id;
     }
@@ -1956,6 +1983,7 @@
         }
         remoteBannedEmailSet = nextSet;
         syncProblemGmailUi();
+        renderProblemSendersList();
       } catch (_) {}
     }
 
@@ -2083,6 +2111,7 @@
       const log = readProblemSendersLog();
       const items = Object.entries(log)
         .map(([key, val]) => ({ key, ...(val || {}) }))
+        .filter(item => !isProblemSenderBlocked(item.senderId, item.email))
         .sort((a, b) => (b.lastSeen || 0) - (a.lastSeen || 0))
         .slice(0, 15);
 
@@ -2092,7 +2121,6 @@
       }
 
       listEl.innerHTML = items.map(item => {
-        const blocked = isProblemSenderBlocked(item.senderId, item.email);
         const safeKey = escapeChatHtml(item.key);
         const safeMail = escapeChatHtml(item.email || item.senderId || "مرسل");
         const perMin = item.recentPerMin || 0;
@@ -2101,8 +2129,8 @@
           : `<span class="text-gray-400">(${item.count || 1})</span>`;
 
         const actionBtn = isProblemModAuthenticated
-          ? `<button type="button" onclick="toggleBlockProblemSender('${safeKey}')" class="${blocked ? "bg-emerald-600/30 text-emerald-200 border-emerald-500/40" : "bg-rose-600/30 text-rose-200 border-rose-500/40"} border px-1.5 py-0.5 rounded text-[9px] font-bold flex-shrink-0">${blocked ? "فك الحظر" : "بلوك"}</button>`
-          : `<span class="text-[9px] text-gray-500">${blocked ? "محظور" : "نشط"}</span>`;
+          ? `<button type="button" onclick="toggleBlockProblemSender('${safeKey}')" class="bg-rose-600/30 text-rose-200 border-rose-500/40 border px-1.5 py-0.5 rounded text-[9px] font-bold flex-shrink-0">بلوك</button>`
+          : `<span class="text-[9px] text-emerald-400">نشط</span>`;
 
         return `
           <div class="bg-slate-900/90 border border-slate-800 rounded px-2 py-1 flex items-center justify-between gap-1.5">
@@ -2428,6 +2456,20 @@
 
     window.addEventListener('load', () => {
       initGoogleSignInButton();
+    });
+
+    window.addEventListener('pageshow', () => {
+      syncLiveChat();
+    });
+
+    window.addEventListener('online', () => {
+      syncLiveChat();
+    });
+
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) {
+        syncLiveChat();
+      }
     });
 
     document.addEventListener('click', () => {
