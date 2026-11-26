@@ -1190,9 +1190,10 @@
         return;
       }
       try {
+        const cacheBust = `${Date.now()}_${Math.random().toString(36).slice(2, 6)}`;
         const [devRes, ipRes] = await Promise.all([
-          fetch(`${getDbBaseUrl()}/bannedDevices.json?t=${Date.now()}`, { cache: "no-store" }),
-          fetch(`${getDbBaseUrl()}/bannedChatIps.json?t=${Date.now()}`, { cache: "no-store" })
+          fetch(`${getDbBaseUrl()}/bannedDevices.json?nocache=${cacheBust}`, { cache: "no-store" }),
+          fetch(`${getDbBaseUrl()}/bannedChatIps.json?nocache=${cacheBust}`, { cache: "no-store" })
         ]);
 
         if (devRes.ok) {
@@ -1405,7 +1406,7 @@
 
       const entries = Object.entries(messagesObj || {})
         .map(([id, val]) => ({ id, ...(val || {}) }))
-        .filter(item => item.text && (!isChatTargetBlocked(item.deviceId, item.ip) || isChatAdmin))
+        .filter(item => item.text && (item.isOwnLocalEcho || !isChatTargetBlocked(item.deviceId, item.ip) || isChatAdmin))
         .sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0))
         .slice(-100);
 
@@ -1606,20 +1607,31 @@
 
       if (!hasFirebaseConfig()) {
         liveMessagesStore = readLocalMessages();
+        lastRenderedMessagesHash = "";
         renderChatMessagesList(liveMessagesStore);
         return;
       }
 
       try {
-        const res = await fetch(`${getDbBaseUrl()}/groupChatMessages.json?t=${Date.now()}`, { cache: "no-store" });
+        const cacheBust = `${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
+        const res = await fetch(`${getDbBaseUrl()}/groupChatMessages.json?nocache=${cacheBust}`, {
+          cache: "no-store",
+          headers: {
+            "Cache-Control": "no-cache, no-store, must-revalidate",
+            "Pragma": "no-cache"
+          }
+        });
         if (!res.ok) {
+          lastRenderedMessagesHash = "";
           renderChatMessagesList(liveMessagesStore);
           return;
         }
         const data = await res.json();
         liveMessagesStore = (data && typeof data === "object") ? data : {};
+        lastRenderedMessagesHash = "";
         renderChatMessagesList(liveMessagesStore);
       } catch (_) {
+        lastRenderedMessagesHash = "";
         renderChatMessagesList(liveMessagesStore);
       }
     }
