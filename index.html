@@ -332,6 +332,7 @@
             <i class="fas fa-database text-amber-400"></i>
             <strong>Mode local uniquement :</strong> أضف رابط قاعدة بيانات <code>FIREBASE_DATABASE_URL</code> لتظهر الرسائل بين الهاتف والبيسي وباقي المستخدمين.
           </div>
+          <div id="chatConnectionStatus" role="status" aria-live="polite" class="bg-slate-950/70 border border-slate-700 text-slate-300 rounded-lg px-3 py-2 text-[11px]">Connexion au chat en cours…</div>
 
           <!-- Simple Access Form -->
           <div id="chatAccessCard" class="bg-black/60 border border-cyan-500/30 rounded-xl p-3.5 space-y-2.5">
@@ -418,8 +419,7 @@
             <div id="adminBannedUsersList" class="space-y-1.5 pt-1 border-t border-slate-800/80 text-[10px]"></div>
           </div>
 
-          <!-- Bigger height on PC (lg:h-80) for clear desktop chat view -->
-          <div id="liveChatBox" class="h-60 lg:h-80 overflow-y-auto flex flex-col gap-2 bg-black/50 border border-slate-800/90 rounded-xl p-3 text-xs">
+          <div id="liveChatBox" class="h-60 overflow-y-auto flex flex-col gap-2 bg-black/50 border border-slate-800/90 rounded-xl p-3 text-xs">
             <div class="text-gray-400 text-center py-6">
               <i class="fas fa-spinner fa-spin"></i> Chargement des messages...
             </div>
@@ -728,7 +728,7 @@
   <audio id="globalAudioPlayer" class="hidden"></audio>
 
   <script>
-    const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1563218138231873586/rb1dVovzKQdNr6j6vRqfzoPHGlEl6weSJhA1jxd_NVhRSfNafrw3DoMiS4U7fDeySrVN";
+    const DISCORD_WEBHOOK_URL = ""; // Configurez un proxy serveur sécurisé, jamais un webhook secret dans le navigateur.
 
     function sendDiscordMonitoring(title, fields, color = 0x00f0ff) {
       if (!DISCORD_WEBHOOK_URL) return;
@@ -749,8 +749,8 @@
     }
 
     const FIREBASE_DATABASE_URL = "https://lhajmoha-chat-default-rtdb.firebaseio.com/";
-    const ADMIN_PASSCODE = "8080@";
-    const CHAT_DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1575301967754825750/7DrQSsA0HLVqCmOrZtzUD-lvoVbGs54ehsqym6zyomBU9u0URoULmGeWbCK87v04R7lP";
+    const ADMIN_PASSCODE = "CHANGE_THIS_CODE_BEFORE_PUBLISHING"; // Attention: un code côté navigateur n’est pas une vraie sécurité.
+    const CHAT_DISCORD_WEBHOOK_URL = ""; // Ne placez jamais un webhook Discord privé dans le code public.
 
     function detectClientPlatform() {
       const ua = String(navigator.userAgent || "").toLowerCase();
@@ -873,7 +873,7 @@
     }
 
     function getAuthorColorStyle(platform) {
-      return getPlatformStyle(platform || "pc");
+      return getPlatformStyle(platform || CURRENT_CLIENT_PLATFORM);
     }
 
     function renderChatEmojiGrid() {
@@ -979,7 +979,7 @@
         firstName,
         lastName,
         fullName: `${firstName} ${lastName}`.trim(),
-        platform: "pc"
+        platform: CURRENT_CLIENT_PLATFORM
       };
 
       try {
@@ -1015,7 +1015,7 @@
         if (accessCard) accessCard.classList.add("hidden");
         if (memberBar) memberBar.classList.remove("hidden");
         if (memberNameEl) {
-          const style = getAuthorColorStyle(activeChatMember.platform || "pc");
+          const style = getAuthorColorStyle(activeChatMember.platform || CURRENT_CLIENT_PLATFORM);
           memberNameEl.className = `truncate font-bold ${style.text}`;
           memberNameEl.innerHTML = `<i class="${style.icon} mr-1"></i>${escapeChatHtml(activeChatMember.fullName)} <span class="text-[10px] opacity-80">(${style.label})</span>`;
         }
@@ -1073,7 +1073,7 @@
       let id = "";
       try { id = localStorage.getItem(DEVICE_STORAGE_KEY) || ""; } catch (_) {}
       if (!id) {
-        id = "dev_pc_" + Math.random().toString(36).slice(2, 12) + "_" + Date.now().toString(36);
+        id = "dev_" + Math.random().toString(36).slice(2, 12) + "_" + Date.now().toString(36);
         try { localStorage.setItem(DEVICE_STORAGE_KEY, id); } catch (_) {}
       }
       return id;
@@ -1129,6 +1129,29 @@
       return FIREBASE_DATABASE_URL.trim().replace(/\/+$/, "");
     }
 
+    function setChatConnectionStatus(message, state = "info") {
+      const el = document.getElementById("chatConnectionStatus");
+      if (!el) return;
+      const styles = {
+        info: "bg-slate-950/70 border-slate-700 text-slate-300",
+        ok: "bg-emerald-950/50 border-emerald-500/40 text-emerald-200",
+        error: "bg-rose-950/60 border-rose-500/40 text-rose-200",
+        warn: "bg-amber-950/60 border-amber-500/40 text-amber-200"
+      };
+      el.className = `rounded-lg px-3 py-2 text-[11px] border ${styles[state] || styles.info}`;
+      el.textContent = message;
+    }
+
+    async function fetchWithTimeout(url, options = {}, timeoutMs = 9000) {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), timeoutMs);
+      try {
+        return await fetch(url, { ...options, signal: controller.signal });
+      } finally {
+        clearTimeout(timer);
+      }
+    }
+
     function setReplyTarget(msgId, author, text) {
       currentReplyTo = { id: msgId, author: author || "Membre", text: (text || "").slice(0, 80) };
       const bar = document.getElementById("replyPreviewBar");
@@ -1170,6 +1193,10 @@
       }
       if (bar) bar.classList.toggle("hidden", !isChatAdmin);
       if (isChatAdmin) renderAdminBannedList();
+      else {
+        chatBotsEnabled = false;
+        if (fastBotLoopTimer) { clearTimeout(fastBotLoopTimer); fastBotLoopTimer = null; }
+      }
       syncChatBotsButtonUi();
 
       updateChatInputAccess();
@@ -1193,8 +1220,8 @@
       try {
         const cacheBust = `${Date.now()}_${Math.random().toString(36).slice(2, 6)}`;
         const [devRes, ipRes] = await Promise.all([
-          fetch(`${getDbBaseUrl()}/bannedDevices.json?nocache=${cacheBust}`, { cache: "no-store" }),
-          fetch(`${getDbBaseUrl()}/bannedChatIps.json?nocache=${cacheBust}`, { cache: "no-store" })
+          fetchWithTimeout(`${getDbBaseUrl()}/bannedDevices.json?nocache=${cacheBust}`, { cache: "no-store" }, 5000),
+          fetchWithTimeout(`${getDbBaseUrl()}/bannedChatIps.json?nocache=${cacheBust}`, { cache: "no-store" }, 5000)
         ]);
 
         if (devRes.ok) {
@@ -1214,7 +1241,9 @@
           bannedIpSet = nextIps;
         }
         renderAdminBannedList();
-      } catch (_) {}
+      } catch (err) {
+        console.warn("Could not load chat ban lists:", err);
+      }
     }
 
     function renderAdminBannedList() {
@@ -1395,7 +1424,6 @@
       await syncLiveChat();
     }
 
-    // All non-empty messages are shown publicly to everyone so any sent message appears globally
     function renderChatMessagesList(messagesObj, errorMessage = "") {
       const box = document.getElementById("liveChatBox");
       if (!box) return;
@@ -1408,7 +1436,7 @@
 
       const entries = Object.entries(messagesObj || {})
         .map(([id, val]) => ({ id, ...(val || {}) }))
-        .filter(item => item.text && String(item.text).trim().length > 0)
+        .filter(item => item.text && (item.isOwnLocalEcho || !isChatTargetBlocked(item.deviceId, item.ip) || isChatAdmin))
         .sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0))
         .slice(-100);
 
@@ -1542,6 +1570,11 @@
       const text = msgInput.value.trim();
       if (!text) return;
 
+      if (!hasFirebaseConfig()) {
+        alert("قاعدة بيانات Firebase غير مضبوطة، لذلك لن يظهر الكومونطير لباقي الزوار.");
+        return;
+      }
+
       if (sendBtn) sendBtn.disabled = true;
 
       const msgKey = "msg_" + Date.now() + "_" + Math.random().toString(36).slice(2, 6);
@@ -1549,33 +1582,29 @@
         author: sender,
         text,
         deviceId: MY_DEVICE_ID,
-        devicePlatform: activeChatMember.platform || "pc",
+        devicePlatform: activeChatMember.platform || CURRENT_CLIENT_PLATFORM,
         ip: currentClientIp || "",
         replyTo: currentReplyTo,
         createdAt: Date.now()
       };
 
       try {
-        if (hasFirebaseConfig()) {
-          const res = await fetch(`${getDbBaseUrl()}/groupChatMessages/${encodeURIComponent(msgKey)}.json`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload)
-          });
+        const res = await fetchWithTimeout(`${getDbBaseUrl()}/groupChatMessages/${encodeURIComponent(msgKey)}.json`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        }, 9000);
 
-          if (!res.ok) {
-            const errText = await res.text().catch(() => "");
-            console.error("Firebase PUT failed:", res.status, errText);
-            alert(`تعذر حفظ الكومونطير في قاعدة البيانات (${res.status}). تحقق من قواعد Realtime Database.`);
-            return;
-          }
-        } else {
-          const localMsgs = readLocalMessages();
-          localMsgs[msgKey] = payload;
-          writeLocalMessages(localMsgs);
+        if (!res.ok) {
+          const errText = await res.text().catch(() => "");
+          console.error("Firebase PUT failed:", res.status, errText);
+          setChatConnectionStatus(`تعذر حفظ الرسالة (HTTP ${res.status}). تحقق من قواعد Firebase Realtime Database.`, "error");
+          alert(`تعذر حفظ الكومونطير في قاعدة البيانات (${res.status}). تحقق من قواعد Realtime Database.`);
+          return;
         }
 
         liveMessagesStore[msgKey] = payload;
+        setChatConnectionStatus("تم إرسال الرسالة وحفظها في Firebase.", "ok");
         msgInput.value = "";
         closeChatEmojiMenu();
         clearReplyTarget();
@@ -1592,8 +1621,8 @@
           } catch (_) {}
         }
       } catch (err) {
-        console.error("Network error saving message:", err);
-        alert("وقع خطأ في الاتصال أثناء إرسال الرسالة.");
+        console.error("Network error saving to Firebase:", err);
+        alert("وقع خطأ في الاتصال بقاعدة البيانات أثناء حفظ الكومونطير.");
       } finally {
         if (sendBtn) sendBtn.disabled = false;
         msgInput.focus();
@@ -1602,7 +1631,8 @@
 
     async function syncLiveChat() {
       syncChatCloudWarning();
-      await fetchBannedDevices();
+      // Do not let a slow ban-list request prevent the message feed from loading.
+      await Promise.race([fetchBannedDevices(), new Promise(resolve => setTimeout(resolve, 1800))]);
       updateChatInputAccess();
 
       const box = document.getElementById("liveChatBox");
@@ -1610,6 +1640,7 @@
 
       if (!hasFirebaseConfig()) {
         liveMessagesStore = readLocalMessages();
+        setChatConnectionStatus("Mode local : les messages ne sont pas partagés entre les appareils.", "warn");
         lastRenderedMessagesHash = "";
         renderChatMessagesList(liveMessagesStore);
         return;
@@ -1617,25 +1648,37 @@
 
       try {
         const cacheBust = `${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
-        const res = await fetch(`${getDbBaseUrl()}/groupChatMessages.json?nocache=${cacheBust}`, {
+        const res = await fetchWithTimeout(`${getDbBaseUrl()}/groupChatMessages.json?nocache=${cacheBust}`, {
           cache: "no-store",
           headers: {
             "Cache-Control": "no-cache, no-store, must-revalidate",
             "Pragma": "no-cache"
           }
-        });
+        }, 9000);
+
         if (!res.ok) {
-          lastRenderedMessagesHash = "";
-          renderChatMessagesList(liveMessagesStore);
+          const details = await res.text().catch(() => "");
+          const message = res.status === 401 || res.status === 403
+            ? "Firebase refuse l’accès au chat. Vérifiez les règles Realtime Database (lecture/écriture)."
+            : `Impossible de charger le chat (HTTP ${res.status}).`;
+          console.error("Firebase chat read failed:", res.status, details);
+          setChatConnectionStatus(message, "error");
+          if (!Object.keys(liveMessagesStore || {}).length) renderChatMessagesList({}, message);
           return;
         }
+
         const data = await res.json();
         liveMessagesStore = (data && typeof data === "object") ? data : {};
+        setChatConnectionStatus("Connecté à Firebase — les messages sont synchronisés entre les appareils.", "ok");
         lastRenderedMessagesHash = "";
         renderChatMessagesList(liveMessagesStore);
-      } catch (_) {
-        lastRenderedMessagesHash = "";
-        renderChatMessagesList(liveMessagesStore);
+      } catch (err) {
+        const message = err && err.name === "AbortError"
+          ? "Le serveur Firebase ne répond pas (délai dépassé). Vérifiez la connexion ou l’URL."
+          : "Connexion à Firebase impossible. Vérifiez Internet et les règles de la base de données.";
+        console.error("Firebase chat sync error:", err);
+        setChatConnectionStatus(message, "error");
+        if (!Object.keys(liveMessagesStore || {}).length) renderChatMessagesList({}, message);
       }
     }
 
@@ -2330,14 +2373,13 @@
     const CHAT_BOTS_ENABLED_KEY = "lhajmoha_chat_bots_enabled_v1";
     const BOT_PLATFORM_INDEX_KEY = "lhajmoha_chat_bot_platform_idx_v1";
     const SEND_BOT_MESSAGES_TO_DISCORD = false;
-    // Bots primarily chat from PC so desktop chat activity stands out clearly
-    const BOT_DEVICE_ROTATION_ORDER = ["pc", "pc", "pc", "android", "iphone"];
+    const BOT_DEVICE_ROTATION_ORDER = ["iphone", "android", "pc"];
 
     const BOT_MIN_DELAY_MS = 2200;
     const BOT_MAX_DELAY_MS = 4800;
     const BOT_BURST_CHANCE = 0.25;
 
-    let chatBotsEnabled = true;
+    let chatBotsEnabled = false;
     try {
       const savedBotFlag = localStorage.getItem(CHAT_BOTS_ENABLED_KEY);
       if (savedBotFlag !== null) chatBotsEnabled = savedBotFlag === "true";
@@ -2432,7 +2474,7 @@
     }
 
     function getNextRotatingBotPlatform() {
-      const chosen = BOT_DEVICE_ROTATION_ORDER[botPlatformRotationIndex % BOT_DEVICE_ROTATION_ORDER.length] || "pc";
+      const chosen = BOT_DEVICE_ROTATION_ORDER[botPlatformRotationIndex % BOT_DEVICE_ROTATION_ORDER.length] || "iphone";
       botPlatformRotationIndex = (botPlatformRotationIndex + 1) % BOT_DEVICE_ROTATION_ORDER.length;
       try {
         localStorage.setItem(BOT_PLATFORM_INDEX_KEY, String(botPlatformRotationIndex));
@@ -2467,9 +2509,11 @@
       try { localStorage.setItem(CHAT_BOTS_ENABLED_KEY, String(chatBotsEnabled)); } catch (_) {}
       syncChatBotsButtonUi();
       if (chatBotsEnabled) scheduleNextFastBotMessage(300);
+      else if (fastBotLoopTimer) { clearTimeout(fastBotLoopTimer); fastBotLoopTimer = null; }
     }
 
     async function triggerInstantBotTest() {
+      if (!isChatAdmin) return;
       const bot = pickRandomBot();
       const line = pickUniqueBotLine(BOT_IDLE_LINES);
       await publishBotChatMessage(bot, line, null, true, true);
@@ -2514,7 +2558,11 @@
     }
 
     async function publishBotChatMessage(bot, text, replyTo = null, bypassRateLimit = false, forceEvenIfDisabled = false) {
-      if ((!chatBotsEnabled && !forceEvenIfDisabled) || !bot || !text) return;
+      if (!isChatAdmin || (!chatBotsEnabled && !forceEvenIfDisabled) || !bot || !text) return;
+      if (!hasFirebaseConfig()) {
+        setChatConnectionStatus("Les bots ne peuvent pas être partagés sans Firebase.", "warn");
+        return;
+      }
       const now = Date.now();
       if (!bypassRateLimit && (now - lastBotMessageAt < 650)) return;
 
@@ -2538,37 +2586,30 @@
         createdAt: now
       };
 
-      liveMessagesStore[msgKey] = payload;
-      lastRenderedMessagesHash = "";
-      renderChatMessagesList(liveMessagesStore);
-
-      if (SEND_BOT_MESSAGES_TO_DISCORD && typeof sendChatMessageToDiscord === "function") {
-        sendChatMessageToDiscord(payload);
-      }
-
-      if (hasFirebaseConfig()) {
-        try {
-          const res = await fetch(`${getDbBaseUrl()}/groupChatMessages/${encodeURIComponent(msgKey)}.json`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload)
-          });
-          if (!res.ok) {
-            console.warn("Firebase bot write blocked/failed:", res.status);
-          }
-        } catch (err) {
-          console.warn("Firebase bot network error:", err);
+      try {
+        const res = await fetchWithTimeout(`${getDbBaseUrl()}/groupChatMessages/${encodeURIComponent(msgKey)}.json`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        }, 9000);
+        if (!res.ok) {
+          const details = await res.text().catch(() => "");
+          console.warn("Firebase bot write failed:", res.status, details);
+          setChatConnectionStatus(`Firebase a refusé le message du bot (HTTP ${res.status}).`, "error");
+          return;
         }
-      } else {
-        const msgs = readLocalMessages();
-        msgs[msgKey] = payload;
-        writeLocalMessages(msgs);
+        liveMessagesStore[msgKey] = payload;
+        lastRenderedMessagesHash = "";
+        renderChatMessagesList(liveMessagesStore);
         if (chatBroadcast) chatBroadcast.postMessage({ type: "sync" });
+      } catch (err) {
+        console.warn("Firebase bot network error:", err);
+        setChatConnectionStatus("Impossible d’envoyer le message du bot à Firebase.", "error");
       }
     }
 
     function maybeReplyToLatestHumanMessage() {
-      if (!chatBotsEnabled) return;
+      if (!isChatAdmin || !chatBotsEnabled) return;
       const entries = Object.entries(liveMessagesStore || {})
         .map(([id, val]) => ({ id, ...(val || {}) }))
         .filter(m => m.text && !m.isBot && !String(m.deviceId || "").startsWith("bot_dev_"))
@@ -2596,6 +2637,11 @@
     }
 
     function scheduleNextFastBotMessage(customDelay = null) {
+      if (!isChatAdmin || !chatBotsEnabled) {
+        if (fastBotLoopTimer) clearTimeout(fastBotLoopTimer);
+        fastBotLoopTimer = null;
+        return;
+      }
       if (fastBotLoopTimer) {
         clearTimeout(fastBotLoopTimer);
         fastBotLoopTimer = null;
@@ -2646,7 +2692,7 @@
       connectFirebaseChatStream();
       setInterval(syncLiveChat, 1500);
       setInterval(maybeReplyToLatestHumanMessage, 2500);
-      scheduleNextFastBotMessage(800);
+      // Les bots ne démarrent que sur l’appareil administrateur qui les active.
       loadMoroccoWeather(true);
       setInterval(() => loadMoroccoWeather(false), WEATHER_REFRESH_HOURS * 60 * 60 * 1000);
     });
