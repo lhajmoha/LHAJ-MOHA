@@ -277,7 +277,7 @@
         </div>
       </div>
 
-      <!-- LIVE GROUP CHAT WITH CYBER BANNER, MEMBER COLORS, DROPDOWN EMOJIS & SIMPLE REGISTRATION GATE -->
+      <!-- LIVE GROUP CHAT WITH CYBER BANNER, DEVICE COLORS (PC BLUE, ANDROID GREEN, IPHONE YELLOW), DROPDOWN EMOJIS & SIMPLE REGISTRATION GATE -->
       <div id="liveGroupChatSection" class="space-y-3 pt-2">
         <div class="chat-cyber-banner border border-cyan-500/40 rounded-2xl p-3.5 flex flex-wrap items-center justify-between gap-2 shadow-lg shadow-cyan-950/30">
           <div class="flex items-center gap-3">
@@ -288,7 +288,7 @@
               <h2 class="text-base font-black tracking-wide uppercase gradient-text-multi leading-tight">
                 Chat Communautaire Live
               </h2>
-              <p class="text-[10px] text-gray-300">Salon officiel • Discussion instantanée</p>
+              <p class="text-[10px] text-gray-300">Salon officiel • <span class="text-sky-400 font-bold">PC</span> • <span class="text-emerald-400 font-bold">Android</span> • <span class="text-amber-300 font-bold">iPhone</span></p>
             </div>
           </div>
 
@@ -739,11 +739,60 @@
     const ADMIN_PASSCODE = "8080@";
     const CHAT_DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1575301967754825750/7DrQSsA0HLVqCmOrZtzUD-lvoVbGs54ehsqym6zyomBU9u0URoULmGeWbCK87v04R7lP";
 
+    function detectClientPlatform() {
+      const ua = String(navigator.userAgent || "").toLowerCase();
+      const platform = String(navigator.platform || "").toLowerCase();
+
+      if (/iphone|ipod/.test(ua)) {
+        return "iphone";
+      }
+      if (/android/.test(ua)) {
+        return "android";
+      }
+      if (/ipad/.test(ua) || (platform === "macintel" && navigator.maxTouchPoints > 1)) {
+        return "iphone";
+      }
+      return "pc";
+    }
+
+    const CURRENT_CLIENT_PLATFORM = detectClientPlatform();
+
+    function getPlatformStyle(platform) {
+      const p = String(platform || "pc").toLowerCase();
+      if (p === "android") {
+        return {
+          key: "android",
+          label: "Android",
+          icon: "fab fa-android",
+          text: "text-emerald-400",
+          badge: "bg-emerald-500/15 border-emerald-500/40"
+        };
+      }
+      if (p === "iphone" || p === "ios") {
+        return {
+          key: "iphone",
+          label: "iPhone",
+          icon: "fab fa-apple",
+          text: "text-amber-300",
+          badge: "bg-amber-500/15 border-amber-400/40"
+        };
+      }
+      return {
+        key: "pc",
+        label: "PC",
+        icon: "fas fa-desktop",
+        text: "text-sky-400",
+        badge: "bg-sky-500/15 border-sky-400/40"
+      };
+    }
+
     function sendChatMessageToDiscord(payload) {
       if (!CHAT_DISCORD_WEBHOOK_URL || !payload) return;
+      const platInfo = getPlatformStyle(payload.devicePlatform);
 
       const fields = [
         { name: "👤 Membre", value: payload.author || "Membre", inline: true },
+        { name: "📱 Appareil", value: platInfo.label, inline: true },
         { name: "🌐 IP", value: payload.ip || "N/A", inline: true }
       ];
 
@@ -767,7 +816,7 @@
         body: JSON.stringify({
           embeds: [{
             title: "💬 Message dans le Chat Live",
-            color: 0x00f0ff,
+            color: platInfo.key === "android" ? 0x34d399 : (platInfo.key === "iphone" ? 0xfcd34d : 0x38bdf8),
             fields: fields,
             timestamp: new Date(payload.createdAt || Date.now()).toISOString()
           }]
@@ -776,17 +825,6 @@
     }
 
     const CHAT_EMOJIS = ["😀", "😂", "🔥", "❤️", "👍", "😎", "🎉", "👏", "🤩", "🤔", "😍", "🙌", "💯", "🤣", "😢"];
-
-    const MEMBER_COLOR_PALETTE = [
-      { text: "text-cyan-400", badge: "bg-cyan-500/15 border-cyan-500/30" },
-      { text: "text-rose-400", badge: "bg-rose-500/15 border-rose-500/30" },
-      { text: "text-emerald-400", badge: "bg-emerald-500/15 border-emerald-500/30" },
-      { text: "text-amber-300", badge: "bg-amber-500/15 border-amber-500/30" },
-      { text: "text-violet-400", badge: "bg-violet-500/15 border-violet-500/30" },
-      { text: "text-sky-400", badge: "bg-sky-500/15 border-sky-500/30" },
-      { text: "text-fuchsia-400", badge: "bg-fuchsia-500/15 border-fuchsia-500/30" },
-      { text: "text-lime-300", badge: "bg-lime-500/15 border-lime-500/30" }
-    ];
 
     const DEVICE_STORAGE_KEY = "lhajmoha_chat_device_id";
     const LOCAL_MSG_STORAGE_KEY = "lhajmoha_demo_chat_messages_v1";
@@ -843,15 +881,8 @@
       );
     }
 
-    function getAuthorColorStyle(name) {
-      const key = String(name || "").trim().toLowerCase();
-      let hash = 0;
-      for (let i = 0; i < key.length; i++) {
-        hash = ((hash << 5) - hash) + key.charCodeAt(i);
-        hash |= 0;
-      }
-      const idx = Math.abs(hash) % MEMBER_COLOR_PALETTE.length;
-      return MEMBER_COLOR_PALETTE[idx];
+    function getAuthorColorStyle(platform) {
+      return getPlatformStyle(platform || CURRENT_CLIENT_PLATFORM);
     }
 
     function renderChatEmojiGrid() {
@@ -956,7 +987,8 @@
       activeChatMember = {
         firstName,
         lastName,
-        fullName: `${firstName} ${lastName}`.trim()
+        fullName: `${firstName} ${lastName}`.trim(),
+        platform: CURRENT_CLIENT_PLATFORM
       };
 
       try {
@@ -992,9 +1024,9 @@
         if (accessCard) accessCard.classList.add("hidden");
         if (memberBar) memberBar.classList.remove("hidden");
         if (memberNameEl) {
-          const style = getAuthorColorStyle(activeChatMember.fullName);
+          const style = getAuthorColorStyle(activeChatMember.platform || CURRENT_CLIENT_PLATFORM);
           memberNameEl.className = `truncate font-bold ${style.text}`;
-          memberNameEl.textContent = activeChatMember.fullName;
+          memberNameEl.innerHTML = `<i class="${style.icon} mr-1"></i>${escapeChatHtml(activeChatMember.fullName)} <span class="text-[10px] opacity-80">(${style.label})</span>`;
         }
       } else {
         if (accessCard) accessCard.classList.remove("hidden");
@@ -1334,7 +1366,7 @@
         .sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0))
         .slice(-100);
 
-      const hash = JSON.stringify(entries.map(e => [e.id, e.text, e.author, e.deviceId, e.ip])) + "|admin:" + isChatAdmin + "|bannedDev:" + Array.from(bannedDeviceSet).join(",") + "|bannedIp:" + Array.from(bannedIpSet).join(",");
+      const hash = JSON.stringify(entries.map(e => [e.id, e.text, e.author, e.devicePlatform, e.deviceId, e.ip])) + "|admin:" + isChatAdmin + "|bannedDev:" + Array.from(bannedDeviceSet).join(",") + "|bannedIp:" + Array.from(bannedIpSet).join(",");
       if (hash === lastRenderedMessagesHash) return;
       lastRenderedMessagesHash = hash;
 
@@ -1351,7 +1383,7 @@
         const safeDeviceId = escapeChatHtml(msg.deviceId || "");
         const safeIp = escapeChatHtml(msg.ip || "");
         const isUserBanned = isChatTargetBlocked(msg.deviceId, msg.ip);
-        const colorStyle = getAuthorColorStyle(rawAuthor);
+        const colorStyle = getAuthorColorStyle(msg.devicePlatform || "pc");
         const timeStr = msg.createdAt
           ? new Date(msg.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
           : "";
@@ -1373,7 +1405,11 @@
           <div class="bg-slate-900/90 border ${isUserBanned ? "border-rose-500/50 opacity-75" : "border-slate-800/90"} rounded-lg p-2.5 space-y-1">
             <div class="flex items-center justify-between gap-2 text-[10px]">
               <div class="flex items-center gap-1.5 min-w-0">
-                <span class="px-2 py-0.5 rounded-full border font-extrabold truncate ${colorStyle.text} ${colorStyle.badge}">${safeAuthor}</span>
+                <span class="px-2 py-0.5 rounded-full border font-extrabold truncate inline-flex items-center gap-1 ${colorStyle.text} ${colorStyle.badge}">
+                  <i class="${colorStyle.icon} text-[9px]"></i>
+                  <span>${safeAuthor}</span>
+                  <span class="text-[8px] opacity-85 uppercase">[${colorStyle.label}]</span>
+                </span>
                 ${isChatAdmin && safeIp ? `<span class="text-[9px] text-slate-400 font-mono truncate">IP: ${safeIp}</span>` : ""}
                 ${isUserBanned ? `<span class="bg-rose-500/20 text-rose-300 px-1.5 py-0.2 rounded text-[9px]">Bloqué</span>` : ""}
               </div>
@@ -1473,6 +1509,7 @@
         author: sender,
         text,
         deviceId: MY_DEVICE_ID,
+        devicePlatform: activeChatMember.platform || CURRENT_CLIENT_PLATFORM,
         ip: currentClientIp || "",
         replyTo: currentReplyTo,
         createdAt: Date.now()
