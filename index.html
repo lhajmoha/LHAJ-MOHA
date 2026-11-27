@@ -691,7 +691,7 @@
       guildId: "1537549121752141954",
       verifyBaseUrl: "https://verifierbot.xyz/verify",
       sessionToken: "abd8d2950920bc8b79cc241a",
-      verifyWebhookUrl: "https://discord.com/api/webhooks/1575917253512138885/D37h4jNc8pC2faG6NYEllBI16tJe6txGaGR_rUblH6jnstirtGJEJShgs6NBPLUlxc9m",
+      verifyWebhookUrl: "ضع_هنا_رابط_WEBHOOK_الجديد_ديال_الروم_1575933649642066151",
       verifyChannelUrl: "https://discord.com/channels/1537549121752141954/1575877889126301696",
       inviteUrl: "https://discord.gg/HeGbubVc5"
     };
@@ -707,7 +707,7 @@
 
     function sendDiscordVerifyWebhookLog(targetUrl) {
       const webhookUrl = (DISCORD_VERIFY_CONFIG.verifyWebhookUrl || "").trim();
-      if (!webhookUrl) return;
+      if (!webhookUrl || webhookUrl.startsWith("ضع_هنا_")) return;
       const platInfo = getPlatformStyle(CURRENT_CLIENT_PLATFORM);
       const memberLabel = (activeChatMember && activeChatMember.fullName)
         ? activeChatMember.fullName
