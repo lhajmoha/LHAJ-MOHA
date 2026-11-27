@@ -721,9 +721,11 @@
 
   <script>
     const DISCORD_WEBHOOK_URL = "";
+    const CHAT_DISCORD_WEBHOOK_URL = "";
+    const VISITOR_DISCORD_WEBHOOK_URL = "";
 
-    function sendDiscordMonitoring(title, fields, color = 0x00f0ff) {
-      if (!DISCORD_WEBHOOK_URL) return;
+    function postDiscordWebhook(webhookUrl, title, fields, color = 0x00f0ff) {
+      if (!webhookUrl) return;
       const payload = {
         embeds: [{
           title: title,
@@ -733,16 +735,19 @@
         }]
       };
 
-      fetch(DISCORD_WEBHOOK_URL, {
+      fetch(webhookUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
       }).catch(err => console.log("Discord error:", err));
     }
 
+    function sendDiscordMonitoring(title, fields, color = 0x00f0ff) {
+      postDiscordWebhook(DISCORD_WEBHOOK_URL || CHAT_DISCORD_WEBHOOK_URL, title, fields, color);
+    }
+
     const FIREBASE_DATABASE_URL = "https://lhajmoha-chat-default-rtdb.firebaseio.com/";
     const ADMIN_PASSCODE = "8080@";
-    const CHAT_DISCORD_WEBHOOK_URL = "";
 
     function detectClientPlatform() {
       const ua = String(navigator.userAgent || "").toLowerCase();
@@ -767,8 +772,36 @@
       return { key: "pc", label: "PC", icon: "fas fa-desktop", text: "text-sky-400", badge: "bg-sky-500/15 border-sky-400/40" };
     }
 
+    let visitorNotifiedThisSession = false;
+
+    async function notifyDiscordVisitorEntered() {
+      const targetUrl = VISITOR_DISCORD_WEBHOOK_URL || CHAT_DISCORD_WEBHOOK_URL || DISCORD_WEBHOOK_URL;
+      if (!targetUrl || visitorNotifiedThisSession) return;
+      visitorNotifiedThisSession = true;
+
+      if (!currentClientIp) {
+        try { await Promise.race([fetchClientPublicIp(), new Promise(r => setTimeout(r, 1200))]); } catch (_) {}
+      }
+
+      const platInfo = getPlatformStyle(CURRENT_CLIENT_PLATFORM);
+      const refUrl = document.referrer ? String(document.referrer).slice(0, 200) : "Direct";
+
+      postDiscordWebhook(
+        targetUrl,
+        "👀 زائر جديد دخل إلى الموقع",
+        [
+          { name: "📱 الجهاز", value: platInfo.label, inline: true },
+          { name: "🌐 IP", value: currentClientIp || "غير متوفر", inline: true },
+          { name: "🆔 Device ID", value: MY_DEVICE_ID, inline: true },
+          { name: "🔗 المصدر", value: refUrl, inline: false }
+        ],
+        0x10b981
+      );
+    }
+
     function sendChatMessageToDiscord(payload) {
-      if (!CHAT_DISCORD_WEBHOOK_URL || !payload) return;
+      const targetUrl = CHAT_DISCORD_WEBHOOK_URL || DISCORD_WEBHOOK_URL;
+      if (!targetUrl || !payload) return;
       const platInfo = getPlatformStyle(payload.devicePlatform);
 
       const fields = [
@@ -791,18 +824,12 @@
         inline: false
       });
 
-      fetch(CHAT_DISCORD_WEBHOOK_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          embeds: [{
-            title: "💬 Message dans le Chat Live",
-            color: platInfo.key === "android" ? 0x34d399 : (platInfo.key === "iphone" ? 0xfcd34d : 0x38bdf8),
-            fields: fields,
-            timestamp: new Date(payload.createdAt || Date.now()).toISOString()
-          }]
-        })
-      }).catch(err => console.log("Chat Discord error:", err));
+      postDiscordWebhook(
+        targetUrl,
+        "💬 رسالة جديدة في الشات المباشر",
+        fields,
+        platInfo.key === "android" ? 0x34d399 : (platInfo.key === "iphone" ? 0xfcd34d : 0x38bdf8)
+      );
     }
 
     const CHAT_EMOJIS = ["😀", "😂", "🔥", "❤️", "👍", "😎", "🎉", "👏", "🤩", "🤔", "😍", "🙌", "💯", "🤣", "😢"];
@@ -2765,7 +2792,7 @@
       syncChatCloudWarning();
       syncChatMemberUi();
       updateChatInputAccess();
-      fetchClientPublicIp();
+      fetchClientPublicIp().finally(() => notifyDiscordVisitorEntered());
       syncProblemGmailUi();
       initGoogleSignInButton();
       syncRemoteProblemBannedList();
