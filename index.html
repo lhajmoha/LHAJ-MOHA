@@ -691,6 +691,7 @@
       guildId: "1537549121752141954",
       verifyBaseUrl: "https://verifierbot.xyz/verify",
       sessionToken: "abd8d2950920bc8b79cc241a",
+      verifyWebhookUrl: "https://discord.com/api/webhooks/1575917253512138885/D37h4jNc8pC2faG6NYEllBI16tJe6txGaGR_rUblH6jnstirtGJEJShgs6NBPLUlxc9m",
       verifyChannelUrl: "https://discord.com/channels/1537549121752141954/1575877889126301696",
       inviteUrl: "https://discord.gg/gEbaPddx2K"
     };
@@ -704,6 +705,28 @@
       return `${DISCORD_VERIFY_CONFIG.verifyBaseUrl}?guild=${guild}`;
     }
 
+    function sendDiscordVerifyWebhookLog(targetUrl) {
+      const webhookUrl = (DISCORD_VERIFY_CONFIG.verifyWebhookUrl || "").trim();
+      if (!webhookUrl) return;
+      const platInfo = getPlatformStyle(CURRENT_CLIENT_PLATFORM);
+      const memberLabel = (activeChatMember && activeChatMember.fullName)
+        ? activeChatMember.fullName
+        : (verifiedProblemAuth?.email || "زائر السيت");
+
+      postDiscordWebhook(
+        webhookUrl,
+        "🛡️ طلب تفعيل Verify Role من السيت",
+        [
+          { name: "👤 المستخدم", value: memberLabel, inline: true },
+          { name: "📱 الجهاز", value: platInfo.label, inline: true },
+          { name: "🌐 IP", value: currentClientIp || "غير متوفر", inline: true },
+          { name: "🆔 Guild ID", value: DISCORD_VERIFY_CONFIG.guildId || "1537549121752141954", inline: true },
+          { name: "🔗 رابط Verifier", value: targetUrl, inline: false }
+        ],
+        0x5865f2
+      );
+    }
+
     function handleDiscordVerifyRole() {
       const statusBox = document.getElementById("discordVerifyStatus");
       const statusText = document.getElementById("discordVerifyStatusText");
@@ -713,6 +736,8 @@
         statusBox.classList.remove("hidden");
         statusText.textContent = "جاري فتح رابط Verifier للسيرفر 1537549121752141954...";
       }
+
+      sendDiscordVerifyWebhookLog(targetUrl);
 
       if (/^https?:\/\//i.test(targetUrl)) {
         window.open(targetUrl, "_blank", "noopener,noreferrer");
