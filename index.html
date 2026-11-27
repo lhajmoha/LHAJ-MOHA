@@ -147,7 +147,6 @@
         </h2>
         <p class="text-xs text-gray-400 mb-3">Écoutez les morceaux et playlists. Connectez-vous à Spotify pour une écoute complète.</p>
         
-        <!-- Spotify Embedded Player -->
         <div class="rounded-xl overflow-hidden border border-slate-800 bg-black/40">
           <iframe 
             style="border-radius:12px" 
@@ -168,7 +167,7 @@
         </div>
       </div>
 
-      <!-- PC SOFTWARE LIST BOX (UNDER SPOTIFY) -->
+      <!-- PC SOFTWARE LIST BOX -->
       <div class="bg-cyber-card/90 border border-cyan-500/30 rounded-2xl p-4 backdrop-blur-md shadow-xl shadow-cyan-950/20">
         <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-3">
           <h2 class="text-base font-bold flex items-center gap-2 gradient-text-multi">
@@ -183,10 +182,8 @@
           Sélection de programmes PC fiables et prêts à l'emploi. D'autres logiciels seront ajoutés prochainement.
         </p>
 
-        <!-- Dynamic Software List Container -->
         <div id="pcSoftwareList" class="space-y-2.5 max-h-72 overflow-y-auto pr-1"></div>
 
-        <!-- Placeholder / Future Addition Note -->
         <div class="mt-3 pt-2.5 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-gray-400">
           <span class="flex items-center gap-1.5">
             <i class="fas fa-plus-circle text-cyan-400"></i> Espace ouvert pour nouveaux ajouts
@@ -221,14 +218,13 @@
         </div>
       </div>
 
-      <!-- Social Platforms Grid (Circular Compact Design) -->
+      <!-- Social Platforms Grid -->
       <div class="bg-cyber-card/90 border border-slate-800 rounded-2xl p-4 backdrop-blur-md shadow-xl">
         <h2 class="text-sm font-bold mb-3 flex items-center gap-2 border-b border-slate-800 pb-2 gradient-text-multi">
           <i class="fas fa-link text-cyan-400"></i> Mes Plateformes Officielles
         </h2>
 
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <!-- Discord -->
           <a href="https://discord.gg/gEbaPddx2K" target="_blank" rel="noopener noreferrer" class="bg-black/50 border border-slate-800 p-3 rounded-xl flex flex-col items-center text-center hover:border-cyan-400 hover:shadow-md hover:shadow-cyan-500/20 transition group">
             <div class="w-12 h-12 rounded-full bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 text-xl mb-2 group-hover:scale-110 group-hover:bg-cyan-500 group-hover:text-black transition shadow-inner">
               <i class="fab fa-discord"></i>
@@ -237,7 +233,6 @@
             <div class="text-[10px] text-gray-400 mt-0.5">Communauté VIP</div>
           </a>
 
-          <!-- YouTube -->
           <a href="https://www.youtube.com/@LHAJMOHA-l8p" target="_blank" rel="noopener noreferrer" class="bg-black/50 border border-slate-800 p-3 rounded-xl flex flex-col items-center text-center hover:border-rose-500 hover:shadow-md hover:shadow-rose-500/20 transition group">
             <div class="w-12 h-12 rounded-full bg-rose-500/10 border border-rose-500/30 flex items-center justify-center text-rose-500 text-xl mb-2 group-hover:scale-110 group-hover:bg-rose-500 group-hover:text-white transition shadow-inner">
               <i class="fab fa-youtube"></i>
@@ -246,7 +241,6 @@
             <div class="text-[10px] text-gray-400 mt-0.5">Vidéos & Live</div>
           </a>
 
-          <!-- TikTok -->
           <a href="https://www.tiktok.com/@lhaj.moha53" target="_blank" rel="noopener noreferrer" class="bg-black/50 border border-slate-800 p-3 rounded-xl flex flex-col items-center text-center hover:border-rose-400 hover:shadow-md hover:shadow-rose-500/20 transition group">
             <div class="w-12 h-12 rounded-full bg-rose-400/10 border border-rose-400/30 flex items-center justify-center text-rose-400 text-xl mb-2 group-hover:scale-110 group-hover:bg-rose-400 group-hover:text-black transition shadow-inner">
               <i class="fab fa-tiktok"></i>
@@ -255,7 +249,6 @@
             <div class="text-[10px] text-gray-400 mt-0.5">Clips & Highlights</div>
           </a>
 
-          <!-- Kick -->
           <a href="https://kick.com/lhaj-mohaa" target="_blank" rel="noopener noreferrer" class="bg-black/50 border border-slate-800 p-3 rounded-xl flex flex-col items-center text-center hover:border-emerald-400 hover:shadow-md hover:shadow-emerald-500/20 transition group">
             <div class="w-12 h-12 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 text-xl mb-2 group-hover:scale-110 group-hover:bg-emerald-500 group-hover:text-black transition shadow-inner">
               <i class="fas fa-bolt"></i>
@@ -288,7 +281,7 @@
               <h2 class="text-base font-black tracking-wide uppercase gradient-text-multi leading-tight">
                 Chat Communautaire Live
               </h2>
-              <p class="text-[10px] text-gray-300">Salon officiel • <span class="text-sky-400 font-bold">PC</span> • <span class="text-emerald-400 font-bold">Android</span> • <span class="text-amber-300 font-bold">iPhone</span></p>
+              <p class="text-[10px] text-gray-300">Salon officiel • <span class="text-sky-400 font-bold">PC</span> • <span class="text-emerald-400 font-bold">Android</span> • <span class="text-amber-300 font-bold">iPhone</span> • <span class="text-cyan-300 font-bold">Bots Actifs</span></p>
             </div>
           </div>
 
@@ -304,7 +297,7 @@
               type="button"
               onclick="triggerInstantBotTest()" 
               id="testBotBtn"
-              class="hidden text-[11px] bg-cyan-950/90 hover:bg-cyan-900 border border-cyan-500/40 text-cyan-300 px-2.5 py-1 rounded-lg font-bold transition"
+              class="text-[11px] bg-cyan-950/90 hover:bg-cyan-900 border border-cyan-500/40 text-cyan-300 px-2.5 py-1 rounded-lg font-bold transition"
             >
               <i class="fas fa-bolt"></i> Test Bot
             </button>
@@ -312,7 +305,7 @@
               type="button"
               onclick="toggleChatBots()" 
               id="chatBotsToggleBtn"
-              class="hidden text-[11px] bg-slate-900/90 hover:bg-slate-800 border border-emerald-500/40 text-emerald-300 px-2.5 py-1 rounded-lg font-bold transition"
+              class="text-[11px] bg-slate-900/90 hover:bg-slate-800 border border-emerald-500/40 text-emerald-300 px-2.5 py-1 rounded-lg font-bold transition"
             >
               <i class="fas fa-robot"></i> Bots: ON
             </button>
@@ -728,7 +721,7 @@
   <audio id="globalAudioPlayer" class="hidden"></audio>
 
   <script>
-    const DISCORD_WEBHOOK_URL = ""; // Configurez un proxy serveur sécurisé, jamais un webhook secret dans le navigateur.
+    const DISCORD_WEBHOOK_URL = "";
 
     function sendDiscordMonitoring(title, fields, color = 0x00f0ff) {
       if (!DISCORD_WEBHOOK_URL) return;
@@ -749,8 +742,8 @@
     }
 
     const FIREBASE_DATABASE_URL = "https://lhajmoha-chat-default-rtdb.firebaseio.com/";
-    const ADMIN_PASSCODE = "CHANGE_THIS_CODE_BEFORE_PUBLISHING"; // Attention: un code côté navigateur n’est pas une vraie sécurité.
-    const CHAT_DISCORD_WEBHOOK_URL = ""; // Ne placez jamais un webhook Discord privé dans le code public.
+    const ADMIN_PASSCODE = "CHANGE_THIS_CODE_BEFORE_PUBLISHING";
+    const CHAT_DISCORD_WEBHOOK_URL = "";
 
     function detectClientPlatform() {
       const ua = String(navigator.userAgent || "").toLowerCase();
@@ -1125,6 +1118,11 @@
         .replace(/"/g, "&quot;");
     }
 
+    function sanitizeUrl(url) {
+      const trimmed = String(url || "").trim();
+      return /^https?:\/\//i.test(trimmed) ? trimmed : "#";
+    }
+
     function getDbBaseUrl() {
       return FIREBASE_DATABASE_URL.trim().replace(/\/+$/, "");
     }
@@ -1193,10 +1191,6 @@
       }
       if (bar) bar.classList.toggle("hidden", !isChatAdmin);
       if (isChatAdmin) renderAdminBannedList();
-      else {
-        chatBotsEnabled = false;
-        if (fastBotLoopTimer) { clearTimeout(fastBotLoopTimer); fastBotLoopTimer = null; }
-      }
       syncChatBotsButtonUi();
 
       updateChatInputAccess();
@@ -1435,9 +1429,9 @@
       }
 
       const entries = Object.entries(messagesObj || {})
-        .map(([id, val]) => ({ id, ...(val || {}) }))
+        .map(([id, val]) => ({ id, ...(val && typeof val === "object" ? val : {}) }))
         .filter(item => item.text && (item.isOwnLocalEcho || !isChatTargetBlocked(item.deviceId, item.ip) || isChatAdmin))
-        .sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0))
+        .sort((a, b) => Number(a.createdAt || 0) - Number(b.createdAt || 0))
         .slice(-100);
 
       const hash = JSON.stringify(entries.map(e => [e.id, e.text, e.author, e.devicePlatform, e.deviceId, e.ip])) + "|admin:" + isChatAdmin + "|bannedDev:" + Array.from(bannedDeviceSet).join(",") + "|bannedIp:" + Array.from(bannedIpSet).join(",");
@@ -1459,13 +1453,17 @@
         const isUserBanned = isChatTargetBlocked(msg.deviceId, msg.ip);
         const colorStyle = getAuthorColorStyle(msg.devicePlatform || "pc");
         const timeStr = msg.createdAt
-          ? new Date(msg.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+          ? new Date(Number(msg.createdAt)).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
           : "";
 
         const replyHtml = msg.replyTo && msg.replyTo.text
           ? `<div class="bg-black/40 border-r-2 border-cyan-400/70 px-2 py-1 rounded mb-1 text-[10px] text-cyan-200">
                Réponse à <strong>${escapeChatHtml(msg.replyTo.author || "Membre")}</strong> : ${escapeChatHtml(msg.replyTo.text)}
              </div>`
+          : "";
+
+        const botBadgeHtml = msg.isBot
+          ? `<span class="bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 px-1.5 py-0.2 rounded text-[9px] font-bold">BOT</span>`
           : "";
 
         const adminActionsHtml = isChatAdmin
@@ -1484,6 +1482,7 @@
                   <span>${safeAuthor}</span>
                   <span class="text-[8px] opacity-85 uppercase">[${colorStyle.label}]</span>
                 </span>
+                ${botBadgeHtml}
                 ${isChatAdmin && safeIp ? `<span class="text-[9px] text-slate-400 font-mono truncate">IP: ${safeIp}</span>` : ""}
                 ${isUserBanned ? `<span class="bg-rose-500/20 text-rose-300 px-1.5 py-0.2 rounded text-[9px]">Bloqué</span>` : ""}
               </div>
@@ -1631,7 +1630,6 @@
 
     async function syncLiveChat() {
       syncChatCloudWarning();
-      // Do not let a slow ban-list request prevent the message feed from loading.
       await Promise.race([fetchBannedDevices(), new Promise(resolve => setTimeout(resolve, 1800))]);
       updateChatInputAccess();
 
@@ -1649,11 +1647,7 @@
       try {
         const cacheBust = `${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
         const res = await fetchWithTimeout(`${getDbBaseUrl()}/groupChatMessages.json?nocache=${cacheBust}`, {
-          cache: "no-store",
-          headers: {
-            "Cache-Control": "no-cache, no-store, must-revalidate",
-            "Pragma": "no-cache"
-          }
+          cache: "no-store"
         }, 9000);
 
         if (!res.ok) {
@@ -1669,7 +1663,7 @@
 
         const data = await res.json();
         liveMessagesStore = (data && typeof data === "object") ? data : {};
-        setChatConnectionStatus("Connecté à Firebase — les messages sont synchronisés entre les appareils.", "ok");
+        setChatConnectionStatus("Connecté à Firebase — Chat et Bots actifs en direct.", "ok");
         lastRenderedMessagesHash = "";
         renderChatMessagesList(liveMessagesStore);
       } catch (err) {
@@ -1742,8 +1736,8 @@
             <div class="weather-row rounded-lg px-2 py-1.5 flex items-center justify-between gap-2">
               <div class="flex items-center gap-2 min-w-0">
                 <i class="fas ${item.icon} text-xs w-4 text-center flex-shrink-0"></i>
-                <span class="text-white font-bold text-[11px] truncate">${item.name}</span>
-                <span class="text-slate-400 text-[9px] truncate">${item.condition}</span>
+                <span class="text-white font-bold text-[11px] truncate">${escapeChatHtml(item.name)}</span>
+                <span class="text-slate-400 text-[9px] truncate">${escapeChatHtml(item.condition)}</span>
               </div>
               <span class="text-cyan-300 font-black text-[11px] flex-shrink-0">${tempText}</span>
             </div>
@@ -1777,17 +1771,17 @@
         <div class="bg-black/50 border border-slate-800 hover:border-cyan-400/50 rounded-xl p-3 flex items-center justify-between gap-2.5 transition group">
           <div class="flex items-center gap-2.5 min-w-0">
             <div class="w-9 h-9 rounded-lg bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 text-sm flex-shrink-0 group-hover:scale-105 transition">
-              <i class="fas ${app.icon || 'fa-cube'}"></i>
+              <i class="fas ${escapeChatHtml(app.icon || 'fa-cube')}"></i>
             </div>
             <div class="min-w-0">
               <div class="flex items-center gap-1.5">
-                <span class="font-bold text-xs text-white truncate">${app.name}</span>
-                <span class="text-[9px] bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 px-1.5 py-0.2 rounded-full flex-shrink-0">${app.badge || 'Ready'}</span>
+                <span class="font-bold text-xs text-white truncate">${escapeChatHtml(app.name)}</span>
+                <span class="text-[9px] bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 px-1.5 py-0.2 rounded-full flex-shrink-0">${escapeChatHtml(app.badge || 'Ready')}</span>
               </div>
-              <p class="text-[11px] text-gray-400 truncate">${app.note || ''}</p>
+              <p class="text-[11px] text-gray-400 truncate">${escapeChatHtml(app.note || '')}</p>
             </div>
           </div>
-          <a href="${app.url}" target="_blank" rel="noopener noreferrer" title="Télécharger / Ouvrir ${app.name}" class="bg-cyan-500/15 hover:bg-cyan-500 text-cyan-300 hover:text-black border border-cyan-500/30 px-2.5 py-1.5 rounded-lg text-[11px] font-bold flex items-center gap-1 flex-shrink-0 transition">
+          <a href="${sanitizeUrl(app.url)}" target="_blank" rel="noopener noreferrer" title="Télécharger / Ouvrir ${escapeChatHtml(app.name)}" class="bg-cyan-500/15 hover:bg-cyan-500 text-cyan-300 hover:text-black border border-cyan-500/30 px-2.5 py-1.5 rounded-lg text-[11px] font-bold flex items-center gap-1 flex-shrink-0 transition">
             <i class="fas fa-download text-[10px]"></i> Get
           </a>
         </div>
@@ -1815,10 +1809,10 @@
         html += `
           <div onclick="playRadio('${s.id}')" class="bg-black/40 border border-slate-800 hover:border-cyan-400/50 rounded-xl p-4 flex items-center gap-4 cursor-pointer transition transform hover:-translate-y-0.5 group">
             <div class="w-14 h-14 rounded-full overflow-hidden border-2 border-cyan-500/40 shadow-md bg-white flex-shrink-0 flex items-center justify-center p-1">
-              <img src="${s.logo}" alt="${s.name}" class="w-full h-full object-contain group-hover:scale-110 transition" onerror="this.onerror=null; this.src='${s.localFallback}';">
+              <img src="${s.logo}" alt="${escapeChatHtml(s.name)}" class="w-full h-full object-contain group-hover:scale-110 transition" onerror="this.onerror=null; this.src='${s.localFallback}';">
             </div>
             <div>
-              <div class="font-bold text-sm text-white group-hover:text-cyan-400 transition">${s.name}</div>
+              <div class="font-bold text-sm text-white group-hover:text-cyan-400 transition">${escapeChatHtml(s.name)}</div>
               <div class="text-xs text-cyan-400 flex items-center gap-1 mt-1">
                 <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span> Écouter en direct
               </div>
@@ -1834,7 +1828,9 @@
       if (!station) return;
       currentStation = station;
       audioPlayer.src = station.stream;
-      audioPlayer.play();
+      audioPlayer.play().catch(() => {
+        document.getElementById('playerGenre').innerText = 'Erreur de lecture du flux';
+      });
       isPlaying = true;
       document.getElementById('playerStation').innerText = station.name;
       document.getElementById('stickyPlayer').classList.remove('hidden');
@@ -1847,7 +1843,7 @@
         audioPlayer.pause();
         document.getElementById('mainPlayIcon').className = 'fas fa-play';
       } else {
-        audioPlayer.play();
+        audioPlayer.play().catch(() => {});
         document.getElementById('mainPlayIcon').className = 'fas fa-pause';
       }
       isPlaying = !isPlaying;
@@ -2372,14 +2368,13 @@
 
     const CHAT_BOTS_ENABLED_KEY = "lhajmoha_chat_bots_enabled_v1";
     const BOT_PLATFORM_INDEX_KEY = "lhajmoha_chat_bot_platform_idx_v1";
-    const SEND_BOT_MESSAGES_TO_DISCORD = false;
     const BOT_DEVICE_ROTATION_ORDER = ["iphone", "android", "pc"];
 
-    const BOT_MIN_DELAY_MS = 2200;
-    const BOT_MAX_DELAY_MS = 4800;
-    const BOT_BURST_CHANCE = 0.25;
+    const BOT_MIN_DELAY_MS = 4500;
+    const BOT_MAX_DELAY_MS = 9000;
+    const BOT_BURST_CHANCE = 0.2;
 
-    let chatBotsEnabled = false;
+    let chatBotsEnabled = true;
     try {
       const savedBotFlag = localStorage.getItem(CHAT_BOTS_ENABLED_KEY);
       if (savedBotFlag !== null) chatBotsEnabled = savedBotFlag === "true";
@@ -2484,36 +2479,26 @@
 
     function syncChatBotsButtonUi() {
       const btn = document.getElementById("chatBotsToggleBtn");
-      const testBtn = document.getElementById("testBotBtn");
       if (btn) {
-        if (!isChatAdmin) {
-          btn.classList.add("hidden");
-        } else {
-          btn.classList.remove("hidden");
-          btn.innerHTML = chatBotsEnabled
-            ? '<i class="fas fa-robot"></i> Bots: ON'
-            : '<i class="fas fa-robot"></i> Bots: OFF';
-          btn.className = chatBotsEnabled
-            ? "text-[11px] bg-slate-900/90 hover:bg-slate-800 border border-emerald-500/40 text-emerald-300 px-2.5 py-1 rounded-lg font-bold transition"
-            : "text-[11px] bg-slate-900/90 hover:bg-slate-800 border border-slate-700 text-slate-400 px-2.5 py-1 rounded-lg font-bold transition";
-        }
-      }
-      if (testBtn) {
-        testBtn.classList.toggle("hidden", !isChatAdmin);
+        btn.classList.remove("hidden");
+        btn.innerHTML = chatBotsEnabled
+          ? '<i class="fas fa-robot"></i> Bots: ON'
+          : '<i class="fas fa-robot"></i> Bots: OFF';
+        btn.className = chatBotsEnabled
+          ? "text-[11px] bg-slate-900/90 hover:bg-slate-800 border border-emerald-500/40 text-emerald-300 px-2.5 py-1 rounded-lg font-bold transition"
+          : "text-[11px] bg-slate-900/90 hover:bg-slate-800 border border-slate-700 text-slate-400 px-2.5 py-1 rounded-lg font-bold transition";
       }
     }
 
     function toggleChatBots() {
-      if (!isChatAdmin) return;
       chatBotsEnabled = !chatBotsEnabled;
       try { localStorage.setItem(CHAT_BOTS_ENABLED_KEY, String(chatBotsEnabled)); } catch (_) {}
       syncChatBotsButtonUi();
-      if (chatBotsEnabled) scheduleNextFastBotMessage(300);
+      if (chatBotsEnabled) scheduleNextFastBotMessage(600);
       else if (fastBotLoopTimer) { clearTimeout(fastBotLoopTimer); fastBotLoopTimer = null; }
     }
 
     async function triggerInstantBotTest() {
-      if (!isChatAdmin) return;
       const bot = pickRandomBot();
       const line = pickUniqueBotLine(BOT_IDLE_LINES);
       await publishBotChatMessage(bot, line, null, true, true);
@@ -2558,13 +2543,13 @@
     }
 
     async function publishBotChatMessage(bot, text, replyTo = null, bypassRateLimit = false, forceEvenIfDisabled = false) {
-      if (!isChatAdmin || (!chatBotsEnabled && !forceEvenIfDisabled) || !bot || !text) return;
+      if ((!chatBotsEnabled && !forceEvenIfDisabled) || !bot || !text) return;
       if (!hasFirebaseConfig()) {
         setChatConnectionStatus("Les bots ne peuvent pas être partagés sans Firebase.", "warn");
         return;
       }
       const now = Date.now();
-      if (!bypassRateLimit && (now - lastBotMessageAt < 650)) return;
+      if (!bypassRateLimit && (now - lastBotMessageAt < 1200)) return;
 
       const platform = getNextRotatingBotPlatform();
       const suffix = platform === "iphone" ? "1" : (platform === "android" ? "2" : "3");
@@ -2609,16 +2594,16 @@
     }
 
     function maybeReplyToLatestHumanMessage() {
-      if (!isChatAdmin || !chatBotsEnabled) return;
+      if (!chatBotsEnabled) return;
       const entries = Object.entries(liveMessagesStore || {})
-        .map(([id, val]) => ({ id, ...(val || {}) }))
+        .map(([id, val]) => ({ id, ...(val && typeof val === "object" ? val : {}) }))
         .filter(m => m.text && !m.isBot && !String(m.deviceId || "").startsWith("bot_dev_"))
-        .sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
+        .sort((a, b) => Number(a.createdAt || 0) - Number(b.createdAt || 0));
 
       if (!entries.length) return;
       const latest = entries[entries.length - 1];
       if (!latest || repliedUserMsgIds.has(latest.id)) return;
-      if (Date.now() - (latest.createdAt || 0) > 45000) return;
+      if (Date.now() - Number(latest.createdAt || 0) > 45000) return;
 
       repliedUserMsgIds.add(latest.id);
       const text = String(latest.text || "");
@@ -2637,7 +2622,7 @@
     }
 
     function scheduleNextFastBotMessage(customDelay = null) {
-      if (!isChatAdmin || !chatBotsEnabled) {
+      if (!chatBotsEnabled) {
         if (fastBotLoopTimer) clearTimeout(fastBotLoopTimer);
         fastBotLoopTimer = null;
         return;
@@ -2663,7 +2648,7 @@
                   const secondLine = pickUniqueBotLine(BOT_IDLE_LINES);
                   await publishBotChatMessage(secondBot, secondLine, null, true);
                 } catch (_) {}
-              }, 700 + Math.floor(Math.random() * 700));
+              }, 900 + Math.floor(Math.random() * 800));
             }
           }
         } catch (err) {
@@ -2686,13 +2671,13 @@
       syncProblemGmailUi();
       initGoogleSignInButton();
       syncRemoteProblemBannedList();
-      setInterval(syncRemoteProblemBannedList, 4000);
+      setInterval(syncRemoteProblemBannedList, 10000);
       setInterval(syncProblem24hQuotaUi, 30000);
       syncLiveChat();
       connectFirebaseChatStream();
-      setInterval(syncLiveChat, 1500);
+      setInterval(syncLiveChat, 12000);
       setInterval(maybeReplyToLatestHumanMessage, 2500);
-      // Les bots ne démarrent que sur l’appareil administrateur qui les active.
+      if (chatBotsEnabled) scheduleNextFastBotMessage(1500);
       loadMoroccoWeather(true);
       setInterval(() => loadMoroccoWeather(false), WEATHER_REFRESH_HOURS * 60 * 60 * 1000);
     });
