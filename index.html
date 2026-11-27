@@ -254,7 +254,7 @@
                 </span>
               </h2>
               <p dir="rtl" class="text-xs text-gray-300 mt-0.5 text-center sm:text-right">
-                فعّل حسابك من هنا باش تاخد <span class="text-cyan-300 font-bold">Verify Role</span> وتدخل لروم التفعيل فالسيرفر.
+                فعّل حسابك من هنا باش تاخد <span class="text-cyan-300 font-bold">Verify Role</span> وتدخل للسيرفر.
               </p>
             </div>
           </div>
@@ -687,27 +687,35 @@
     const CHAT_DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1575301967754825750/7DrQSsA0HLVqCmOrZtzUD-lvoVbGs54ehsqym6zyomBU9u0URoULmGeWbCK87v04R7lP";
     const VISITOR_DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1563218138231873586/rb1dVovzKQdNr6j6vRqfzoPHGlEl6weSJhA1jxd_NVhRSfNafrw3DoMiS4U7fDeySrVN";
 
-    // حط هنا رابط السيرفر الخلفي ديالك (مثلاً http://localhost:3000/start-verify أو رابط الاستضافة ديالك)
     const DISCORD_VERIFY_CONFIG = {
-      backendVerifyUrl: "http://localhost:3000/start-verify",
+      guildId: "1537549121752141954",
+      verifyBaseUrl: "https://verifierbot.xyz/verify",
+      sessionToken: "abd8d2950920bc8b79cc241a",
       verifyChannelUrl: "https://discord.com/channels/1537549121752141954/1575877889126301696",
       inviteUrl: "https://discord.gg/gEbaPddx2K"
     };
 
+    function buildVerifierTargetUrl() {
+      const guild = encodeURIComponent(DISCORD_VERIFY_CONFIG.guildId || "1537549121752141954");
+      const token = (DISCORD_VERIFY_CONFIG.sessionToken || "").trim();
+      if (token) {
+        return `${DISCORD_VERIFY_CONFIG.verifyBaseUrl}?guild=${guild}&token=${encodeURIComponent(token)}`;
+      }
+      return `${DISCORD_VERIFY_CONFIG.verifyBaseUrl}?guild=${guild}`;
+    }
+
     function handleDiscordVerifyRole() {
       const statusBox = document.getElementById("discordVerifyStatus");
       const statusText = document.getElementById("discordVerifyStatusText");
-      const baseUrl = (DISCORD_VERIFY_CONFIG.backendVerifyUrl || "").trim();
+      const targetUrl = buildVerifierTargetUrl();
 
       if (statusBox && statusText) {
         statusBox.classList.remove("hidden");
-        statusText.textContent = "جاري تحويلك إلى Discord لتفعيل المرحلة الأولى والتوجه إلى الروم...";
+        statusText.textContent = "جاري فتح رابط Verifier للسيرفر 1537549121752141954...";
       }
 
-      if (baseUrl && /^https?:\/\//i.test(baseUrl)) {
-        const sep = baseUrl.includes("?") ? "&" : "?";
-        const targetUrl = `${baseUrl}${sep}channel=${encodeURIComponent(DISCORD_VERIFY_CONFIG.verifyChannelUrl)}`;
-        window.location.href = targetUrl;
+      if (/^https?:\/\//i.test(targetUrl)) {
+        window.open(targetUrl, "_blank", "noopener,noreferrer");
       } else {
         window.open(DISCORD_VERIFY_CONFIG.inviteUrl, "_blank", "noopener,noreferrer");
       }
