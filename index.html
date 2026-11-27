@@ -236,7 +236,6 @@
       <div class="discord-verify-banner border border-indigo-400/40 hover:border-cyan-400/70 rounded-2xl p-4 sm:p-5 transition-all duration-300">
         <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
           <div class="flex items-center gap-3.5 text-center sm:text-left">
-            <!-- Discord + Verify Badge Logo -->
             <div class="relative w-14 h-14 rounded-2xl bg-[#5865F2]/20 border border-[#5865F2]/60 flex items-center justify-center text-[#8ea1e1] text-2xl flex-shrink-0 shadow-lg shadow-[#5865F2]/25">
               <i class="fab fa-discord"></i>
               <span title="Verify Badge" class="-bottom-1.5 -right-1.5 absolute w-6 h-6 rounded-full bg-gradient-to-tr from-cyan-400 to-emerald-400 text-slate-950 border-2 border-[#101424] flex items-center justify-center text-[11px] font-black shadow-md">
@@ -255,7 +254,7 @@
                 </span>
               </h2>
               <p dir="rtl" class="text-xs text-gray-300 mt-0.5 text-center sm:text-right">
-                فعّل حسابك من هنا باش تاخد <span class="text-cyan-300 font-bold">Verify Role</span> وتدخل للسيرفر.
+                فعّل حسابك من هنا باش تاخد <span class="text-cyan-300 font-bold">Verify Role</span> وتدخل لروم التفعيل فالسيرفر.
               </p>
             </div>
           </div>
@@ -387,7 +386,6 @@
             <strong>Mode local uniquement :</strong> أضف رابط قاعدة بيانات <code>FIREBASE_DATABASE_URL</code> لتظهر الرسائل بين الهاتف والبيسي وباقي المستخدمين.
           </div>
 
-          <!-- Simple Access Form -->
           <div id="chatAccessCard" class="bg-black/60 border border-cyan-500/30 rounded-xl p-3.5 space-y-2.5">
             <div class="flex items-center justify-between gap-2">
               <span class="text-xs font-extrabold text-cyan-300 flex items-center gap-1.5">
@@ -397,59 +395,25 @@
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              <input 
-                type="text" 
-                id="chatFirstName" 
-                placeholder="Prénom" 
-                maxlength="25"
-                class="bg-slate-900/90 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-cyan-400"
-              >
-              <input 
-                type="text" 
-                id="chatLastName" 
-                placeholder="Nom" 
-                maxlength="25"
-                class="bg-slate-900/90 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-cyan-400"
-              >
-              <input 
-                type="password" 
-                id="chatPassword" 
-                placeholder="Mot de passe" 
-                maxlength="40"
-                class="bg-slate-900/90 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-cyan-400"
-              >
-              <input 
-                type="password" 
-                id="chatPasswordConfirm" 
-                placeholder="Confirmer le mot de passe" 
-                maxlength="40"
-                onkeypress="if(event.key==='Enter') submitChatAccessForm()"
-                class="bg-slate-900/90 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-cyan-400"
-              >
+              <input type="text" id="chatFirstName" placeholder="Prénom" maxlength="25" class="bg-slate-900/90 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-cyan-400">
+              <input type="text" id="chatLastName" placeholder="Nom" maxlength="25" class="bg-slate-900/90 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-cyan-400">
+              <input type="password" id="chatPassword" placeholder="Mot de passe" maxlength="40" class="bg-slate-900/90 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-cyan-400">
+              <input type="password" id="chatPasswordConfirm" placeholder="Confirmer le mot de passe" maxlength="40" onkeypress="if(event.key==='Enter') submitChatAccessForm()" class="bg-slate-900/90 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-cyan-400">
             </div>
 
             <div id="chatAccessError" class="hidden text-[11px] text-rose-400 font-bold"></div>
 
-            <button 
-              type="button"
-              onclick="submitChatAccessForm()" 
-              class="w-full bg-gradient-to-r from-cyan-500 to-rose-500 hover:opacity-95 text-white py-2 px-4 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition shadow-md shadow-cyan-500/20"
-            >
+            <button type="button" onclick="submitChatAccessForm()" class="w-full bg-gradient-to-r from-cyan-500 to-rose-500 hover:opacity-95 text-white py-2 px-4 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition shadow-md shadow-cyan-500/20">
               <i class="fas fa-sign-in-alt"></i> Entrer dans le Chat
             </button>
           </div>
 
-          <!-- Active Member Bar -->
           <div id="chatActiveMemberBar" class="hidden bg-black/50 border border-emerald-500/30 rounded-xl px-3 py-2 flex items-center justify-between gap-2 text-[11px]">
             <span class="font-bold flex items-center gap-1.5 truncate">
               <i class="fas fa-user-check text-emerald-400"></i>
               <span id="chatActiveMemberName" class="truncate"></span>
             </span>
-            <button 
-              type="button" 
-              onclick="logoutChatMember()" 
-              class="bg-slate-800 hover:bg-slate-700 text-rose-300 border border-rose-500/30 px-2.5 py-1 rounded text-[10px] font-bold flex-shrink-0 transition"
-            >
+            <button type="button" onclick="logoutChatMember()" class="bg-slate-800 hover:bg-slate-700 text-rose-300 border border-rose-500/30 px-2.5 py-1 rounded text-[10px] font-bold flex-shrink-0 transition">
               Déconnexion
             </button>
           </div>
@@ -461,11 +425,7 @@
           <div id="adminControlsBar" class="hidden bg-black/50 border border-cyan-500/30 rounded-xl p-2.5 space-y-2 text-[11px]">
             <div class="flex flex-wrap items-center justify-between gap-2">
               <span class="text-cyan-300 font-bold"><i class="fas fa-user-shield"></i> Mode Admin actif : suppression et blocage (IP + appareil)</span>
-              <button 
-                type="button"
-                onclick="unbanCurrentDeviceTest()" 
-                class="bg-slate-800 hover:bg-slate-700 text-gray-200 px-2 py-1 rounded text-[10px] font-bold transition"
-              >
+              <button type="button" onclick="unbanCurrentDeviceTest()" class="bg-slate-800 hover:bg-slate-700 text-gray-200 px-2 py-1 rounded text-[10px] font-bold transition">
                 Débloquer mon propre appareil / IP
               </button>
             </div>
@@ -487,39 +447,16 @@
             </button>
           </div>
 
-          <!-- Input + Emoji Dropdown Beside Send Button -->
           <div class="relative flex gap-2">
-            <input 
-              type="text" 
-              id="liveChatInput" 
-              placeholder="Écrivez votre message..." 
-              maxlength="350"
-              onkeypress="if(event.key==='Enter') sendLiveChatMessage()"
-              class="flex-1 min-w-0 bg-black/60 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-400"
-            >
-            <button 
-              type="button"
-              id="chatEmojiToggleBtn"
-              onclick="toggleChatEmojiMenu(event)"
-              title="Choisir un emoji"
-              class="bg-slate-900/95 hover:bg-slate-800 border border-slate-700 hover:border-cyan-400/50 text-sm px-2.5 py-2 rounded-lg flex items-center justify-center flex-shrink-0 transition"
-            >
+            <input type="text" id="liveChatInput" placeholder="Écrivez votre message..." maxlength="350" onkeypress="if(event.key==='Enter') sendLiveChatMessage()" class="flex-1 min-w-0 bg-black/60 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-400">
+            <button type="button" id="chatEmojiToggleBtn" onclick="toggleChatEmojiMenu(event)" title="Choisir un emoji" class="bg-slate-900/95 hover:bg-slate-800 border border-slate-700 hover:border-cyan-400/50 text-sm px-2.5 py-2 rounded-lg flex items-center justify-center flex-shrink-0 transition">
               😀
             </button>
-            <button 
-              type="button"
-              id="liveChatSendBtn"
-              onclick="sendLiveChatMessage()" 
-              class="bg-gradient-to-r from-cyan-500 to-rose-500 hover:opacity-95 disabled:opacity-40 disabled:cursor-not-allowed text-white py-2 px-4 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 flex-shrink-0 transition"
-            >
+            <button type="button" id="liveChatSendBtn" onclick="sendLiveChatMessage()" class="bg-gradient-to-r from-cyan-500 to-rose-500 hover:opacity-95 disabled:opacity-40 disabled:cursor-not-allowed text-white py-2 px-4 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 flex-shrink-0 transition">
               <i class="fas fa-paper-plane"></i> Envoyer
             </button>
 
-            <div 
-              id="chatEmojiDropdown" 
-              onclick="event.stopPropagation()"
-              class="hidden absolute right-0 top-full mt-1.5 z-30 w-56 bg-[#0d1222]/98 border border-cyan-500/40 rounded-xl p-2 shadow-2xl"
-            >
+            <div id="chatEmojiDropdown" onclick="event.stopPropagation()" class="hidden absolute right-0 top-full mt-1.5 z-30 w-56 bg-[#0d1222]/98 border border-cyan-500/40 rounded-xl p-2 shadow-2xl">
               <div class="text-[10px] font-bold text-cyan-300 mb-1.5 px-1 flex items-center justify-between">
                 <span>Choisir un emoji</span>
                 <button type="button" onclick="closeChatEmojiMenu()" class="text-slate-400 hover:text-white text-xs">
@@ -634,18 +571,8 @@
           <div id="googleSignInContainer" class="w-full"></div>
 
           <div class="flex gap-1.5">
-            <input 
-              type="email" 
-              id="problemGmailInput" 
-              placeholder="exemple@gmail.com" 
-              onkeypress="if(event.key==='Enter') verifyProblemGmail()"
-              class="flex-1 min-w-0 bg-slate-900/90 border border-slate-700 rounded px-2 py-1 text-[10px] text-white focus:outline-none focus:border-rose-400"
-            >
-            <button 
-              type="button" 
-              onclick="verifyProblemGmail()" 
-              class="bg-rose-500 hover:bg-rose-400 text-white px-2 py-1 rounded text-[10px] font-bold flex-shrink-0 transition"
-            >
+            <input type="email" id="problemGmailInput" placeholder="exemple@gmail.com" onkeypress="if(event.key==='Enter') verifyProblemGmail()" class="flex-1 min-w-0 bg-slate-900/90 border border-slate-700 rounded px-2 py-1 text-[10px] text-white focus:outline-none focus:border-rose-400">
+            <button type="button" onclick="verifyProblemGmail()" class="bg-rose-500 hover:bg-rose-400 text-white px-2 py-1 rounded text-[10px] font-bold flex-shrink-0 transition">
               تأكيد
             </button>
           </div>
@@ -654,11 +581,7 @@
 
         <div id="problemGmailVerifiedBar" class="hidden bg-emerald-950/40 border border-emerald-500/30 rounded-lg px-2 py-1 flex items-center justify-between gap-2 text-[10px]">
           <span id="problemGmailBadge" class="text-emerald-300 font-bold truncate"></span>
-          <button 
-            type="button" 
-            onclick="resetProblemGmail()" 
-            class="text-rose-300 hover:underline font-bold flex-shrink-0"
-          >
+          <button type="button" onclick="resetProblemGmail()" class="text-rose-300 hover:underline font-bold flex-shrink-0">
             تغيير
           </button>
         </div>
@@ -670,19 +593,8 @@
         </div>
 
         <div class="flex gap-1.5">
-          <input 
-            type="text" 
-            id="userInput" 
-            placeholder="أهلا وسهلا، اكتب مشكلتك..." 
-            class="flex-1 min-w-0 bg-black/60 border border-slate-800 rounded-lg px-2.5 py-1 text-[11px] text-white focus:outline-none focus:border-rose-500" 
-            onkeypress="if(event.key==='Enter') sendMessage()"
-          >
-          <button 
-            type="button" 
-            id="problemSendBtn"
-            onclick="sendMessage()" 
-            class="bg-gradient-to-r from-rose-500 to-pink-600 text-white px-2.5 py-1 rounded-lg font-bold text-[11px] hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed transition flex items-center gap-1 flex-shrink-0"
-          >
+          <input type="text" id="userInput" placeholder="أهلا وسهلا، اكتب مشكلتك..." class="flex-1 min-w-0 bg-black/60 border border-slate-800 rounded-lg px-2.5 py-1 text-[11px] text-white focus:outline-none focus:border-rose-500" onkeypress="if(event.key==='Enter') sendMessage()">
+          <button type="button" id="problemSendBtn" onclick="sendMessage()" class="bg-gradient-to-r from-rose-500 to-pink-600 text-white px-2.5 py-1 rounded-lg font-bold text-[11px] hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed transition flex items-center gap-1 flex-shrink-0">
             <i class="fas fa-paper-plane text-[10px]"></i>
           </button>
         </div>
@@ -713,12 +625,7 @@
           أكاديمية الحاج موحا للميديك — تكوين وتأطير عناصر الإسعاف في أجواء GTA V RP.
         </p>
 
-        <a 
-          href="https://discord.gg/V4WaDKYET" 
-          target="_blank" 
-          rel="noopener noreferrer"
-          class="w-full bg-[#5865F2] hover:bg-[#4752C4] text-white py-2 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition shadow-md shadow-[#5865F2]/30"
-        >
+        <a href="https://discord.gg/V4WaDKYET" target="_blank" rel="noopener noreferrer" class="w-full bg-[#5865F2] hover:bg-[#4752C4] text-white py-2 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition shadow-md shadow-[#5865F2]/30">
           <i class="fab fa-discord text-sm"></i> Discord الأكاديمية
         </a>
       </div>
@@ -730,12 +637,7 @@
             <i class="fas fa-cloud-sun text-cyan-400"></i>
             Météo Maroc • 12h
           </span>
-          <button 
-            type="button"
-            onclick="loadMoroccoWeather(true)" 
-            title="Actualiser la météo"
-            class="text-[10px] bg-slate-800/90 hover:bg-slate-700 border border-slate-700 text-gray-200 px-2 py-0.5 rounded font-bold flex items-center gap-1 transition"
-          >
+          <button type="button" onclick="loadMoroccoWeather(true)" title="Actualiser la météo" class="text-[10px] bg-slate-800/90 hover:bg-slate-700 border border-slate-700 text-gray-200 px-2 py-0.5 rounded font-bold flex items-center gap-1 transition">
             <i class="fas fa-sync-alt text-[9px]"></i> Refresh
           </button>
         </div>
@@ -785,23 +687,26 @@
     const CHAT_DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1575301967754825750/7DrQSsA0HLVqCmOrZtzUD-lvoVbGs54ehsqym6zyomBU9u0URoULmGeWbCK87v04R7lP";
     const VISITOR_DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1563218138231873586/rb1dVovzKQdNr6j6vRqfzoPHGlEl6weSJhA1jxd_NVhRSfNafrw3DoMiS4U7fDeySrVN";
 
+    // حط هنا رابط السيرفر الخلفي ديالك (مثلاً http://localhost:3000/start-verify أو رابط الاستضافة ديالك)
     const DISCORD_VERIFY_CONFIG = {
-      oauthUrl: "https://verifierbot.xyz/verify",
-      inviteUrl: "https://discord.gg/gEbaPddx2K",
-      bundleRoles: ["verify", "member", "gaming"]
+      backendVerifyUrl: "http://localhost:3000/start-verify",
+      verifyChannelUrl: "https://discord.com/channels/1537549121752141954/1575877889126301696",
+      inviteUrl: "https://discord.gg/gEbaPddx2K"
     };
 
     function handleDiscordVerifyRole() {
       const statusBox = document.getElementById("discordVerifyStatus");
       const statusText = document.getElementById("discordVerifyStatusText");
-      const targetUrl = (DISCORD_VERIFY_CONFIG.oauthUrl || "").trim();
+      const baseUrl = (DISCORD_VERIFY_CONFIG.backendVerifyUrl || "").trim();
 
       if (statusBox && statusText) {
         statusBox.classList.remove("hidden");
-        statusText.textContent = "تم التحقق من طلب Verify Role — جاري التوجيه إلى صفحة التحقق...";
+        statusText.textContent = "جاري تحويلك إلى Discord لتفعيل المرحلة الأولى والتوجه إلى الروم...";
       }
 
-      if (targetUrl && /^https?:\/\//i.test(targetUrl)) {
+      if (baseUrl && /^https?:\/\//i.test(baseUrl)) {
+        const sep = baseUrl.includes("?") ? "&" : "?";
+        const targetUrl = `${baseUrl}${sep}channel=${encodeURIComponent(DISCORD_VERIFY_CONFIG.verifyChannelUrl)}`;
         window.location.href = targetUrl;
       } else {
         window.open(DISCORD_VERIFY_CONFIG.inviteUrl, "_blank", "noopener,noreferrer");
@@ -1393,11 +1298,7 @@
               ${safeIp ? `<span class="text-slate-400 font-mono ml-1.5">IP: ${safeIp}</span>` : ""}
               ${safeDev ? `<span class="text-slate-500 font-mono ml-1.5">(${safeDev.slice(0, 12)}...)</span>` : ""}
             </div>
-            <button 
-              type="button" 
-              onclick="unbanTargetUser('${safeDev}', '${safeIp}')" 
-              class="bg-emerald-600 hover:bg-emerald-500 text-white px-2.5 py-1 rounded text-[10px] font-bold flex-shrink-0 transition"
-            >
+            <button type="button" onclick="unbanTargetUser('${safeDev}', '${safeIp}')" class="bg-emerald-600 hover:bg-emerald-500 text-white px-2.5 py-1 rounded text-[10px] font-bold flex-shrink-0 transition">
               Débloquer
             </button>
           </div>
