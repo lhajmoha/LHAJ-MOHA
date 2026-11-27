@@ -812,6 +812,7 @@
     const LOCAL_BAN_STORAGE_KEY = "lhajmoha_demo_chat_banned_v1";
     const LOCAL_IP_BAN_STORAGE_KEY = "lhajmoha_demo_chat_banned_ips_v1";
     const CHAT_MEMBER_SESSION_KEY = "lhajmoha_chat_member_session_v1";
+    const BOT_RECENT_LINES_STORAGE_KEY = "lhajmoha_recent_bot_lines_v1";
 
     let isChatAdmin = false;
     let currentReplyTo = null;
@@ -2383,20 +2384,131 @@
     ];
 
     const BOT_IDLE_LINES = [
-      "ناري 🔥",
-      "والله حتى ناضي 😂",
-      "أوووه لقطة خطيرة 🤯",
+      // الدارجة المغربية (45 جملة)
       "السلام عليكم الدراري، كيدايرين اليوم؟ 🔥",
-      "GTA RP ولا Kick؟ واش كاين شي لايف اليوم فـ السيرفر؟ 🎮",
       "واش كاين شي حد أونلاين دابا ندخلوا سكواد؟ 👀",
-      "هاد اللقطة خاصها كليب دغيا 😂🔥",
+      "والله حتى ناضي هاد البلان 😂🔥",
+      "ناري على لقطة خطيرة وقعت قبيلة 🤯",
       "فين غابرين الخوت؟ شكون اللي طالع اليوم؟",
-      "واش تبدل شي حاجة فـ الماب ولا باقي نفس البلان؟ ⚡",
-      "شكون متبع الراديو دابا؟ Hit Radio ولا Radio Mars؟ 📻",
-      "اللي باغي يدخل يتواصل، حنا واجدين دابا 🙌",
+      "واش كاين شي لايف جديد ولا غا طالعين نبردوا؟ 🎮",
+      "هاد اللقطة خاصها كليب يتسجل دغيا 😂",
       "شكون اللي عندو البينغ مزيان اليوم؟ أنا شوية طالع 😅",
-      "واش بصح كاين أبديت جديد اليوم ولا غير هضرة؟",
-      "حماس فالشات اليوم، تبارك الله 🔥🔥"
+      "واش بصح كاين شي أبديت جديد اليوم ولا غير هضرة؟",
+      "حماس فالشات اليوم، تبارك الله عليكم 🔥🔥",
+      "اللي باغي يضحك شوية راه الشات عامر اليوم 😂",
+      "أجي بعدا، شكون اللي ربح آخر جولة؟ 🏆",
+      "واش كاين شي حد فـ RP دابا ولا ناعسين؟ 😄",
+      "خويا راه الأجواء هنا واعرة بزاف اليوم 👏",
+      "شكون متبع الراديو دابا؟ Hit Radio ولا Radio Mars؟ 📻",
+      "واش كاين شي واحد طالع على كرونو؟ ⚡",
+      "أنا يلاه دخلت، شكون يعطيني ملخص داكشي اللي فات؟ 👀",
+      "بصراحة هاد الكومينوتي زوينة بالزاف، الله يعمرها دار 🙌",
+      "واش حتى نتوما كيبان ليكم اللاغ شوية ولا غير عندي؟",
+      "يلاه نوضوا نتحركوا، السيرفر كيتسنى الدراري 🔥",
+      "ضحكتيني والله حتى دمعت عيني 😂😂",
+      "شكون اللي عندو المايك نقي اليوم؟ بغينا نهضروا شوية 🎙️",
+      "واش كاين شي مفاجأة اليوم فـ اللايف؟",
+      "اللي بغا يتناقش فـ شي موضوع مرحبا، الشات مفتوح 💬",
+      "ناري شحال داز الوقت دغيا، ما حسيتش كاع 🕒",
+      "أشخباركم الخوت؟ كلشي بخير وعلى خير؟",
+      "واش كاين شي واحد كيعرف شي تريك جديدة فـ اللعبة؟",
+      "هاد النهار داز خفيف ظريف مع هاد الأجواء 😎",
+      "شكون اللي سهران معانا حتى لدابا؟ 🌙",
+      "واش تبدل شي حاجة فـ السيرفر من البارح؟",
+      "تبارك الله على اللي حاضرين، ديما منورين ✨",
+      "أنا كملت الشغل ديالي وجيت نرتاح شوية هنا ☕",
+      "واش كاين شي حد كيدير مونتاج هنا؟ نحتاج نصيحة 🎬",
+      "اللي طالع دابا يكتب 'حاضر' نشوفوا شحال كاين ✋",
+      "والله إلا هاد الجلسة كتنسيك فـ العيا كامل 💯",
+      "شكون اللي عندو شي نكتة خفيفة نبدلوا بيها الجو؟ 😂",
+      "أجي نشوفوا شكون غادي يسبق اليوم 🚀",
+      "واش بصح غادي يكون تجمع كبير قريب؟",
+      "مزيان ملي كاين تفاعل بحال هكا فالشات 👌",
+      "اللي دخل جديد مرحبا بيه بين خوتو 🌟",
+      "واش كاين شي حد كيعاني من الدروب فـ FPS؟",
+      "نوضوا نكملوا البلان، ما كاينش الوقت للنعاس 😂🔥",
+      "شكون اللي عندو شي اقتراح زوين للسيرفر؟",
+      "أجواء نقية وزوينة، الله يديمها محبة ❤️",
+      "يلاه نبداو، شكون اللي واجد؟ 🎯",
+
+      // الفرنسية والفرنسية الدارجة المغربية (45 جملة)
+      "Salut l'équipe, ça dit quoi aujourd'hui ? 🔥",
+      "Franchement l'ambiance ici est trop propre 😎",
+      "Qui est chaud pour une session maintenant ? 🎮",
+      "C'est carré le truc, wallah trop bien fait 😂",
+      "Y a du monde connecté là ou tout le monde dort ? 👀",
+      "Le clip là il mérite un montage direct 🔥",
+      "C'est quoi les nouveautés aujourd'hui les gars ?",
+      "Moi je viens d'arriver, qui me fait un petit résumé ?",
+      "Trop stylé le setup et l'ambiance du live ✨",
+      "Qui a une bonne connexion aujourd'hui ? Moi ça ping un peu 😅",
+      "Fréro t'as géré sur ce coup, rien à dire 👏",
+      "On est là tranquille on profite de la soirée 🌙",
+      "Qui écoute la radio en même temps que le chat ? 📻",
+      "C'est validé à 100%, franchement super cool 💯",
+      "Vous pensez quoi de la dernière mise à jour ?",
+      "Allez les gars on se motive, c'est l'heure ⚡",
+      "J'ai trop rigolé avec votre message là 😂😂",
+      "Qui est motivé pour faire un truc sympa ce soir ?",
+      "Franchement la commu est grave accueillante 🙌",
+      "Ça lag un peu chez moi ou c'est général ?",
+      "Bon courage à ceux qui bossent et ceux qui jouent 💪",
+      "Qui a des bons plans ou des astuces à partager ?",
+      "Ambiance au top, ça fait plaisir à voir 🔥",
+      "Je reste un peu sur le chat avant de déconnecter",
+      "C'est trop calme d'un coup, réveillez-vous les gars 😄",
+      "Bien joué à tout le monde pour l'énergie ici 👍",
+      "Qui est sur PC et qui est sur téléphone aujourd'hui ?",
+      "Un petit coucou rapide à tous ceux qui sont là 👋",
+      "Franchement j'adore ce genre de discussions tranquilles",
+      "On garde la même énergie jusqu'à la fin 🚀",
+      "Qui a déjà testé le nouveau truc dans le jeu ?",
+      "Trop fort ce moment, personne ne s'y attendait 🤯",
+      "Merci pour la bonne ambiance, c'est toujours cool ❤️",
+      "Qui veut discuter un peu de gaming et de RP ?",
+      "C'est clean, simple et efficace comme d'habitude 👌",
+      "Allez on lance, qui est prêt à suivre ? 🎯",
+      "J'avoue j'avais pas vu venir celle-là 😂",
+      "Toujours présent pour suivre ce qui se passe ici",
+      "Bonne soirée à tous et bon jeu les amis 🌟",
+      "Qui a prévu de rester tard ce soir ?",
+      "Franchement ça change les idées de passer ici",
+      "Super actif le chat aujourd'hui, continuez comme ça 🔥",
+      "Qui connaît un bon réglage pour fluidifier le jeu ?",
+      "Rien à dire, c'est du solide aujourd'hui 💥",
+      "À fond dedans, on lâche rien les gars 🙌",
+
+      // العربية التفاعلية والمنوعة (30 جملة)
+      "مرحباً بالجميع في الشات، يومكم مليء بالنشاط والحماس 🌟",
+      "ما شاء الله على التفاعل الجميل هنا، الله يبارك في الجميع ✨",
+      "هل هناك من يتابع البث المباشر الآن معنا؟ 🎥",
+      "أجواء رائعة وممتعة تجمع عشاق اللعب والتواصل 🎮",
+      "أهلاً بكل من انضم إلينا للتو، نورتوا المكان 👋",
+      "مشاركة جميلة ولقطة تستحق الإشادة فعلاً 👏",
+      "كيف حالكم اليوم؟ نتمنى للجميع وقتاً ممتعاً ومفيداً 😊",
+      "الروح الجماعية هنا تصنع الفارق دائماً 💯",
+      "من يشاركنا رأيه حول آخر التحديثات والأحداث؟ 💬",
+      "لحظات حماسية ومشوقة تجعل المتابعة أكثر متعة 🔥",
+      "شكراً لكل من يضيف لمسة إيجابية في هذا النقاش 🙏",
+      "هل أنتم مستعدون لجولة جديدة مليئة بالإثارة؟ 🚀",
+      "جميل جداً أن نرى هذا التنوع والحضور المستمر 🎯",
+      "بالتوفيق للجميع في كل خطوة وفي كل مباراة 💪",
+      "نرحب بجميع الآراء والاقتراحات البناءة هنا 🌈",
+      "متابعة ممتعة للجميع، والقادم أجمل بإذن الله ⭐",
+      "من المتواجد معنا الآن من عشاق المغامرة والتحدي؟",
+      "أوقات طيبة نقضيها معاً في هذا الفضاء التفاعلي 🌺",
+      "الحماس واضح في كل رسالة، استمروا على هذا المنوال 🔥",
+      "هل جربتم الأسلوب الجديد في اللعب اليوم؟",
+      "كل التحية والتقدير لمتابعي القناة والمجتمع 🤝",
+      "بداية موفقة وأجواء إيجابية منذ اللحظة الأولى 👍",
+      "من لديه سؤال أو استفسار فليتفضل بطرحه هنا",
+      "متعة اللعب تكمن في الصحبة الطيبة والأجواء الهادئة 😄",
+      "ننتظر منكم المزيد من التفاعل واللقطات المميزة 📸",
+      "مساء الخير أو صباح الخير حسب توقيتكم، أهلاً بكم ☀️",
+      "تفاعل سريع ومميز يجعل الشات ينبض بالحياة ⚡",
+      "نتمنى لكم أوقاتاً سعيدة مليئة بالنجاح والمرح 🎉",
+      "حضوركم هو سر جمال هذا المجتمع واستمراريته ❤️",
+      "هيا بنا نواصل المتابعة بكل حماس وحيوية 🚀"
     ];
 
     const BOT_OPENERS = ["الدراري", "الخوت", "أشخباركم", "واش كاين شي جديد", "شكون هنا دابا"];
@@ -2436,6 +2548,11 @@
     let lastBotMessageAt = 0;
     let lastUsedBotId = "";
     let recentBotLines = [];
+    try {
+      const savedRecent = JSON.parse(localStorage.getItem(BOT_RECENT_LINES_STORAGE_KEY) || "[]");
+      if (Array.isArray(savedRecent)) recentBotLines = savedRecent.slice(-85);
+    } catch (_) {}
+
     let fastBotLoopTimer = null;
     const repliedUserMsgIds = new Set();
 
@@ -2523,7 +2640,8 @@
       }
 
       recentBotLines.push(chosen);
-      if (recentBotLines.length > 35) recentBotLines.shift();
+      if (recentBotLines.length > 85) recentBotLines = recentBotLines.slice(-85);
+      try { localStorage.setItem(BOT_RECENT_LINES_STORAGE_KEY, JSON.stringify(recentBotLines)); } catch (_) {}
       return chosen;
     }
 
