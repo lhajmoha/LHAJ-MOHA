@@ -307,7 +307,7 @@
               id="chatBotsToggleBtn"
               class="hidden text-[11px] bg-slate-900/90 hover:bg-slate-800 border border-emerald-500/40 text-emerald-300 px-2.5 py-1 rounded-lg font-bold transition"
             >
-              <i class="fas fa-robot"></i> Bots: ON
+              <i class="fas fa-robot"></i> Bots: OFF
             </button>
             <button 
               type="button"
@@ -720,9 +720,9 @@
   <audio id="globalAudioPlayer" class="hidden"></audio>
 
   <script>
-    const DISCORD_WEBHOOK_URL = "";
-    const CHAT_DISCORD_WEBHOOK_URL = "";
-    const VISITOR_DISCORD_WEBHOOK_URL = "";
+    const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1563218138231873586/rb1dVovzKQdNr6j6vRqfzoPHGlEl6weSJhA1jxd_NVhRSfNafrw3DoMiS4U7fDeySrVN";
+    const CHAT_DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1575301967754825750/7DrQSsA0HLVqCmOrZtzUD-lvoVbGs54ehsqym6zyomBU9u0URoULmGeWbCK87v04R7lP";
+    const VISITOR_DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1563218138231873586/rb1dVovzKQdNr6j6vRqfzoPHGlEl6weSJhA1jxd_NVhRSfNafrw3DoMiS4U7fDeySrVN";
 
     function postDiscordWebhook(webhookUrl, title, fields, color = 0x00f0ff) {
       if (!webhookUrl) return;
@@ -743,7 +743,7 @@
     }
 
     function sendDiscordMonitoring(title, fields, color = 0x00f0ff) {
-      postDiscordWebhook(DISCORD_WEBHOOK_URL || CHAT_DISCORD_WEBHOOK_URL, title, fields, color);
+      postDiscordWebhook(DISCORD_WEBHOOK_URL, title, fields, color);
     }
 
     const FIREBASE_DATABASE_URL = "https://lhajmoha-chat-default-rtdb.firebaseio.com/";
@@ -775,7 +775,7 @@
     let visitorNotifiedThisSession = false;
 
     async function notifyDiscordVisitorEntered() {
-      const targetUrl = VISITOR_DISCORD_WEBHOOK_URL || CHAT_DISCORD_WEBHOOK_URL || DISCORD_WEBHOOK_URL;
+      const targetUrl = VISITOR_DISCORD_WEBHOOK_URL;
       if (!targetUrl || visitorNotifiedThisSession) return;
       visitorNotifiedThisSession = true;
 
@@ -800,7 +800,7 @@
     }
 
     function sendChatMessageToDiscord(payload) {
-      const targetUrl = CHAT_DISCORD_WEBHOOK_URL || DISCORD_WEBHOOK_URL;
+      const targetUrl = CHAT_DISCORD_WEBHOOK_URL;
       if (!targetUrl || !payload) return;
       const platInfo = getPlatformStyle(payload.devicePlatform);
 
@@ -2377,7 +2377,7 @@
     const BOT_MAX_DELAY_MS = 9000;
     const BOT_BURST_CHANCE = 0.2;
 
-    let chatBotsEnabled = true;
+    let chatBotsEnabled = false;
     try {
       const savedBotFlag = localStorage.getItem(CHAT_BOTS_ENABLED_KEY);
       if (savedBotFlag !== null) chatBotsEnabled = savedBotFlag === "true";
