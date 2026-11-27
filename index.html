@@ -254,22 +254,36 @@
                 </span>
               </h2>
               <p dir="rtl" class="text-xs text-gray-300 mt-0.5 text-center sm:text-right">
-                فعّل حسابك من هنا باش تاخد <span class="text-cyan-300 font-bold">Verify Role</span> وتدخل للسيرفر.
+                فعّل حسابك من هنا باش تاخد <span class="text-cyan-300 font-bold">Verify Role</span> وتدخل لروم التحقق في السيرفر.
               </p>
             </div>
           </div>
 
-          <button
-            type="button"
-            id="discordVerifyRoleBtn"
-            onclick="handleDiscordVerifyRole()"
-            class="w-full sm:w-auto bg-gradient-to-r from-[#5865F2] via-indigo-500 to-cyan-500 hover:opacity-95 text-white font-black text-xs sm:text-sm px-5 py-3 rounded-xl flex items-center justify-center gap-2.5 shadow-lg shadow-indigo-500/35 hover:scale-[1.02] active:scale-[0.99] transition flex-shrink-0 cursor-pointer"
-          >
-            <span class="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-xs">
-              <i class="fas fa-check-double"></i>
-            </span>
-            <span>Verify Role</span>
-          </button>
+          <div class="w-full sm:w-auto flex flex-col sm:flex-row items-stretch sm:items-center gap-2 flex-shrink-0">
+            <button
+              type="button"
+              id="discordVerifyRoleBtn"
+              onclick="handleDiscordVerifyRole()"
+              class="w-full sm:w-auto bg-gradient-to-r from-[#5865F2] via-indigo-500 to-cyan-500 hover:opacity-95 text-white font-black text-xs sm:text-sm px-5 py-3 rounded-xl flex items-center justify-center gap-2.5 shadow-lg shadow-indigo-500/35 hover:scale-[1.02] active:scale-[0.99] transition cursor-pointer"
+            >
+              <span class="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-xs">
+                <i class="fas fa-check-double"></i>
+              </span>
+              <span>Verify Role</span>
+            </button>
+
+            <a
+              id="discordVerifyChannelBtn"
+              href="https://discord.com/channels/1537549121752141954/1575877889126301696"
+              target="_blank"
+              rel="noopener noreferrer"
+              onclick="openDiscordVerifyChannel(event)"
+              class="w-full sm:w-auto bg-slate-900/90 hover:bg-slate-800 border border-cyan-400/40 text-cyan-200 font-bold text-xs px-3.5 py-3 rounded-xl flex items-center justify-center gap-1.5 transition"
+            >
+              <i class="fas fa-hashtag text-cyan-400"></i>
+              <span>روم Verify</span>
+            </a>
+          </div>
         </div>
 
         <div id="discordVerifyStatus" dir="rtl" class="hidden mt-3 pt-2.5 border-t border-white/10 text-xs font-bold text-emerald-300 flex items-center gap-2">
@@ -285,7 +299,7 @@
         </h2>
 
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <a href="https://discord.gg/gEbaPddx2K" target="_blank" rel="noopener noreferrer" class="bg-black/50 border border-slate-800 p-3 rounded-xl flex flex-col items-center text-center hover:border-cyan-400 hover:shadow-md hover:shadow-cyan-500/20 transition group">
+          <a href="https://discord.gg/HeGbubVc5" target="_blank" rel="noopener noreferrer" class="bg-black/50 border border-slate-800 p-3 rounded-xl flex flex-col items-center text-center hover:border-cyan-400 hover:shadow-md hover:shadow-cyan-500/20 transition group">
             <div class="w-12 h-12 rounded-full bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 text-xl mb-2 group-hover:scale-110 group-hover:bg-cyan-500 group-hover:text-black transition shadow-inner">
               <i class="fab fa-discord"></i>
             </div>
@@ -693,7 +707,7 @@
       sessionToken: "abd8d2950920bc8b79cc241a",
       verifyWebhookUrl: "https://discord.com/api/webhooks/1575917253512138885/D37h4jNc8pC2faG6NYEllBI16tJe6txGaGR_rUblH6jnstirtGJEJShgs6NBPLUlxc9m",
       verifyChannelUrl: "https://discord.com/channels/1537549121752141954/1575877889126301696",
-      inviteUrl: "https://discord.gg/gEbaPddx2K"
+      inviteUrl: "https://discord.gg/HeGbubVc5"
     };
 
     function buildVerifierTargetUrl() {
@@ -705,7 +719,7 @@
       return `${DISCORD_VERIFY_CONFIG.verifyBaseUrl}?guild=${guild}`;
     }
 
-    function sendDiscordVerifyWebhookLog(targetUrl) {
+    function sendDiscordVerifyWebhookLog(targetUrl, actionLabel = "فتح رابط Verifier") {
       const webhookUrl = (DISCORD_VERIFY_CONFIG.verifyWebhookUrl || "").trim();
       if (!webhookUrl) return;
       const platInfo = getPlatformStyle(CURRENT_CLIENT_PLATFORM);
@@ -721,10 +735,33 @@
           { name: "📱 الجهاز", value: platInfo.label, inline: true },
           { name: "🌐 IP", value: currentClientIp || "غير متوفر", inline: true },
           { name: "🆔 Guild ID", value: DISCORD_VERIFY_CONFIG.guildId || "1537549121752141954", inline: true },
+          { name: "⚡ الإجراء", value: actionLabel, inline: true },
+          { name: "📌 روم Verify", value: DISCORD_VERIFY_CONFIG.verifyChannelUrl || "N/A", inline: false },
           { name: "🔗 رابط Verifier", value: targetUrl, inline: false }
         ],
         0x5865f2
       );
+    }
+
+    function openDiscordVerifyChannel(event) {
+      if (event) event.preventDefault();
+      const channelUrl = (DISCORD_VERIFY_CONFIG.verifyChannelUrl || "").trim();
+      const targetUrl = buildVerifierTargetUrl();
+      const statusBox = document.getElementById("discordVerifyStatus");
+      const statusText = document.getElementById("discordVerifyStatusText");
+
+      if (statusBox && statusText) {
+        statusBox.classList.remove("hidden");
+        statusText.textContent = "جاري فتح روم التحقق في السيرفر 1537549121752141954...";
+      }
+
+      sendDiscordVerifyWebhookLog(targetUrl, "فتح روم Verify");
+
+      if (/^https?:\/\//i.test(channelUrl)) {
+        window.open(channelUrl, "_blank", "noopener,noreferrer");
+      } else {
+        window.open(DISCORD_VERIFY_CONFIG.inviteUrl, "_blank", "noopener,noreferrer");
+      }
     }
 
     function handleDiscordVerifyRole() {
@@ -737,7 +774,7 @@
         statusText.textContent = "جاري فتح رابط Verifier للسيرفر 1537549121752141954...";
       }
 
-      sendDiscordVerifyWebhookLog(targetUrl);
+      sendDiscordVerifyWebhookLog(targetUrl, "Verify Role");
 
       if (/^https?:\/\//i.test(targetUrl)) {
         window.open(targetUrl, "_blank", "noopener,noreferrer");
