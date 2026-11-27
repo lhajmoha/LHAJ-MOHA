@@ -239,7 +239,7 @@
             <!-- Discord + Verify Badge Logo -->
             <div class="relative w-14 h-14 rounded-2xl bg-[#5865F2]/20 border border-[#5865F2]/60 flex items-center justify-center text-[#8ea1e1] text-2xl flex-shrink-0 shadow-lg shadow-[#5865F2]/25">
               <i class="fab fa-discord"></i>
-              <span title="Verify Badge" class=" -bottom-1.5 -right-1.5 absolute w-6 h-6 rounded-full bg-gradient-to-tr from-cyan-400 to-emerald-400 text-slate-950 border-2 border-[#101424] flex items-center justify-center text-[11px] font-black shadow-md">
+              <span title="Verify Badge" class="-bottom-1.5 -right-1.5 absolute w-6 h-6 rounded-full bg-gradient-to-tr from-cyan-400 to-emerald-400 text-slate-950 border-2 border-[#101424] flex items-center justify-center text-[11px] font-black shadow-md">
                 <i class="fas fa-check"></i>
               </span>
             </div>
@@ -254,7 +254,7 @@
                   <i class="fas fa-check"></i>
                 </span>
               </h2>
-              <p class="text-xs text-gray-300 mt-0.5">
+              <p dir="rtl" class="text-xs text-gray-300 mt-0.5 text-center sm:text-right">
                 فعّل حسابك من هنا باش تاخد <span class="text-cyan-300 font-bold">Verify Role</span> وتدخل للسيرفر.
               </p>
             </div>
@@ -273,7 +273,7 @@
           </button>
         </div>
 
-        <div id="discordVerifyStatus" class="hidden mt-3 pt-2.5 border-t border-white/10 text-xs font-bold text-emerald-300 flex items-center gap-2">
+        <div id="discordVerifyStatus" dir="rtl" class="hidden mt-3 pt-2.5 border-t border-white/10 text-xs font-bold text-emerald-300 flex items-center gap-2">
           <i class="fas fa-circle-check text-emerald-400"></i>
           <span id="discordVerifyStatusText"></span>
         </div>
@@ -785,9 +785,8 @@
     const CHAT_DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1575301967754825750/7DrQSsA0HLVqCmOrZtzUD-lvoVbGs54ehsqym6zyomBU9u0URoULmGeWbCK87v04R7lP";
     const VISITOR_DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1563218138231873586/rb1dVovzKQdNr6j6vRqfzoPHGlEl6weSJhA1jxd_NVhRSfNafrw3DoMiS4U7fDeySrVN";
 
-    // إعدادات Verify Role (إلى كان عندك رابط OAuth2 أو سيرفر تفعيل حطو هنا، وإلا غادي يفتح رابط السيرفر بعد تسجيل طلب التفعيل)
     const DISCORD_VERIFY_CONFIG = {
-      oauthUrl: "", // مثال: "https://discord.com/oauth2/authorize?client_id=YOUR_ID&response_type=code&redirect_uri=...&scope=identify%20guilds.join"
+      oauthUrl: "https://verifierbot.xyz/verify",
       inviteUrl: "https://discord.gg/gEbaPddx2K",
       bundleRoles: ["verify", "member", "gaming"]
     };
@@ -799,7 +798,7 @@
 
       if (statusBox && statusText) {
         statusBox.classList.remove("hidden");
-        statusText.textContent = "تم التحقق من طلب Verify Role — جاري التوجيه إلى Discord...";
+        statusText.textContent = "تم التحقق من طلب Verify Role — جاري التوجيه إلى صفحة التحقق...";
       }
 
       if (targetUrl && /^https?:\/\//i.test(targetUrl)) {
