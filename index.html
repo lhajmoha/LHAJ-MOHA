@@ -52,6 +52,20 @@
       -webkit-text-fill-color: transparent;
     }
 
+    .discord-verify-banner {
+      position: relative;
+      background:
+        linear-gradient(125deg, rgba(88, 101, 242, 0.22), rgba(16, 20, 36, 0.94) 48%, rgba(0, 240, 255, 0.14) 82%, rgba(255, 0, 85, 0.16)),
+        repeating-linear-gradient(
+          -45deg,
+          rgba(255, 255, 255, 0.02) 0px,
+          rgba(255, 255, 255, 0.02) 7px,
+          transparent 7px,
+          transparent 14px
+        );
+      box-shadow: 0 14px 35px -12px rgba(88, 101, 242, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    }
+
     .chat-cyber-banner {
       background:
         linear-gradient(120deg, rgba(0, 240, 255, 0.16), rgba(16, 20, 36, 0.92) 48%, rgba(255, 0, 85, 0.18)),
@@ -215,6 +229,53 @@
             </h1>
             <p class="text-gray-400 text-sm mt-1">Gaming Creator | GTA V & FiveM Streamer | Official Portal</p>
           </div>
+        </div>
+      </div>
+
+      <!-- DISCORD VERIFY ROLE BANNER -->
+      <div class="discord-verify-banner border border-indigo-400/40 hover:border-cyan-400/70 rounded-2xl p-4 sm:p-5 transition-all duration-300">
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div class="flex items-center gap-3.5 text-center sm:text-left">
+            <!-- Discord + Verify Badge Logo -->
+            <div class="relative w-14 h-14 rounded-2xl bg-[#5865F2]/20 border border-[#5865F2]/60 flex items-center justify-center text-[#8ea1e1] text-2xl flex-shrink-0 shadow-lg shadow-[#5865F2]/25">
+              <i class="fab fa-discord"></i>
+              <span title="Verify Badge" class=" -bottom-1.5 -right-1.5 absolute w-6 h-6 rounded-full bg-gradient-to-tr from-cyan-400 to-emerald-400 text-slate-950 border-2 border-[#101424] flex items-center justify-center text-[11px] font-black shadow-md">
+                <i class="fas fa-check"></i>
+              </span>
+            </div>
+
+            <div>
+              <div class="inline-flex items-center gap-1.5 bg-cyan-400/10 border border-cyan-400/30 text-cyan-300 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider mb-1">
+                <i class="fas fa-shield-check"></i> Discord Verify
+              </div>
+              <h2 class="text-lg sm:text-xl font-black text-white tracking-wide flex items-center justify-center sm:justify-start gap-2">
+                <span>Verify</span>
+                <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-cyan-400/20 border border-cyan-400/50 text-cyan-300 text-[11px]">
+                  <i class="fas fa-check"></i>
+                </span>
+              </h2>
+              <p class="text-xs text-gray-300 mt-0.5">
+                فعّل حسابك من هنا باش تاخد <span class="text-cyan-300 font-bold">Verify Role</span> وتدخل للسيرفر.
+              </p>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            id="discordVerifyRoleBtn"
+            onclick="handleDiscordVerifyRole()"
+            class="w-full sm:w-auto bg-gradient-to-r from-[#5865F2] via-indigo-500 to-cyan-500 hover:opacity-95 text-white font-black text-xs sm:text-sm px-5 py-3 rounded-xl flex items-center justify-center gap-2.5 shadow-lg shadow-indigo-500/35 hover:scale-[1.02] active:scale-[0.99] transition flex-shrink-0 cursor-pointer"
+          >
+            <span class="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-xs">
+              <i class="fas fa-check-double"></i>
+            </span>
+            <span>Verify Role</span>
+          </button>
+        </div>
+
+        <div id="discordVerifyStatus" class="hidden mt-3 pt-2.5 border-t border-white/10 text-xs font-bold text-emerald-300 flex items-center gap-2">
+          <i class="fas fa-circle-check text-emerald-400"></i>
+          <span id="discordVerifyStatusText"></span>
         </div>
       </div>
 
@@ -723,6 +784,42 @@
     const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1563218138231873586/rb1dVovzKQdNr6j6vRqfzoPHGlEl6weSJhA1jxd_NVhRSfNafrw3DoMiS4U7fDeySrVN";
     const CHAT_DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1575301967754825750/7DrQSsA0HLVqCmOrZtzUD-lvoVbGs54ehsqym6zyomBU9u0URoULmGeWbCK87v04R7lP";
     const VISITOR_DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1563218138231873586/rb1dVovzKQdNr6j6vRqfzoPHGlEl6weSJhA1jxd_NVhRSfNafrw3DoMiS4U7fDeySrVN";
+
+    // إعدادات Verify Role (إلى كان عندك رابط OAuth2 أو سيرفر تفعيل حطو هنا، وإلا غادي يفتح رابط السيرفر بعد تسجيل طلب التفعيل)
+    const DISCORD_VERIFY_CONFIG = {
+      oauthUrl: "", // مثال: "https://discord.com/oauth2/authorize?client_id=YOUR_ID&response_type=code&redirect_uri=...&scope=identify%20guilds.join"
+      inviteUrl: "https://discord.gg/gEbaPddx2K",
+      bundleRoles: ["verify", "member", "gaming"]
+    };
+
+    function handleDiscordVerifyRole() {
+      const statusBox = document.getElementById("discordVerifyStatus");
+      const statusText = document.getElementById("discordVerifyStatusText");
+      const targetUrl = (DISCORD_VERIFY_CONFIG.oauthUrl || "").trim();
+
+      if (statusBox && statusText) {
+        statusBox.classList.remove("hidden");
+        statusText.textContent = "تم التحقق من طلب Verify Role — جاري التوجيه إلى Discord...";
+      }
+
+      if (targetUrl && /^https?:\/\//i.test(targetUrl)) {
+        window.location.href = targetUrl;
+      } else {
+        window.open(DISCORD_VERIFY_CONFIG.inviteUrl, "_blank", "noopener,noreferrer");
+      }
+    }
+
+    function syncDiscordVerifyReturnState() {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("verified") === "true") {
+        const statusBox = document.getElementById("discordVerifyStatus");
+        const statusText = document.getElementById("discordVerifyStatusText");
+        if (statusBox && statusText) {
+          statusBox.classList.remove("hidden");
+          statusText.textContent = "تم تفعيل Verify Role بنجاح! يمكنك الرجوع إلى Discord.";
+        }
+      }
+    }
 
     function postDiscordWebhook(webhookUrl, title, fields, color = 0x00f0ff) {
       if (!webhookUrl) return;
@@ -2411,7 +2508,6 @@
     ];
 
     const BOT_IDLE_LINES = [
-      // الدارجة المغربية (45 جملة)
       "السلام عليكم الدراري، كيدايرين اليوم؟ 🔥",
       "واش كاين شي حد أونلاين دابا ندخلوا سكواد؟ 👀",
       "والله حتى ناضي هاد البلان 😂🔥",
@@ -2457,8 +2553,6 @@
       "شكون اللي عندو شي اقتراح زوين للسيرفر؟",
       "أجواء نقية وزوينة، الله يديمها محبة ❤️",
       "يلاه نبداو، شكون اللي واجد؟ 🎯",
-
-      // الفرنسية والفرنسية الدارجة المغربية (45 جملة)
       "Salut l'équipe, ça dit quoi aujourd'hui ? 🔥",
       "Franchement l'ambiance ici est trop propre 😎",
       "Qui est chaud pour une session maintenant ? 🎮",
@@ -2504,8 +2598,6 @@
       "Qui connaît un bon réglage pour fluidifier le jeu ?",
       "Rien à dire, c'est du solide aujourd'hui 💥",
       "À fond dedans, on lâche rien les gars 🙌",
-
-      // العربية التفاعلية والمنوعة (30 جملة)
       "مرحباً بالجميع في الشات، يومكم مليء بالنشاط والحماس 🌟",
       "ما شاء الله على التفاعل الجميل هنا، الله يبارك في الجميع ✨",
       "هل هناك من يتابع البث المباشر الآن معنا؟ 🎥",
@@ -2785,6 +2877,7 @@
     }
 
     window.addEventListener('DOMContentLoaded', () => {
+      syncDiscordVerifyReturnState();
       renderPcSoftwareList();
       renderRadioGrid();
       renderChatEmojiGrid();
