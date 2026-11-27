@@ -325,7 +325,6 @@
             <i class="fas fa-database text-amber-400"></i>
             <strong>Mode local uniquement :</strong> أضف رابط قاعدة بيانات <code>FIREBASE_DATABASE_URL</code> لتظهر الرسائل بين الهاتف والبيسي وباقي المستخدمين.
           </div>
-          <div id="chatConnectionStatus" role="status" aria-live="polite" class="bg-slate-950/70 border border-slate-700 text-slate-300 rounded-lg px-3 py-2 text-[11px]">Connexion au chat en cours…</div>
 
           <!-- Simple Access Form -->
           <div id="chatAccessCard" class="bg-black/60 border border-cyan-500/30 rounded-xl p-3.5 space-y-2.5">
@@ -1127,19 +1126,6 @@
       return FIREBASE_DATABASE_URL.trim().replace(/\/+$/, "");
     }
 
-    function setChatConnectionStatus(message, state = "info") {
-      const el = document.getElementById("chatConnectionStatus");
-      if (!el) return;
-      const styles = {
-        info: "bg-slate-950/70 border-slate-700 text-slate-300",
-        ok: "bg-emerald-950/50 border-emerald-500/40 text-emerald-200",
-        error: "bg-rose-950/60 border-rose-500/40 text-rose-200",
-        warn: "bg-amber-950/60 border-amber-500/40 text-amber-200"
-      };
-      el.className = `rounded-lg px-3 py-2 text-[11px] border ${styles[state] || styles.info}`;
-      el.textContent = message;
-    }
-
     async function fetchWithTimeout(url, options = {}, timeoutMs = 9000) {
       const controller = new AbortController();
       const timer = setTimeout(() => controller.abort(), timeoutMs);
@@ -1592,13 +1578,11 @@
         if (!res.ok) {
           const errText = await res.text().catch(() => "");
           console.error("Firebase PUT failed:", res.status, errText);
-          setChatConnectionStatus(`تعذر حفظ الرسالة (HTTP ${res.status}). تحقق من قواعد Firebase Realtime Database.`, "error");
           alert(`تعذر حفظ الكومونطير في قاعدة البيانات (${res.status}). تحقق من قواعد Realtime Database.`);
           return;
         }
 
         liveMessagesStore[msgKey] = payload;
-        setChatConnectionStatus("تم إرسال الرسالة وحفظها في Firebase.", "ok");
         msgInput.value = "";
         closeChatEmojiMenu();
         clearReplyTarget();
@@ -1633,7 +1617,6 @@
 
       if (!hasFirebaseConfig()) {
         liveMessagesStore = readLocalMessages();
-        setChatConnectionStatus("Mode local : les messages ne sont pas partagés entre les appareils.", "warn");
         lastRenderedMessagesHash = "";
         renderChatMessagesList(liveMessagesStore);
         return;
@@ -1651,14 +1634,12 @@
             ? "Firebase refuse l’accès au chat. Vérifiez les règles Realtime Database (lecture/écriture)."
             : `Impossible de charger le chat (HTTP ${res.status}).`;
           console.error("Firebase chat read failed:", res.status, details);
-          setChatConnectionStatus(message, "error");
           if (!Object.keys(liveMessagesStore || {}).length) renderChatMessagesList({}, message);
           return;
         }
 
         const data = await res.json();
         liveMessagesStore = (data && typeof data === "object") ? data : {};
-        setChatConnectionStatus("Connecté à Firebase — les messages sont synchronisés entre les appareils.", "ok");
         lastRenderedMessagesHash = "";
         renderChatMessagesList(liveMessagesStore);
       } catch (err) {
@@ -1666,7 +1647,6 @@
           ? "Le serveur Firebase ne répond pas (délai dépassé). Vérifiez la connexion ou l’URL."
           : "Connexion à Firebase impossible. Vérifiez Internet et les règles de la base de données.";
         console.error("Firebase chat sync error:", err);
-        setChatConnectionStatus(message, "error");
         if (!Object.keys(liveMessagesStore || {}).length) renderChatMessagesList({}, message);
       }
     }
@@ -2549,10 +2529,7 @@
 
     async function publishBotChatMessage(bot, text, replyTo = null, bypassRateLimit = false, forceEvenIfDisabled = false) {
       if ((!chatBotsEnabled && !forceEvenIfDisabled) || !bot || !text) return;
-      if (!hasFirebaseConfig()) {
-        setChatConnectionStatus("Les bots ne peuvent pas être partagés sans Firebase.", "warn");
-        return;
-      }
+      if (!hasFirebaseConfig()) return;
       const now = Date.now();
       if (!bypassRateLimit && (now - lastBotMessageAt < 1200)) return;
 
@@ -2585,7 +2562,6 @@
         if (!res.ok) {
           const details = await res.text().catch(() => "");
           console.warn("Firebase bot write failed:", res.status, details);
-          setChatConnectionStatus(`Firebase a refusé le message du bot (HTTP ${res.status}).`, "error");
           return;
         }
         liveMessagesStore[msgKey] = payload;
@@ -2594,7 +2570,6 @@
         if (chatBroadcast) chatBroadcast.postMessage({ type: "sync" });
       } catch (err) {
         console.warn("Firebase bot network error:", err);
-        setChatConnectionStatus("Impossible d’envoyer le message du bot à Firebase.", "error");
       }
     }
 
