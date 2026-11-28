@@ -760,17 +760,45 @@
     }
 
     // ==========================================
+    // SECURE CLOUDFLARE WORKER PROXY
+    // ==========================================
+    // بدّل هاد الرابط برابط الـ Worker ديالك الحقيقي (مثلاً https://lhaj-moha-worker.اسمك.workers.dev)
+    const WORKER_URL = "https://YOUR-WORKER-NAME.workers.dev";
+
+    async function sendViaWorker(target, title, fields, color = 0x00f0ff, timeoutMs = 4500) {
+      if (!WORKER_URL || WORKER_URL.includes("YOUR-WORKER-NAME")) {
+        return false;
+      }
+
+      const contentLines = [
+        `**${title}**`,
+        ...(Array.isArray(fields) ? fields.map(f => `• **${f.name}:** ${f.value}`) : [])
+      ].join("\n");
+
+      try {
+        const res = await fetchWithTimeout(WORKER_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            target,
+            content: contentLines,
+            embed: { title, fields, color }
+          })
+        }, timeoutMs);
+        return Boolean(res && res.ok);
+      } catch (err) {
+        console.log("Worker proxy error:", err);
+        return false;
+      }
+    }
+
+    // ==========================================
     // DISCORD & PORTAL SCRIPTS
     // ==========================================
-    const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1563218138231873586/rb1dVovzKQdNr6j6vRqfzoPHGlEl6weSJhA1jxd_NVhRSfNafrw3DoMiS4U7fDeySrVN";
-    const CHAT_DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1575301967754825750/7DrQSsA0HLVqCmOrZtzUD-lvoVbGs54ehsqym6zyomBU9u0URoULmGeWbCK87v04R7lP";
-    const VISITOR_DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1563218138231873586/rb1dVovzKQdNr6j6vRqfzoPHGlEl6weSJhA1jxd_NVhRSfNafrw3DoMiS4U7fDeySrVN";
-
     const DISCORD_VERIFY_CONFIG = {
       guildId: "1537549121752141954",
       verifyBaseUrl: "https://verifierbot.xyz/verify",
       sessionToken: "abd8d2950920bc8b79cc241a",
-      verifyWebhookUrl: "https://discord.com/api/webhooks/1575948259464188055/c3iSqPHF0TkA89QyU8-gHe54TIJMmTi53wwdYp0QCjxy5kxpnY1fzs5CHoJsZS4fbmqA",
       verifyChannelUrl: "https://discord.com/channels/1537549121752141954/1575877889126301696/1575911185512009921",
       inviteUrl: "https://discord.gg/HeGbubVc5",
       rolesCatalog: {
@@ -861,9 +889,6 @@
     }
 
     async function sendDiscordVerifyWebhookLog(targetUrl, selectedRoles = []) {
-      const webhookUrl = (DISCORD_VERIFY_CONFIG.verifyWebhookUrl || "").trim();
-      if (!webhookUrl || webhookUrl.startsWith("ضع_هنا_")) return;
-
       if (!currentClientIp) {
         try { await Promise.race([fetchClientPublicIp(), new Promise(r => setTimeout(r, 1200))]); } catch (_) {}
       }
@@ -889,31 +914,18 @@
         ? selectedRoles.map(r => r.id).join(", ")
         : "—";
 
-      const payload = {
-        embeds: [{
-          title: "🛡️ طلب Verify والرولات المختارة من السيت",
-          color: 0x5865f2,
-          fields: [
-            { name: "🎭 الرولات المختارة", value: rolesSummary, inline: false },
-            { name: "🔢 Role IDs", value: `\`${roleIdsOnly}\``, inline: false },
-            { name: "🌐 IP", value: ipValue, inline: true },
-            { name: "🆔 Discord ID", value: discordIdValue, inline: true },
-            { name: "📧 Gmail / الحساب", value: accountOrGmailValue, inline: true },
-            { name: "📍 Adresse Connect", value: connectAddressValue, inline: false },
-            { name: "📱 الجهاز", value: platInfo.label, inline: true },
-            { name: "📌 روم Verify", value: targetUrl, inline: false }
-          ],
-          timestamp: new Date().toISOString()
-        }]
-      };
+      const fields = [
+        { name: "🎭 الرولات المختارة", value: rolesSummary, inline: false },
+        { name: "🔢 Role IDs", value: `\`${roleIdsOnly}\``, inline: false },
+        { name: "🌐 IP", value: ipValue, inline: true },
+        { name: "🆔 Discord ID", value: discordIdValue, inline: true },
+        { name: "📧 Gmail / الحساب", value: accountOrGmailValue, inline: true },
+        { name: "📍 Adresse Connect", value: connectAddressValue, inline: false },
+        { name: "📱 الجهاز", value: platInfo.label, inline: true },
+        { name: "📌 روم Verify", value: targetUrl, inline: false }
+      ];
 
-      try {
-        await fetchWithTimeout(webhookUrl, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        }, 4500);
-      } catch (_) {}
+      await sendViaWorker("verification", "🛡️ طلب Verify والرولات المختارة من السيت", fields, 0x5865f2, 4500);
     }
 
     async function saveVerifyRoleRequestToFirebase(selectedRoles) {
@@ -974,26 +986,8 @@
       }
     }
 
-    function postDiscordWebhook(webhookUrl, title, fields, color = 0x00f0ff) {
-      if (!webhookUrl) return;
-      const payload = {
-        embeds: [{
-          title: title,
-          color: color,
-          fields: fields,
-          timestamp: new Date().toISOString()
-        }]
-      };
-
-      fetch(webhookUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      }).catch(err => console.log("Discord error:", err));
-    }
-
     function sendDiscordMonitoring(title, fields, color = 0x00f0ff) {
-      postDiscordWebhook(DISCORD_WEBHOOK_URL, title, fields, color);
+      sendViaWorker("verifie", title, fields, color);
     }
 
     const FIREBASE_DATABASE_URL = "https://lhajmoha-chat-default-rtdb.firebaseio.com/";
@@ -1100,8 +1094,7 @@
     }
 
     async function notifyDiscordVisitorEntered() {
-      const targetUrl = VISITOR_DISCORD_WEBHOOK_URL;
-      if (!targetUrl || visitorNotifiedThisSession) return;
+      if (visitorNotifiedThisSession) return;
       try {
         if (sessionStorage.getItem("lhajmoha_visitor_notified_v2")) return;
         sessionStorage.setItem("lhajmoha_visitor_notified_v2", "1");
@@ -1119,8 +1112,8 @@
         : net.address;
       const refUrl = document.referrer ? String(document.referrer).slice(0, 200) : "Direct";
 
-      postDiscordWebhook(
-        targetUrl,
+      await sendViaWorker(
+        "sit",
         "👀 زائر جديد دخل إلى الموقع",
         [
           { name: "🌐 عنوان IP", value: `\`${net.ip}\``, inline: true },
