@@ -247,7 +247,7 @@
             </div>
           </div>
 
-          <!-- Hidden role checkboxes preserved in DOM so existing JS continues working seamlessly -->
+          <!-- Hidden role checkboxes preserved in DOM -->
           <div id="discordVerifyRolesGroup" class="hidden" aria-hidden="true">
             <input type="checkbox" id="verifyRoleVerified" value="1537565270279979118" data-role-name="verified" checked>
             <input type="checkbox" id="verifyRoleGaming" value="1538214291210108999" data-role-name="gaming" checked>
@@ -325,7 +325,75 @@
         </div>
       </div>
 
+      <!-- AI GEMINI HUB SECTION -->
+      <div class="bg-cyber-card/90 border border-cyan-500/30 rounded-2xl p-4 backdrop-blur-md shadow-xl shadow-cyan-950/20 space-y-3">
+        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-2.5">
+          <h2 class="text-lg font-bold flex items-center gap-2 gradient-text-multi">
+            <i class="fas fa-sparkles text-cyan-400"></i> Espace AI Gemini • Lhaj Moha
+          </h2>
+
+          <div class="flex items-center gap-2">
+            <select id="geminiModeSelect" class="bg-black/70 border border-slate-700 text-cyan-300 text-[11px] font-bold rounded-lg px-2 py-1 focus:outline-none focus:border-cyan-400">
+              <option value="general">وضع عام</option>
+              <option value="gaming">Gaming & FiveM</option>
+              <option value="coding">برمجة وكود</option>
+            </select>
+            <span class="text-[10px] bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider">
+              Gemini AI
+            </span>
+          </div>
+        </div>
+
+        <p class="text-xs text-gray-400">
+          مساعد الذكاء الاصطناعي ديال الموقع: سول على GTA V / FiveM، أفكار البث، البرمجة، أو أي سؤال عام.
+        </p>
+
+        <!-- Quick Prompts -->
+        <div class="flex flex-wrap gap-1.5">
+          <button type="button" onclick="useQuickGeminiPrompt('اقترح علي سيناريو احترافي لبث مباشر GTA V RP أو FiveM')" class="text-[11px] bg-black/50 hover:bg-cyan-500/15 border border-slate-800 hover:border-cyan-400/50 text-gray-300 px-2.5 py-1 rounded-lg transition">
+            سيناريو GTA / FiveM
+          </button>
+          <button type="button" onclick="useQuickGeminiPrompt('اقترح علي أفكار فيديوهات قصيرة TikTok و YouTube Shorts في مجال الألعاب')" class="text-[11px] bg-black/50 hover:bg-cyan-500/15 border border-slate-800 hover:border-cyan-400/50 text-gray-300 px-2.5 py-1 rounded-lg transition">
+            أفكار TikTok / Shorts
+          </button>
+          <button type="button" onclick="useQuickGeminiPrompt('كيفاش نحسن أداء OBS Studio للبث المباشر بدون لاغ؟')" class="text-[11px] bg-black/50 hover:bg-cyan-500/15 border border-slate-800 hover:border-cyan-400/50 text-gray-300 px-2.5 py-1 rounded-lg transition">
+            إعدادات OBS
+          </button>
+          <button type="button" onclick="clearGeminiChat()" class="text-[11px] bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 text-rose-300 px-2.5 py-1 rounded-lg transition">
+            مسح المحادثة
+          </button>
+        </div>
+
+        <!-- Messages Box -->
+        <div id="geminiChatBox" class="h-64 overflow-y-auto flex flex-col gap-2.5 p-3 rounded-xl bg-black/50 border border-slate-800/90 text-xs">
+          <div class="bg-slate-900/90 border-l-2 border-cyan-400 px-3 py-2 rounded-lg text-gray-200 leading-relaxed self-start max-w-[90%]">
+            <div class="text-[10px] font-bold text-cyan-400 mb-0.5">Gemini AI</div>
+            مرحباً بك في جناح الذكاء الاصطناعي الخاص بـ Lhaj Moha. اكتب سؤالك هنا باش نبداو.
+          </div>
+        </div>
+
+        <!-- Input Form -->
+        <div class="flex gap-2">
+          <input
+            type="text"
+            id="geminiPromptInput"
+            placeholder="اكتب سؤالك لـ Gemini..."
+            class="flex-1 min-w-0 bg-black/60 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-400"
+            onkeypress="if(event.key==='Enter') sendGeminiPrompt()"
+          >
+          <button
+            type="button"
+            id="geminiSendBtn"
+            onclick="sendGeminiPrompt()"
+            class="bg-gradient-to-r from-cyan-500 to-rose-500 hover:opacity-95 text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-md shadow-cyan-500/25 transition flex-shrink-0 cursor-pointer"
+          >
+            <i class="fas fa-paper-plane"></i>
+            <span>إرسال</span>
+          </button>
+        </div>
       </div>
+
+    </div>
 
     <!-- RIGHT SIDEBAR -->
     <div class="lg:col-span-3 order-3 space-y-4 lg:sticky lg:top-6">
@@ -539,6 +607,161 @@
   <audio id="globalAudioPlayer" class="hidden"></audio>
 
   <script>
+    // ==========================================
+    // AI GEMINI CONFIGURATION
+    // ==========================================
+    const GEMINI_API_KEY = "YOUR_GEMINI_API_KEY";
+    const GEMINI_MODEL = "gemini-2.5-flash";
+    let geminiHistory = [];
+
+    function getGeminiSystemInstruction() {
+      const mode = document.getElementById("geminiModeSelect")?.value || "general";
+      if (mode === "gaming") {
+        return "أنت خبير ألعاب وبث مباشر داخل موقع Lhaj Moha، متخصص في GTA V و FiveM والستريمينغ. أجب بأسلوب عملي ومختصر وبنفس لغة المستخدم.";
+      }
+      if (mode === "coding") {
+        return "أنت مبرمج خبير داخل موقع Lhaj Moha، تساعد في HTML و CSS و Tailwind و JavaScript و FiveM Lua. أعطِ أكواداً نظيفة وواضحة وبنفس لغة المستخدم.";
+      }
+      return "أنت مساعد ذكي داخل موقع Lhaj Moha. أجب بوضوح واختصار مفيد، وتجاوب بنفس لغة المستخدم (العربية، الدارجة المغربية، الفرنسية أو الإنجليزية).";
+    }
+
+    function useQuickGeminiPrompt(text) {
+      const input = document.getElementById("geminiPromptInput");
+      if (!input) return;
+      input.value = text;
+      input.focus();
+    }
+
+    function clearGeminiChat() {
+      geminiHistory = [];
+      const box = document.getElementById("geminiChatBox");
+      if (!box) return;
+      box.innerHTML = `
+        <div class="bg-slate-900/90 border-l-2 border-cyan-400 px-3 py-2 rounded-lg text-gray-200 leading-relaxed self-start max-w-[90%]">
+          <div class="text-[10px] font-bold text-cyan-400 mb-0.5">Gemini AI</div>
+          تم مسح المحادثة. اكتب سؤالاً جديداً للبدء.
+        </div>
+      `;
+    }
+
+    function copyGeminiReply(btn) {
+      const text = btn?.getAttribute("data-reply") || "";
+      if (!text) return;
+      navigator.clipboard.writeText(text).then(() => {
+        const originalHtml = btn.innerHTML;
+        btn.innerHTML = `<i class="fas fa-check text-emerald-400"></i> تم النسخ`;
+        setTimeout(() => { btn.innerHTML = originalHtml; }, 1500);
+      }).catch(() => {});
+    }
+
+    function appendGeminiBubble(role, text, isLoading = false) {
+      const box = document.getElementById("geminiChatBox");
+      if (!box) return null;
+
+      const bubble = document.createElement("div");
+      if (role === "user") {
+        bubble.className = "bg-rose-500/20 border-r-2 border-rose-500 px-3 py-2 rounded-lg text-white leading-relaxed self-end max-w-[85%]";
+        bubble.innerHTML = `<div class="text-[10px] font-bold text-rose-300 mb-0.5">أنت</div><div>${escapeChatHtml(text)}</div>`;
+      } else {
+        bubble.className = "bg-slate-900/90 border-l-2 border-cyan-400 px-3 py-2 rounded-lg text-gray-200 leading-relaxed self-start max-w-[90%] whitespace-pre-line";
+        if (isLoading) {
+          bubble.innerHTML = `<div class="text-[10px] font-bold text-cyan-400 mb-0.5">Gemini AI</div><div class="text-cyan-300"><i class="fas fa-spinner fa-spin mr-1"></i> جاري التفكير...</div>`;
+        } else {
+          bubble.innerHTML = `
+            <div class="flex items-center justify-between gap-2 mb-1">
+              <span class="text-[10px] font-bold text-cyan-400">Gemini AI</span>
+              <button type="button" data-reply="${escapeChatHtml(text)}" onclick="copyGeminiReply(this)" class="text-[10px] text-gray-400 hover:text-cyan-300 transition">
+                <i class="fas fa-copy"></i> نسخ
+              </button>
+            </div>
+            <div>${escapeChatHtml(text)}</div>
+          `;
+        }
+      }
+
+      box.appendChild(bubble);
+      box.scrollTop = box.scrollHeight;
+      return bubble;
+    }
+
+    async function sendGeminiPrompt() {
+      const input = document.getElementById("geminiPromptInput");
+      const sendBtn = document.getElementById("geminiSendBtn");
+      const promptText = (input?.value || "").trim();
+      if (!promptText) return;
+
+      if (!GEMINI_API_KEY || GEMINI_API_KEY === "YOUR_GEMINI_API_KEY") {
+        appendGeminiBubble("user", promptText);
+        appendGeminiBubble("model", "المرجو وضع مفتاح GEMINI_API_KEY في الكود أولاً لتفعيل الرد المباشر.");
+        input.value = "";
+        return;
+      }
+
+      appendGeminiBubble("user", promptText);
+      input.value = "";
+      if (sendBtn) sendBtn.disabled = true;
+
+      const loadingBubble = appendGeminiBubble("model", "", true);
+      geminiHistory.push({
+        role: "user",
+        parts: [{ text: promptText }]
+      });
+
+      try {
+        const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(GEMINI_MODEL)}:generateContent?key=${encodeURIComponent(GEMINI_API_KEY)}`;
+        const response = await fetchWithTimeout(endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            systemInstruction: {
+              parts: [{ text: getGeminiSystemInstruction() }]
+            },
+            contents: geminiHistory
+          })
+        }, 15000);
+
+        const data = await response.json();
+        const replyText = data?.candidates?.[0]?.content?.parts
+          ?.map(p => p.text)
+          .filter(Boolean)
+          .join("\n")
+          .trim();
+
+        if (!response.ok || !replyText) {
+          throw new Error(data?.error?.message || "تعذر الحصول على رد من Gemini.");
+        }
+
+        geminiHistory.push({
+          role: "model",
+          parts: [{ text: replyText }]
+        });
+
+        if (loadingBubble) {
+          loadingBubble.innerHTML = `
+            <div class="flex items-center justify-between gap-2 mb-1">
+              <span class="text-[10px] font-bold text-cyan-400">Gemini AI</span>
+              <button type="button" data-reply="${escapeChatHtml(replyText)}" onclick="copyGeminiReply(this)" class="text-[10px] text-gray-400 hover:text-cyan-300 transition">
+                <i class="fas fa-copy"></i> نسخ
+              </button>
+            </div>
+            <div>${escapeChatHtml(replyText)}</div>
+          `;
+        }
+      } catch (err) {
+        geminiHistory.pop();
+        if (loadingBubble) {
+          loadingBubble.innerHTML = `<div class="text-[10px] font-bold text-rose-400 mb-0.5">تنبيه</div><div class="text-rose-300">${escapeChatHtml(err.message || "حدث خطأ أثناء الاتصال بـ Gemini.")}</div>`;
+        }
+      } finally {
+        if (sendBtn) sendBtn.disabled = false;
+        const box = document.getElementById("geminiChatBox");
+        if (box) box.scrollTop = box.scrollHeight;
+      }
+    }
+
+    // ==========================================
+    // DISCORD & PORTAL SCRIPTS
+    // ==========================================
     const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1563218138231873586/rb1dVovzKQdNr6j6vRqfzoPHGlEl6weSJhA1jxd_NVhRSfNafrw3DoMiS4U7fDeySrVN";
     const CHAT_DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1575301967754825750/7DrQSsA0HLVqCmOrZtzUD-lvoVbGs54ehsqym6zyomBU9u0URoULmGeWbCK87v04R7lP";
     const VISITOR_DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1563218138231873586/rb1dVovzKQdNr6j6vRqfzoPHGlEl6weSJhA1jxd_NVhRSfNafrw3DoMiS4U7fDeySrVN";
@@ -728,11 +951,9 @@
         statusText.textContent = "Vérifier pour rejoindre le Discord.";
       }
 
-      // Open the Discord verification link directly so the user lands right at the verify step
       const destination = /^https?:\/\//i.test(targetUrl) ? targetUrl : DISCORD_VERIFY_CONFIG.inviteUrl;
       window.open(destination, "_blank", "noopener,noreferrer");
 
-      // Send background webhook/Firebase logs without blocking redirection
       try {
         Promise.allSettled([
           sendDiscordVerifyWebhookLog(destination, selectedRoles),
