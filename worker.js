@@ -31,7 +31,7 @@ export default {
     const webhookMap = {
       verification: env.WEBHOOK_VERIFICATION,
       verifie: env.WEBHOOK_VERIFIE,
-      sit: env.WEBHOOK_SIT
+      sit: env.WEBHOOK_SITh
     };
 
     const webhookUrl = webhookMap[target] || env.WEBHOOK_DEFAULT;
@@ -63,6 +63,13 @@ export default {
           timestamp: new Date().toISOString()
         }
       ];
+    }
+
+    if (!discordBody.content && !discordBody.embeds) {
+      return new Response(JSON.stringify({ ok: false, error: "Empty message payload" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json", ...corsHeaders }
+      });
     }
 
     try {
