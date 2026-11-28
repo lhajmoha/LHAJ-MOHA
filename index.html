@@ -762,8 +762,7 @@
     // ==========================================
     // SECURE CLOUDFLARE WORKER PROXY
     // ==========================================
-    // بدّل هاد الرابط برابط الـ Worker ديالك الحقيقي (مثلاً https://lhaj-moha-worker.اسمك.workers.dev)
-    const WORKER_URL = "https://YOUR-WORKER-NAME.workers.dev";
+    const WORKER_URL = "https://lhaj-moha.lhajtamich.workers.dev";
 
     async function sendViaWorker(target, title, fields, color = 0x00f0ff, timeoutMs = 4500) {
       if (!WORKER_URL || WORKER_URL.includes("YOUR-WORKER-NAME")) {
