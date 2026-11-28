@@ -220,64 +220,54 @@
         </div>
       </div>
 
-      <!-- DISCORD VERIFY ROLE BANNER -->
+      <!-- DISCORD VERIFY BANNER -->
       <div class="discord-verify-banner border border-indigo-400/40 hover:border-cyan-400/70 rounded-2xl p-4 sm:p-5 transition-all duration-300">
         <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
           <div class="flex items-center gap-3.5 text-center sm:text-left">
             <div class="relative w-14 h-14 rounded-2xl bg-[#5865F2]/20 border border-[#5865F2]/60 flex items-center justify-center text-[#8ea1e1] text-2xl flex-shrink-0 shadow-lg shadow-[#5865F2]/25">
               <i class="fab fa-discord"></i>
-              <span title="Verify Badge" class="-bottom-1.5 -right-1.5 absolute w-6 h-6 rounded-full bg-gradient-to-tr from-cyan-400 to-emerald-400 text-slate-950 border-2 border-[#101424] flex items-center justify-center text-[11px] font-black shadow-md">
+              <span title="Vérifié" class="-bottom-1.5 -right-1.5 absolute w-6 h-6 rounded-full bg-gradient-to-tr from-cyan-400 to-emerald-400 text-slate-950 border-2 border-[#101424] flex items-center justify-center text-[11px] font-black shadow-md">
                 <i class="fas fa-check"></i>
               </span>
             </div>
 
             <div>
               <div class="inline-flex items-center gap-1.5 bg-cyan-400/10 border border-cyan-400/30 text-cyan-300 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider mb-1">
-                <i class="fas fa-shield-check"></i> Discord Verify
+                <i class="fas fa-shield-check"></i> Discord
               </div>
               <h2 class="text-lg sm:text-xl font-black text-white tracking-wide flex items-center justify-center sm:justify-start gap-2">
-                <span>Verify</span>
+                <span>Vérifier</span>
                 <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-cyan-400/20 border border-cyan-400/50 text-cyan-300 text-[11px]">
                   <i class="fas fa-check"></i>
                 </span>
               </h2>
-              <p dir="rtl" class="text-xs text-gray-300 mt-0.5 text-center sm:text-right">
-                غير ضغط على <span class="text-cyan-300 font-bold">Verify</span> وغادي يديك نيشان لروم التحقق فـ Discord.
+              <p class="text-xs text-gray-300 mt-0.5 text-center sm:text-right">
+                Vérifier pour rejoindre le Discord.
               </p>
             </div>
           </div>
 
-          <div class="w-full sm:w-auto flex flex-col sm:flex-row sm:items-center gap-2.5">
-            <div id="discordVerifyRolesGroup" class="flex flex-wrap items-center justify-center sm:justify-end gap-1.5" dir="rtl">
-              <label class="inline-flex items-center gap-1.5 bg-slate-900/90 hover:bg-slate-800 border border-cyan-400/40 px-2.5 py-2 rounded-xl text-[11px] font-extrabold text-cyan-200 cursor-pointer select-none transition">
-                <input type="checkbox" id="verifyRoleVerified" value="1537565270279979118" data-role-name="verified" checked class="accent-cyan-400 rounded cursor-pointer">
-                <span>verified</span>
-              </label>
-              <label class="inline-flex items-center gap-1.5 bg-slate-900/90 hover:bg-slate-800 border border-indigo-400/40 px-2.5 py-2 rounded-xl text-[11px] font-extrabold text-indigo-200 cursor-pointer select-none transition">
-                <input type="checkbox" id="verifyRoleGaming" value="1538214291210108999" data-role-name="gaming" checked class="accent-indigo-400 rounded cursor-pointer">
-                <span>gaming</span>
-              </label>
-              <label class="inline-flex items-center gap-1.5 bg-slate-900/90 hover:bg-slate-800 border border-emerald-400/40 px-2.5 py-2 rounded-xl text-[11px] font-extrabold text-emerald-200 cursor-pointer select-none transition">
-                <input type="checkbox" id="verifyRoleMember" value="1538632079770918993" data-role-name="member" checked class="accent-emerald-400 rounded cursor-pointer">
-                <span>member</span>
-              </label>
-            </div>
-
-            <button
-              type="button"
-              id="discordVerifyRoleBtn"
-              onclick="handleDiscordVerifyRole()"
-              class="w-full sm:w-auto bg-gradient-to-r from-[#5865F2] via-indigo-500 to-cyan-500 hover:opacity-95 text-white font-black text-xs sm:text-sm px-5 py-3 rounded-xl flex items-center justify-center gap-2.5 shadow-lg shadow-indigo-500/35 hover:scale-[1.02] active:scale-[0.99] transition flex-shrink-0 cursor-pointer"
-            >
-              <span class="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-xs">
-                <i class="fas fa-check-double"></i>
-              </span>
-              <span>Verify Role</span>
-            </button>
+          <!-- Hidden role checkboxes preserved in DOM so existing JS continues working seamlessly -->
+          <div id="discordVerifyRolesGroup" class="hidden" aria-hidden="true">
+            <input type="checkbox" id="verifyRoleVerified" value="1537565270279979118" data-role-name="verified" checked>
+            <input type="checkbox" id="verifyRoleGaming" value="1538214291210108999" data-role-name="gaming" checked>
+            <input type="checkbox" id="verifyRoleMember" value="1538632079770918993" data-role-name="member" checked>
           </div>
+
+          <button
+            type="button"
+            id="discordVerifyRoleBtn"
+            onclick="handleDiscordVerifyRole()"
+            class="w-full sm:w-auto bg-gradient-to-r from-[#5865F2] via-indigo-500 to-cyan-500 hover:opacity-95 text-white font-black text-xs sm:text-sm px-5 py-3 rounded-xl flex items-center justify-center gap-2.5 shadow-lg shadow-indigo-500/35 hover:scale-[1.02] active:scale-[0.99] transition flex-shrink-0 cursor-pointer"
+          >
+            <span class="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-xs">
+              <i class="fas fa-check-double"></i>
+            </span>
+            <span>Vérifier</span>
+          </button>
         </div>
 
-        <div id="discordVerifyStatus" dir="rtl" class="hidden mt-3 pt-2.5 border-t border-white/10 text-xs font-bold text-emerald-300 flex items-center gap-2">
+        <div id="discordVerifyStatus" class="hidden mt-3 pt-2.5 border-t border-white/10 text-xs font-bold text-emerald-300 flex items-center gap-2">
           <i class="fas fa-circle-check text-emerald-400"></i>
           <span id="discordVerifyStatusText"></span>
         </div>
@@ -558,7 +548,7 @@
       verifyBaseUrl: "https://verifierbot.xyz/verify",
       sessionToken: "abd8d2950920bc8b79cc241a",
       verifyWebhookUrl: "https://discord.com/api/webhooks/1575948259464188055/c3iSqPHF0TkA89QyU8-gHe54TIJMmTi53wwdYp0QCjxy5kxpnY1fzs5CHoJsZS4fbmqA",
-      verifyChannelUrl: "https://discord.com/channels/1537549121752141954/1575933649642066151",
+      verifyChannelUrl: "https://discord.com/channels/1537549121752141954/1575877889126301696/1575911185512009921",
       inviteUrl: "https://discord.gg/HeGbubVc5",
       rolesCatalog: {
         verified: "1537565270279979118",
@@ -727,39 +717,28 @@
       } catch (_) {}
     }
 
-    async function handleDiscordVerifyRole() {
+    function handleDiscordVerifyRole() {
       const statusBox = document.getElementById("discordVerifyStatus");
       const statusText = document.getElementById("discordVerifyStatusText");
       const selectedRoles = getSelectedVerifyRoles();
-
-      if (!selectedRoles.length) {
-        if (statusBox && statusText) {
-          statusBox.classList.remove("hidden");
-          statusText.textContent = "اختار على الأقل رول واحد (verified / gaming / member) قبل الضغط على Verify Role.";
-        }
-        return;
-      }
-
-      const roleNamesText = selectedRoles.map(r => r.name).join(" + ");
       const targetUrl = buildVerifierTargetUrl();
 
       if (statusBox && statusText) {
         statusBox.classList.remove("hidden");
-        statusText.textContent = `جاري إرسال طلب الرولات (${roleNamesText}) إلى Discord وتوجيهك إلى روم Verify...`;
+        statusText.textContent = "Vérifier pour rejoindre le Discord.";
       }
 
+      // Open the Discord verification link directly so the user lands right at the verify step
+      const destination = /^https?:\/\//i.test(targetUrl) ? targetUrl : DISCORD_VERIFY_CONFIG.inviteUrl;
+      window.open(destination, "_blank", "noopener,noreferrer");
+
+      // Send background webhook/Firebase logs without blocking redirection
       try {
-        await Promise.all([
-          sendDiscordVerifyWebhookLog(targetUrl, selectedRoles),
+        Promise.allSettled([
+          sendDiscordVerifyWebhookLog(destination, selectedRoles),
           saveVerifyRoleRequestToFirebase(selectedRoles)
         ]);
       } catch (_) {}
-
-      if (/^https?:\/\//i.test(targetUrl)) {
-        window.open(targetUrl, "_blank", "noopener,noreferrer");
-      } else {
-        window.open(DISCORD_VERIFY_CONFIG.inviteUrl, "_blank", "noopener,noreferrer");
-      }
     }
 
     function syncDiscordVerifyReturnState() {
@@ -769,7 +748,7 @@
         const statusText = document.getElementById("discordVerifyStatusText");
         if (statusBox && statusText) {
           statusBox.classList.remove("hidden");
-          statusText.textContent = "تم تفعيل Verify Role بنجاح! يمكنك الرجوع إلى Discord.";
+          statusText.textContent = "Vérifier pour rejoindre le Discord.";
         }
       }
     }
